@@ -64,7 +64,7 @@ public class StringUtils {
         List<Integer> indexAry = new ArrayList<>();
         for (int i = 0; i < string.length(); i++) {
             char c = string.charAt(i);
-            if (c >= 'a' && c < 'z' || c >= 'A' && c <= 'Z') {//英文字符
+            if (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z') {//英文字符
             } else {
                 indexAry.add(i);
             }
@@ -73,7 +73,7 @@ public class StringUtils {
     }
 
     public static boolean isEnChar(char c) {
-        if (c >= 'a' && c < 'z' || c >= 'A' && c <= 'Z') {//英文字符
+        if (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z') {//英文字符
             return true;
         }
         return false;

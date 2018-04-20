@@ -111,7 +111,7 @@ public class ReadActivity extends AppCompatActivity implements PageViewListener,
 
     private void initFile() {
         String filePath = "";
-        filePath = Environment.getExternalStorageDirectory() + "/tencent/Lord of the Flies.txt";
+        //filePath = Environment.getExternalStorageDirectory() + "/tencent/Lord of the Flies.txt";
         if (getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().containsKey("filePath")) {
             filePath = getIntent().getExtras().getString("filePath");
         }

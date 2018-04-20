@@ -360,6 +360,14 @@ public class JustifyTextView extends AppCompatTextView {
                         pageViewListener.showBottom();
                     }
                 }
+            } else {
+                if (pageViewListener != null) {
+                    pageViewListener.showBottom();
+                }
+            }
+        } else {
+            if (pageViewListener != null) {
+                pageViewListener.showBottom();
             }
         }
     }
