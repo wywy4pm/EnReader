@@ -11,5 +11,11 @@ public interface PageViewListener {
 
     void showTransDialog(String word);
 
-    void showBottom();
+    void showBottom(boolean isShowDialog);
+
+    void setReadBackground(int bgColor);
+
+    void setTextColor(int textColor);
+
+    void setReadProgress(int progress);
 }

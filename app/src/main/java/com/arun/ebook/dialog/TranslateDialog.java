@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.Gravity;
@@ -49,7 +48,7 @@ public class TranslateDialog extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final Dialog dialog = new Dialog(getActivity(), R.style.ActionSheetDialogStyle);
+        final Dialog dialog = new Dialog(getActivity(), R.style.DialogTopStyle);
         //dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.layout_translate, null);
         dialog.setContentView(view);
@@ -57,7 +56,7 @@ public class TranslateDialog extends DialogFragment {
         // 设置宽度为屏宽、位置靠近屏幕顶部
         Window window = dialog.getWindow();
         if (window != null) {
-            //window.setDimAmount(0f);
+            window.setDimAmount(0f);
             window.getDecorView().setPadding(0, 0, 0, 0);
             window.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
             WindowManager.LayoutParams wlp = window.getAttributes();

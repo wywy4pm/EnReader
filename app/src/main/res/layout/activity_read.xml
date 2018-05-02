@@ -14,110 +14,54 @@
         android:layout_above="@+id/layout_bottom"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
+        android:includeFontPadding="false"
         android:layout_marginRight="10dp"
         android:layout_marginTop="15dp"
         android:lineSpacingExtra="5dp"
+        android:text=""
         android:textColor="@color/text_common"
         android:textSize="18sp" />
 
-    <!--<TextView
-        android:id="@+id/testView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:background="@android:color/holo_green_dark"
-        android:padding="10dp" />-->
-
     <RelativeLayout
         android:id="@+id/layout_bottom"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:visibility="visible">
 
-        <RelativeLayout
-            android:id="@+id/read_bottom"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/to_main"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp">
+            android:text="首页 |"
+            android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/currentTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/currentProgress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:textSize="16sp" />
-
-        </RelativeLayout>
-
-        <LinearLayout
-            android:id="@+id/read_bottom_edit"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/to_edit"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:visibility="gone"
-            android:weightSum="5">
+            android:layout_toRightOf="@+id/to_main"
+            android:text=" 编辑"
+            android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/to_main"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="[首页]"
-                android:textColor="@android:color/tertiary_text_dark"
-                android:textSize="18sp" />
+        <TextView
+            android:id="@+id/currentProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/change_size"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="[字号]"
-                android:textColor="@android:color/tertiary_text_dark"
-                android:textSize="18sp" />
+        <TextView
+            android:id="@+id/currentTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="15dp"
+            android:layout_toLeftOf="@+id/currentProgress"
+            android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/change_bg"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="[背景]"
-                android:textColor="@android:color/tertiary_text_dark"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/change_font"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="[字体]"
-                android:textColor="@android:color/tertiary_text_dark"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/to_more"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="[更多]"
-                android:textColor="@android:color/tertiary_text_dark"
-                android:textSize="18sp" />
-
-        </LinearLayout>
     </RelativeLayout>
-
 
 </RelativeLayout>

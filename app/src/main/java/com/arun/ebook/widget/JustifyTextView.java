@@ -7,6 +7,7 @@ package com.arun.ebook.widget;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.Layout;
 import android.text.StaticLayout;
@@ -14,6 +15,7 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
@@ -57,6 +59,17 @@ public class JustifyTextView extends AppCompatTextView {
     }
 
     @Override
+    public void setTextColor(int color) {
+        paint.setColor(color);
+        super.setTextColor(color);
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
         resize();
@@ -69,7 +82,16 @@ public class JustifyTextView extends AppCompatTextView {
      */
     public void resize() {
         CharSequence oldContent = getText();
-        CharSequence newContent = oldContent.subSequence(0, getCharNum());
+        int start = 0;
+        int end = 0;
+        if (isForward) {
+            start = 0;
+            end = getCharNum();
+        } else {
+            start = oldContent.length() - getCharNum();
+            end = oldContent.length();
+        }
+        CharSequence newContent = oldContent.subSequence(start, end);
         if (oldContent.length() - newContent.length() > 0) {
             setText(newContent);
         }
@@ -98,47 +120,122 @@ public class JustifyTextView extends AppCompatTextView {
         return lineNum;
     }
 
+    private Paint.FontMetricsInt fontMetricsInt;
+    private boolean isForward = true;
+
+    public void setMovePage(boolean isForward) {//true从上往下读,false从下往上读
+        setGravity(isForward ? Gravity.TOP : Gravity.BOTTOM);
+        this.isForward = isForward;
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
+        //设置remove间距
+        if (fontMetricsInt == null) {
+            fontMetricsInt = new Paint.FontMetricsInt();
+            getPaint().getFontMetricsInt(fontMetricsInt);
+        }
+        //canvas.translate(0, fontMetricsInt.top - fontMetricsInt.ascent);
         mLineY = 0;
-        mViewWidth = getMeasuredWidth();//获取textview的实际宽度
-        mLineY += getTextSize();
+        mViewWidth = getMeasuredWidth();
+        if (isForward) {
+            drawNextPage(canvas);
+        } else {
+            drawPrePage(canvas);
+        }
+        //super.onDraw(canvas);
+    }
 
+    private void drawNextPage(Canvas canvas) {
+        mLineY = (int) getTextSize();
         String text = getText().toString();
-
         Layout layout = getLayout();
         if (layout != null) {
             int lineCount = layout.getLineCount();
+            //Log.d("TAG", "lineCount = " + lineCount + " isForward = " + isForward);
             for (int i = 0; i < lineCount; i++) {//每行循环
                 int lineStart = layout.getLineStart(i);
                 int lineEnd = layout.getLineEnd(i);
                 String lineText = text.substring(lineStart, lineEnd);//获取TextView每行中的内容
-                if (needScale(lineText)) {
-                    if (i == touchLine) {
-                        drawMultiText(canvas, lineText);
-                    } else {
-                        canvas.drawText(lineText, 0, mLineY, paint);
-                    }
-                    /*if (i == lineCount - 1) {//最后一行不需要重绘
-                        if (i == touchLine) {
-                            drawMultiText(canvas, lineText);
-                        } else {
-                            canvas.drawText(lineText, 0, mLineY, paint);
-                        }
-                        //canvas.drawText(lineText, 0, mLineY, paint);
-                    } else {
-                        float width = StaticLayout.getDesiredWidth(text, lineStart, lineEnd, paint);
-                        drawScaleText(i, canvas, lineText, width);
-                    }*/
-                } else {
-                    if (i == touchLine) {
-                        drawMultiText(canvas, lineText);
-                    } else {
-                        canvas.drawText(lineText, 0, mLineY, paint);
-                    }
-                }
-                mLineY += getLineHeight();//写完一行以后，高度增加一行的高度
+                Log.e("TAG", "lineText =" + lineText);
+                drawLineText(i, canvas, lineText);
+                Log.e("TAG", "mLineY = " + mLineY + "  getLineHeight = " + getLineHeight() + "  getMeasuredHeight = " + getMeasuredHeight());
+                mLineY += getLineHeight();//写完一行以后，高度增加一行的高度//1770
             }
+        }
+    }
+
+    private void drawPrePage(Canvas canvas) {
+        mLineY = getMeasuredHeight();
+        String text = getText().toString();
+        Layout layout = getLayout();
+        if (layout != null) {
+            int lineCount = layout.getLineCount();
+            //Log.d("TAG", "lineCount = " + lineCount + " isForward = " + isForward);
+
+            for (int i = lineCount - 1; i >= 0; i--) {//每行循环
+                int lineStart = layout.getLineStart(i);
+                int lineEnd = layout.getLineEnd(i);
+                String lineText = text.substring(lineStart, lineEnd);//获取TextView每行中的内容
+                if (i == lineCount - 1) {
+                    Log.e("TAG", "lineText =--------------------------------------------start--------------------------------------------");
+                }
+                Log.e("TAG", "lineText =" + lineText);
+                if (i == 0) {
+                    Log.e("TAG", "lineText =--------------------------------------------end---------------------------------------------");
+                }
+                drawLineText(i, canvas, lineText);
+                Log.e("TAG", "mLineY = " + mLineY + "  getLineHeight = " + getLineHeight() + "  getMeasuredHeight = " + getMeasuredHeight());
+                mLineY -= getLineHeight();//写完一行以后，高度增加一行的高度//1770
+            }
+
+            /*for (int i = lineCount - 1; i >= 0; i--) {//每行循环
+                int lineStart = layout.getLineStart(lineCount - 1 - i);
+                int lineEnd = layout.getLineEnd(lineCount - 1 - i);
+                String lineText = text.substring(lineStart, lineEnd);//获取TextView每行中的内容
+                Log.d("TAG", " lineText =" + lineText);
+                if (lineText.length() > 0) {
+                    char charEnd = lineText.charAt(lineText.length() - 1);
+                    if (charEnd == '\n') {
+                        drawLineText(i, canvas, lineText);
+                        Log.e("TAG", "mLineY = " + mLineY + "  getLineHeight = " + getLineHeight() + "  getMeasuredHeight = " + getMeasuredHeight());
+                        mLineY -= getLineHeight();
+                        if (i > 0) {
+                            for (int j = i + 1; j < lineCount; j++) {
+                                int preLineStart = layout.getLineStart(lineCount - 1 - j);
+                                int preLineEnd = layout.getLineEnd(lineCount - 1 - j);
+                                String preLineText = text.substring(preLineStart, preLineEnd);
+                                if (preLineText.length() > 0) {
+                                    char preCharEnd = preLineText.charAt(preLineText.length() - 1);
+                                    if (preCharEnd != '\n') {
+                                        drawLineText(j, canvas, preLineText);
+                                        Log.e("TAG", "mLineY = " + mLineY + "  getLineHeight = " + getLineHeight() + "  getMeasuredHeight = " + getMeasuredHeight());
+                                        mLineY -= getLineHeight();
+                                    } else {
+                                        break;
+                                    }
+                                } else {
+                                    drawLineText(i, canvas, lineText);
+                                    Log.e("TAG", "mLineY = " + mLineY + "  getLineHeight = " + getLineHeight() + "  getMeasuredHeight = " + getMeasuredHeight());
+                                    mLineY -= getLineHeight();
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    drawLineText(i, canvas, lineText);
+                    Log.e("TAG", "mLineY = " + mLineY + "  getLineHeight = " + getLineHeight() + "  getMeasuredHeight = " + getMeasuredHeight());
+                    mLineY -= getLineHeight();
+                }
+            }*/
+        }
+    }
+
+    private void drawLineText(int i, Canvas canvas, String lineText) {
+        if (i == touchLine) {
+            drawMultiText(canvas, lineText);
+        } else {
+            canvas.drawText(lineText, 0, mLineY, paint);
         }
     }
 
@@ -151,7 +248,7 @@ public class JustifyTextView extends AppCompatTextView {
             String touchRight = lineText.substring(touchWordEndIndex, lineText.length());
             String touchWord = lineText.substring(touchWordStartIndex, touchWordEndIndex);
 
-            paint.setColor(getResources().getColor(R.color.text_common));
+            paint.setColor(getCurrentTextColor());
             canvas.drawText(touchLeft, 0, mLineY, paint);
             /*TextPaint textPaint = getPaint();
             textPaint.setColor(Color.RED);
@@ -159,7 +256,7 @@ public class JustifyTextView extends AppCompatTextView {
             paint.setColor(Color.RED);
             canvas.drawText(touchWord, touchWordStartX, mLineY, paint);
 
-            paint.setColor(getResources().getColor(R.color.text_common));
+            paint.setColor(getCurrentTextColor());
             canvas.drawText(touchRight, touchWordEndX, mLineY, paint);
         }
     }
@@ -349,6 +446,7 @@ public class JustifyTextView extends AppCompatTextView {
 
                     if (pageViewListener != null) {
                         pageViewListener.showTransDialog(word);
+                        pageViewListener.showBottom(true);
                     }
                     /*SpannableStringBuilder span = new SpannableStringBuilder(textView.getText());
                      int start = startIndex + lineStart;
@@ -357,17 +455,17 @@ public class JustifyTextView extends AppCompatTextView {
                      setText(span);*/
                 } else {
                     if (pageViewListener != null) {
-                        pageViewListener.showBottom();
+                        pageViewListener.showBottom(false);
                     }
                 }
             } else {
                 if (pageViewListener != null) {
-                    pageViewListener.showBottom();
+                    pageViewListener.showBottom(false);
                 }
             }
         } else {
             if (pageViewListener != null) {
-                pageViewListener.showBottom();
+                pageViewListener.showBottom(false);
             }
         }
     }

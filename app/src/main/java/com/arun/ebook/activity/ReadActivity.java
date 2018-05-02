@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arun.ebook.R;
+import com.arun.ebook.dialog.ReadBottomDialog;
 import com.arun.ebook.dialog.TranslateDialog;
 import com.arun.ebook.bean.TranslateResponse;
 import com.arun.ebook.common.Constant;
@@ -61,19 +63,16 @@ public class ReadActivity extends AppCompatActivity implements PageViewListener,
     private long fileLength;
     private int start = 0;
     private int end = 0;
-    private int preAllPageCounts = 0;
     private static final int margin = DensityUtil.dp2px(5);//文字显示距离屏幕实际尺寸的偏移量
     private int pageHeight, pageWidth;//文字排版页面尺寸
     private int maxLineNumber;//行数
     private int lineMaxCount;//一行最多显示字数
     private int pageMaxCount;//一页最多显示字数
-    private List<Integer> readCounts = new ArrayList<>();
-    private int currentPageIndex = -1;
     private int lineSpace = DensityUtil.dp2px(5);
     private double currentProgress;
-    private RelativeLayout readBottom;
-    private LinearLayout readBottomEdit;
+    private View contentView;
     private TextView to_main;
+    private TextView to_edit;
     private TextView tvCurrentTime;
     private TextView tvCurrentProgress;
     private OkHttpClient okHttpClient = new OkHttpClient();
@@ -88,7 +87,8 @@ public class ReadActivity extends AppCompatActivity implements PageViewListener,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_read);
+        contentView = LayoutInflater.from(this).inflate(R.layout.activity_read, null);
+        setContentView(contentView);
         initViewAndListener();
         initFile();
         initTime();
@@ -102,16 +102,18 @@ public class ReadActivity extends AppCompatActivity implements PageViewListener,
         txtView = findViewById(R.id.text);
         tvCurrentTime = findViewById(R.id.currentTime);
         tvCurrentProgress = findViewById(R.id.currentProgress);
-        readBottom = findViewById(R.id.read_bottom);
-        readBottomEdit = findViewById(R.id.read_bottom_edit);
+       /* readBottom = findViewById(R.id.read_bottom);
+        readBottomEdit = findViewById(R.id.read_bottom_edit);*/
         to_main = findViewById(R.id.to_main);
+        to_edit = findViewById(R.id.to_edit);
         to_main.setOnClickListener(this);
+        to_edit.setOnClickListener(this);
         txtView.setPageViewListener(this);
     }
 
     private void initFile() {
         String filePath = "";
-        //filePath = Environment.getExternalStorageDirectory() + "/tencent/Lord of the Flies.txt";
+        filePath = Environment.getExternalStorageDirectory() + "/tencent/Lord of the Flies.txt";
         if (getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().containsKey("filePath")) {
             filePath = getIntent().getExtras().getString("filePath");
         }
@@ -143,7 +145,7 @@ public class ReadActivity extends AppCompatActivity implements PageViewListener,
         }
     }
 
-    private void initTime(){
+    private void initTime() {
         //显示时间
         tvCurrentTime.setText(getCurrentTime());
         new TimeThread().start();
@@ -159,6 +161,11 @@ public class ReadActivity extends AppCompatActivity implements PageViewListener,
         switch (v.getId()) {
             case R.id.to_main:
                 finish();
+                break;
+            case R.id.to_edit:
+                ReadBottomDialog dialog = new ReadBottomDialog();
+                dialog.setListener(this);
+                dialog.show(getFragmentManager(), "read_bottom");
                 break;
         }
     }
@@ -228,62 +235,31 @@ public class ReadActivity extends AppCompatActivity implements PageViewListener,
         //showPrePage(currentPageCounts);
     }
 
-    private float downX = 0;
-    private float downY = 0;
-
-    /*@Override
-    public boolean onTouchEvent(MotionEvent event) {
-        float eventX = event.getX();
-        float eventY = event.getY();
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                downX = eventX;
-                downY = eventY;
-                break;
-            case MotionEvent.ACTION_MOVE:
-                break;
-            case MotionEvent.ACTION_UP:
-                float moveX = eventX - downX;
-                //float moveY = Math.abs(eventY - downY);
-                if (moveX > 10) {//上一页
-                    showPrePage();
-                } else if (moveX < -10) {
-                    showNextPage();
-                }
-                break;
-        }
-        return super.onTouchEvent(event);
-    }*/
-
     public void showNextPage() {
         if (end >= fileLength) {//当前处于最后一页
             tvCurrentProgress.setText("100%");
             Toast.makeText(this, "已到最后", Toast.LENGTH_SHORT).show();
         } else {
+            txtView.setMovePage(true);
             try {
+                start = end;
+                Log.d("TAG", "----END_INDEX----" + end);
+                //Log.d("TAG", "Read Next----Prepare: start = " + start + " end = " + end);
                 final StringBuilder onePage = new StringBuilder();
                 while (onePage.length() <= pageMaxCount && end < fileLength) {
                     char[] byteTemp = readParagraphForward(end);
                     String onePara = new String(byteTemp);
                     end += byteTemp.length;
+                    Log.d("TAG", "----END_INDEX----" + end);
                     onePage.append(onePara);
                 }
                 txtView.setText(onePage.toString());
-                /*StringUtils.setEachWord(txtView, onePage.toString(), new ClickWordListener() {
-                    @Override
-                    public void onClickWord(String word) {
-                        getTranslateData(word);
-                    }
-                });*/
                 txtView.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         int showNum = txtView.getCharNum();
-                        currentPageIndex++;
-                        readCounts.add(currentPageIndex, showNum);
-                        preAllPageCounts += showNum;
-                        end = preAllPageCounts;//end会多读，这边改为当前所有显示的最后一位
-                        start = end - showNum;
+                        end = start + showNum;//end会多读，这边改为当前所有显示的最后一位
+                        //Log.d("TAG", "Read Next----Done: start = " + start + " end = " + end);
                         currentProgress = (float) start / fileLength * 100;
                         DecimalFormat format = new DecimalFormat("#0.00");
                         String readingProgress = format.format(currentProgress) + "%";
@@ -297,9 +273,66 @@ public class ReadActivity extends AppCompatActivity implements PageViewListener,
     }
 
     public void showPrePage() {
-        try {
-            final int currentCount = readCounts.get(currentPageIndex);
-            end -= currentCount + readCounts.get(currentPageIndex - 1);
+        if (start > 0) {
+            txtView.setMovePage(false);
+            try {
+                end = start;
+                Log.d("TAG", "----END_INDEX----" + start);
+                //Log.d("TAG", "Read Pre----Prepare: start = " + start + " end = " + end);
+                final StringBuilder onePage = new StringBuilder();
+                while (onePage.length() <= pageMaxCount && start > 0) {
+                    char[] byteTemp = readParagraphBack(start);
+                    String onePara = new String(byteTemp);
+                    start -= byteTemp.length;
+                    Log.d("TAG", "----END_INDEX----" + start);
+                    onePage.insert(0, onePara);
+                }
+                txtView.setText(onePage.toString());
+                txtView.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        int showNum = txtView.getCharNum();
+                        start = end - showNum;
+                        //Log.d("TAG", "Read Pre----Done: start = " + start + " end = " + end);
+                        currentProgress = (float) start / fileLength * 100;
+                        DecimalFormat format = new DecimalFormat("#0.00");
+                        String readingProgress = format.format(currentProgress) + "%";
+                        tvCurrentProgress.setText(readingProgress);
+                    }
+                }, 50);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void showPage(int progress) {
+        start = (int) ((float) progress / 100 * fileLength) - 1;
+        if (start > 0) {
+            char startChar = builder.charAt(start);
+            if (startChar != '\n' && startChar != ' ') {
+                int i = start - 1;
+                while (i > 0) {
+                    char c = builder.charAt(i);
+                    if (c == '\n' || c == ' ') {
+                        start = i + 1;
+                        break;
+                    }
+                    i--;
+                }
+            }
+        } else {
+            start = 0;
+        }
+        end = start;
+        showProgressPage();
+    }
+
+    public void showProgressPage() {
+        if (end >= fileLength) {//当前处于最后一页
+            tvCurrentProgress.setText("100%");
+            Toast.makeText(this, "已到最后", Toast.LENGTH_SHORT).show();
+        } else {
             final StringBuilder onePage = new StringBuilder();
             while (onePage.length() <= pageMaxCount && end < fileLength) {
                 char[] byteTemp = readParagraphForward(end);
@@ -311,20 +344,9 @@ public class ReadActivity extends AppCompatActivity implements PageViewListener,
             txtView.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    int showNum = txtView.getCharNum();
-                    readCounts.remove(currentPageIndex);
-                    currentPageIndex--;
-                    preAllPageCounts -= currentCount;
-                    end = preAllPageCounts;
-                    start = end - showNum;
-                    currentProgress = (float) start / fileLength * 100;
-                    DecimalFormat format = new DecimalFormat("#0.00");
-                    String readingProgress = format.format(currentProgress) + "%";
-                    tvCurrentProgress.setText(readingProgress);
+
                 }
             }, 50);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -338,19 +360,24 @@ public class ReadActivity extends AppCompatActivity implements PageViewListener,
         }
     }
 
-    private boolean isShowBottom;
+    @Override
+    public void showBottom(boolean isShowDialog) {
+
+    }
 
     @Override
-    public void showBottom() {
-        if (!isShowBottom) {
-            readBottomEdit.setVisibility(View.VISIBLE);
-            readBottom.setVisibility(View.GONE);
-            isShowBottom = true;
-        } else {
-            readBottomEdit.setVisibility(View.GONE);
-            readBottom.setVisibility(View.VISIBLE);
-            isShowBottom = false;
-        }
+    public void setReadBackground(int bgColor) {
+        contentView.setBackgroundColor(bgColor);
+    }
+
+    @Override
+    public void setTextColor(int textColor) {
+        txtView.setTextColor(textColor);
+    }
+
+    @Override
+    public void setReadProgress(int progress) {
+        showPage(progress);
     }
 
     private char[] readParagraphForward(int end) {
@@ -370,6 +397,26 @@ public class ReadActivity extends AppCompatActivity implements PageViewListener,
         char[] buf = new char[nParaSize];
         for (i = 0; i < nParaSize; i++) {
             buf[i] = builder.charAt(end + i);
+        }
+        return buf;
+    }
+
+    //向前读取一个段落
+    private char[] readParagraphBack(int start) {
+        char b0;
+        int i = start - 1;
+        while (i > 0) {
+            b0 = builder.charAt(i);
+            if (b0 == '\n' && i != start - 1) {
+                i++;
+                break;
+            }
+            i--;
+        }
+        int nParaSize = start - i;
+        char[] buf = new char[nParaSize];
+        for (int j = 0; j < nParaSize; j++) {
+            buf[j] = builder.charAt(i + j);
         }
         return buf;
     }
@@ -414,6 +461,7 @@ public class ReadActivity extends AppCompatActivity implements PageViewListener,
                                 if (txtView != null) {
                                     txtView.reset();
                                     txtView.invalidate();
+                                    showBottom(false);
                                 }
                             }
                         });

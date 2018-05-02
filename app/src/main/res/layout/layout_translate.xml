@@ -3,13 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/bg_read"
-    android:paddingLeft="15dp"
-    android:paddingRight="15dp"
     android:paddingTop="20dp">
 
     <RelativeLayout
         android:id="@+id/translate_top"
         android:layout_width="match_parent"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
         android:layout_height="wrap_content">
 
         <TextView
@@ -34,6 +34,8 @@
         android:id="@+id/translate_center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
         android:layout_below="@+id/translate_top"
         android:layout_marginTop="10dp">
 
@@ -60,8 +62,16 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/translate_center"
         android:layout_marginBottom="8dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
         android:layout_marginTop="10dp"
         android:lineSpacingExtra="7dp"
         android:textColor="@color/text_common"
         android:textSize="14sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/text_common"
+        android:layout_below="@+id/translate_detail"/>
 </RelativeLayout>
