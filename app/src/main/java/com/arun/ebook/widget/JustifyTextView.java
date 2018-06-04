@@ -19,7 +19,6 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
-import com.arun.ebook.R;
 import com.arun.ebook.listener.PageViewListener;
 import com.arun.ebook.utils.StringUtils;
 
@@ -153,12 +152,20 @@ public class JustifyTextView extends AppCompatTextView {
         if (layout != null) {
             int lineCount = layout.getLineCount();
             //Log.d("TAG", "lineCount = " + lineCount + " isForward = " + isForward);
+            int oneParaEndLine = -2;
             for (int i = 0; i < lineCount; i++) {//每行循环
                 int lineStart = layout.getLineStart(i);
                 int lineEnd = layout.getLineEnd(i);
                 String lineText = text.substring(lineStart, lineEnd);//获取TextView每行中的内容
                 Log.e("TAG", "lineText =" + lineText);
-                drawLineText(i, canvas, lineText);
+                if (i == oneParaEndLine + 1) {
+                    drawLineText(i, canvas, lineText, true);
+                } else {
+                    drawLineText(i, canvas, lineText, false);
+                }
+                if (lineText.contains("\n")) {
+                    oneParaEndLine = i;
+                }
                 Log.e("TAG", "mLineY = " + mLineY + "  getLineHeight = " + getLineHeight() + "  getMeasuredHeight = " + getMeasuredHeight());
                 mLineY += getLineHeight();//写完一行以后，高度增加一行的高度//1770
             }
@@ -184,7 +191,7 @@ public class JustifyTextView extends AppCompatTextView {
                 if (i == 0) {
                     Log.e("TAG", "lineText =--------------------------------------------end---------------------------------------------");
                 }
-                drawLineText(i, canvas, lineText);
+                drawLineText(i, canvas, lineText, false);
                 Log.e("TAG", "mLineY = " + mLineY + "  getLineHeight = " + getLineHeight() + "  getMeasuredHeight = " + getMeasuredHeight());
                 mLineY -= getLineHeight();//写完一行以后，高度增加一行的高度//1770
             }
@@ -231,15 +238,25 @@ public class JustifyTextView extends AppCompatTextView {
         }
     }
 
-    private void drawLineText(int i, Canvas canvas, String lineText) {
+    private int paraSpace;
+
+    public void setParaSpace(int paraSpace) {
+        this.paraSpace = paraSpace;
+        invalidate();
+    }
+
+    private void drawLineText(int i, Canvas canvas, String lineText, boolean isParaStartLine) {
         if (i == touchLine) {
-            drawMultiText(canvas, lineText);
+            drawMultiText(canvas, lineText, isParaStartLine);
         } else {
+            if (isParaStartLine) {
+                mLineY = mLineY + paraSpace;
+            }
             canvas.drawText(lineText, 0, mLineY, paint);
         }
     }
 
-    private void drawMultiText(Canvas canvas, String lineText) {
+    private void drawMultiText(Canvas canvas, String lineText, boolean isParaStartLine) {
         Log.d("TAG", "drawMultiText:lineText =" + lineText);
         Log.d("TAG", "drawMultiText:lineText.length() = " + lineText.length());
         Log.d("TAG", "drawMultiText:touchWordStartIndex = " + touchWordStartIndex);
@@ -254,9 +271,12 @@ public class JustifyTextView extends AppCompatTextView {
             textPaint.setColor(Color.RED);
             textPaint.drawableState = getDrawableState();*/
             paint.setColor(Color.RED);
+            if (isParaStartLine) {
+                mLineY = mLineY + paraSpace;
+            }
             canvas.drawText(touchWord, touchWordStartX, mLineY, paint);
-
             paint.setColor(getCurrentTextColor());
+
             canvas.drawText(touchRight, touchWordEndX, mLineY, paint);
         }
     }
@@ -269,12 +289,12 @@ public class JustifyTextView extends AppCompatTextView {
      * @param lineText    该行所有的文字
      * @param lineWidth   该行每个文字的宽度的总和
      */
-    private void drawScaleText(int currentLine, Canvas canvas, String lineText, float lineWidth) {
+    /*private void drawScaleText(int currentLine, Canvas canvas, String lineText, float lineWidth) {
         float x = 0;
         if (isFirstLineOfParagraph(lineText)) {
             String blanks = "  ";
             if (currentLine == touchLine) {
-                drawMultiText(canvas, lineText);
+                drawMultiText(canvas, lineText, isParaStartLine);
             } else {
                 canvas.drawText(blanks, x, mLineY, paint);
             }
@@ -290,13 +310,13 @@ public class JustifyTextView extends AppCompatTextView {
             String character = String.valueOf(lineText.charAt(i));
             float cw = StaticLayout.getDesiredWidth(character, paint);
             if (currentLine == touchLine) {
-                drawMultiText(canvas, lineText);
+                drawMultiText(canvas, lineText, isParaStartLine);
             } else {
                 canvas.drawText(character, x, mLineY, paint);
             }
             x += (cw + interval);
         }
-    }
+    }*/
 
 
     /**
@@ -336,21 +356,22 @@ public class JustifyTextView extends AppCompatTextView {
             case MotionEvent.ACTION_DOWN:
                 downX = eventX;
                 downY = eventY;
-
                 //Log.d("TAG", "---------------ACTION_DOWN------------------");
                 break;
             case MotionEvent.ACTION_MOVE:
                 break;
             case MotionEvent.ACTION_UP:
                 reset();
-                float moveX = eventX - downX;
+                float moveUpX = eventX - downX;
                 //float moveY = Math.abs(eventY - downY);
                 if (pageViewListener != null) {
-                    if (moveX > 30) {//上一页
+                    if (moveUpX > 8) {//上一页
                         pageViewListener.showPrePage();
+                        getParent().requestDisallowInterceptTouchEvent(false);
                         return true;
-                    } else if (moveX < -30) {
+                    } else if (moveUpX < -8) {
                         pageViewListener.showNextPage();
+                        getParent().requestDisallowInterceptTouchEvent(false);
                         return true;
                     }
                     getTouchWord(this, event, pageViewListener);

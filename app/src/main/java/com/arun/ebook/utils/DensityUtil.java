@@ -1,7 +1,12 @@
 package com.arun.ebook.utils;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.provider.Settings;
+import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.arun.ebook.MyApplication;
 
@@ -13,6 +18,11 @@ public class DensityUtil {
     public static int dp2px(float dpValue) {
         float scale = MyApplication.getGlobalContext().getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale);
+    }
+
+    public static int px2dp(float pxValue) {
+        float scale = MyApplication.getGlobalContext().getResources().getDisplayMetrics().density;
+        return (int) (pxValue / scale);
     }
 
     /**
@@ -38,7 +48,7 @@ public class DensityUtil {
     }
 
     public static int getScreenHeight(Context context) {
-        int screenHeight= 0;
+        int screenHeight = 0;
         if (context != null && context.getResources() != null && context.getResources().getDisplayMetrics() != null) {
             screenHeight = context.getResources().getDisplayMetrics().heightPixels;
         }
@@ -46,10 +56,39 @@ public class DensityUtil {
     }
 
     public static float getScreenDensity(Context context) {
-        float density= 0;
+        float density = 0;
         if (context != null && context.getResources() != null && context.getResources().getDisplayMetrics() != null) {
             density = context.getResources().getDisplayMetrics().density;
         }
         return density;
+    }
+
+
+    /**
+     * 根据亮度值修改当前window亮度
+     */
+    public static void changeAppBrightness(Context context, int brightness) {
+        Window window = ((Activity) context).getWindow();
+        WindowManager.LayoutParams lp = window.getAttributes();
+        if (brightness == -1) {
+            lp.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
+        } else {
+            lp.screenBrightness = (brightness <= 0 ? 1 : brightness) / 100f;
+        }
+        window.setAttributes(lp);
+    }
+
+    /**
+     * 获得系统亮度
+     */
+    public static int getSystemBrightness(Context context) {
+        int systemBrightness = 0;
+        try {
+            systemBrightness = Settings.System.getInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS);
+            systemBrightness = (int) (systemBrightness / 2.55);
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+        }
+        return systemBrightness;
     }
 }

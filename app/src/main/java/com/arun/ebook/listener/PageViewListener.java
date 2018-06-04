@@ -18,4 +18,14 @@ public interface PageViewListener {
     void setTextColor(int textColor);
 
     void setReadProgress(int progress);
+
+    void setTextSize(int spSize);
+
+    void setLineSpace(int lineSpace);
+
+    void setEdgeSpace(int edgeSpace);
+
+    //void setWordSpace(int wordSpace);
+
+    void setParaSpace(int paraSpace);
 }
