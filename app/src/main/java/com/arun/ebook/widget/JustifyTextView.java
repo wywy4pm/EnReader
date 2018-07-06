@@ -10,17 +10,19 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.Layout;
-import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
+import com.arun.ebook.bean.book.NewBookWordBean;
 import com.arun.ebook.listener.PageViewListener;
+import com.arun.ebook.listener.TranslateListener;
 import com.arun.ebook.utils.StringUtils;
+
+import java.util.List;
 
 /**
  * Created by du on 17/9/27.
@@ -30,7 +32,8 @@ public class JustifyTextView extends AppCompatTextView {
     private int mLineY = 0;//总行高
     private int mViewWidth;//TextView的总宽度
     private TextPaint paint;
-    private PageViewListener pageViewListener;
+    private TranslateListener translateListener;
+    //private PageViewListener pageViewListener;
 
     public JustifyTextView(Context context) {
         super(context);
@@ -53,15 +56,31 @@ public class JustifyTextView extends AppCompatTextView {
         paint.drawableState = getDrawableState();
     }
 
-    public void setPageViewListener(PageViewListener pageViewListener) {
-        this.pageViewListener = pageViewListener;
+    public void setTranslateListener(TranslateListener translateListener) {
+        this.translateListener = translateListener;
     }
 
-    @Override
+    public void setPageViewListener(PageViewListener pageViewListener) {
+        //this.pageViewListener = pageViewListener;
+    }
+
+    private List<NewBookWordBean> paraText;
+
+    public void setParaText(List<NewBookWordBean> paraText) {
+        this.paraText = paraText;
+    }
+
+    private String paraSeq;
+
+    public void setParaSeq(String paraSeq) {
+        this.paraSeq = paraSeq;
+    }
+
+    /*@Override
     public void setTextColor(int color) {
         paint.setColor(color);
         super.setTextColor(color);
-    }
+    }*/
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -71,7 +90,7 @@ public class JustifyTextView extends AppCompatTextView {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        resize();
+        //resize();
     }
 
     /**
@@ -123,12 +142,13 @@ public class JustifyTextView extends AppCompatTextView {
     private boolean isForward = true;
 
     public void setMovePage(boolean isForward) {//true从上往下读,false从下往上读
-        setGravity(isForward ? Gravity.TOP : Gravity.BOTTOM);
+        //setGravity(isForward ? Gravity.TOP : Gravity.BOTTOM);
         this.isForward = isForward;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
+        Log.d("TAG", "Drawing TextView Address= " + this.toString());
         //设置remove间距
         if (fontMetricsInt == null) {
             fontMetricsInt = new Paint.FontMetricsInt();
@@ -136,14 +156,15 @@ public class JustifyTextView extends AppCompatTextView {
         }
         //canvas.translate(0, fontMetricsInt.top - fontMetricsInt.ascent);
         mLineY = 0;
-        mViewWidth = getMeasuredWidth();
+        //mViewWidth = getMeasuredWidth();
         if (isForward) {
             drawNextPage(canvas);
         } else {
             drawPrePage(canvas);
         }
-        //super.onDraw(canvas);
     }
+
+    private int startIndex = 0;
 
     private void drawNextPage(Canvas canvas) {
         mLineY = (int) getTextSize();
@@ -152,20 +173,22 @@ public class JustifyTextView extends AppCompatTextView {
         if (layout != null) {
             int lineCount = layout.getLineCount();
             //Log.d("TAG", "lineCount = " + lineCount + " isForward = " + isForward);
-            int oneParaEndLine = -2;
+            //int oneParaEndLine = -2;
+            startIndex = 0;
             for (int i = 0; i < lineCount; i++) {//每行循环
                 int lineStart = layout.getLineStart(i);
                 int lineEnd = layout.getLineEnd(i);
                 String lineText = text.substring(lineStart, lineEnd);//获取TextView每行中的内容
                 Log.e("TAG", "lineText =" + lineText);
-                if (i == oneParaEndLine + 1) {
-                    drawLineText(i, canvas, lineText, true);
+                /*if (i == oneParaEndLine + 1) {
+                    drawLineText(i, canvas, lineText);
                 } else {
-                    drawLineText(i, canvas, lineText, false);
-                }
-                if (lineText.contains("\n")) {
+                    drawLineText(i, canvas, lineText);
+                }*/
+                drawMultiText(canvas, lineText);
+                /*if (lineText.contains("\n")) {
                     oneParaEndLine = i;
-                }
+                }*/
                 Log.e("TAG", "mLineY = " + mLineY + "  getLineHeight = " + getLineHeight() + "  getMeasuredHeight = " + getMeasuredHeight());
                 mLineY += getLineHeight();//写完一行以后，高度增加一行的高度//1770
             }
@@ -179,7 +202,6 @@ public class JustifyTextView extends AppCompatTextView {
         if (layout != null) {
             int lineCount = layout.getLineCount();
             //Log.d("TAG", "lineCount = " + lineCount + " isForward = " + isForward);
-
             for (int i = lineCount - 1; i >= 0; i--) {//每行循环
                 int lineStart = layout.getLineStart(i);
                 int lineEnd = layout.getLineEnd(i);
@@ -191,7 +213,7 @@ public class JustifyTextView extends AppCompatTextView {
                 if (i == 0) {
                     Log.e("TAG", "lineText =--------------------------------------------end---------------------------------------------");
                 }
-                drawLineText(i, canvas, lineText, false);
+                drawMultiText(canvas, lineText);
                 Log.e("TAG", "mLineY = " + mLineY + "  getLineHeight = " + getLineHeight() + "  getMeasuredHeight = " + getMeasuredHeight());
                 mLineY -= getLineHeight();//写完一行以后，高度增加一行的高度//1770
             }
@@ -238,47 +260,69 @@ public class JustifyTextView extends AppCompatTextView {
         }
     }
 
-    private int paraSpace;
+    //private int paraSpace;
 
     public void setParaSpace(int paraSpace) {
-        this.paraSpace = paraSpace;
-        invalidate();
+        /*this.paraSpace = paraSpace;
+        invalidate();*/
     }
 
-    private void drawLineText(int i, Canvas canvas, String lineText, boolean isParaStartLine) {
-        if (i == touchLine) {
-            drawMultiText(canvas, lineText, isParaStartLine);
+    /*private void drawLineText(int i, Canvas canvas, String lineText) {
+     *//*if (i == touchLine) {
+            drawMultiText(canvas, lineText);
         } else {
-            if (isParaStartLine) {
-                mLineY = mLineY + paraSpace;
-            }
             canvas.drawText(lineText, 0, mLineY, paint);
-        }
-    }
+        }*//*
+        //canvas.drawText(lineText, 0, mLineY, paint);
+        drawMultiText(canvas, lineText);
+    }*/
 
-    private void drawMultiText(Canvas canvas, String lineText, boolean isParaStartLine) {
-        Log.d("TAG", "drawMultiText:lineText =" + lineText);
-        Log.d("TAG", "drawMultiText:lineText.length() = " + lineText.length());
-        Log.d("TAG", "drawMultiText:touchWordStartIndex = " + touchWordStartIndex);
-        if (!TextUtils.isEmpty(lineText) && lineText.length() > 0) {
+    private void drawMultiText(Canvas canvas, String lineText) {
+//        Log.d("TAG", "drawMultiText:lineText =" + lineText);
+//        Log.d("TAG", "drawMultiText:lineText.length() = " + lineText.length());
+//        Log.d("TAG", "drawMultiText:touchWordStartIndex = " + touchWordStartIndex);
+
+        String[] words = lineText.split(" ");
+        Layout layout = getLayout();
+        for (int i = 0; i < words.length; i++) {
+            if (paraText != null) {
+                for (int j = 0; j < paraText.size(); j++) {
+                    if (!TextUtils.isEmpty(words[i]) && words[i].equals(paraText.get(j).content)) {
+                        if (paraText.get(j).translated == 1) {
+                            float pointX = layout.getSecondaryHorizontal(startIndex);
+                            String newText = words[i] + " ";
+                            paint.setColor(Color.RED);
+                            canvas.drawText(newText, pointX, mLineY, paint);
+                            Log.d("TAG", "drawTextTestTest word =" + newText + " startIndex = " + startIndex + " pointX = " + pointX);
+                            startIndex += newText.length();
+                            break;
+                        } else {
+                            float pointX = layout.getSecondaryHorizontal(startIndex);
+                            String newText = words[i] + " ";
+                            paint.setColor(getCurrentTextColor());
+                            canvas.drawText(newText, pointX, mLineY, paint);
+                            Log.d("TAG", "drawTextTestTest word =" + newText + " startIndex = " + startIndex + " pointX = " + pointX);
+                            startIndex += newText.length();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        /*if (!TextUtils.isEmpty(lineText) && lineText.length() > 0) {
             String touchLeft = lineText.substring(0, touchWordStartIndex);
             String touchRight = lineText.substring(touchWordEndIndex, lineText.length());
             String touchWord = lineText.substring(touchWordStartIndex, touchWordEndIndex);
 
             paint.setColor(getCurrentTextColor());
             canvas.drawText(touchLeft, 0, mLineY, paint);
-            /*TextPaint textPaint = getPaint();
-            textPaint.setColor(Color.RED);
-            textPaint.drawableState = getDrawableState();*/
-            paint.setColor(Color.RED);
-            if (isParaStartLine) {
-                mLineY = mLineY + paraSpace;
-            }
-            canvas.drawText(touchWord, touchWordStartX, mLineY, paint);
-            paint.setColor(getCurrentTextColor());
 
+            paint.setColor(Color.RED);
+            canvas.drawText(touchWord, touchWordStartX, mLineY, paint);
+
+            paint.setColor(getCurrentTextColor());
             canvas.drawText(touchRight, touchWordEndX, mLineY, paint);
-        }
+        }*/
     }
 
     /**
@@ -345,7 +389,7 @@ public class JustifyTextView extends AppCompatTextView {
     }
 
     private float downX = 0;
-    private float downY = 0;
+    //private float downY = 0;
     //private boolean isTurnPage;
 
     @Override
@@ -355,7 +399,7 @@ public class JustifyTextView extends AppCompatTextView {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 downX = eventX;
-                downY = eventY;
+                //downY = eventY;
                 //Log.d("TAG", "---------------ACTION_DOWN------------------");
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -364,17 +408,13 @@ public class JustifyTextView extends AppCompatTextView {
                 reset();
                 float moveUpX = eventX - downX;
                 //float moveY = Math.abs(eventY - downY);
-                if (pageViewListener != null) {
-                    if (moveUpX > 8) {//上一页
-                        pageViewListener.showPrePage();
-                        getParent().requestDisallowInterceptTouchEvent(false);
+                if (translateListener != null) {
+                    if (moveUpX > 20) {//上一页
                         return true;
-                    } else if (moveUpX < -8) {
-                        pageViewListener.showNextPage();
-                        getParent().requestDisallowInterceptTouchEvent(false);
+                    } else if (moveUpX < -20) {
                         return true;
                     }
-                    getTouchWord(this, event, pageViewListener);
+                    getTouchWord(this, event, translateListener);
                 }
                 //Log.d("TAG", "---------------ACTION_UP------------------");
                 break;
@@ -396,7 +436,7 @@ public class JustifyTextView extends AppCompatTextView {
         touchWordEndX = 0;
     }
 
-    private void getTouchWord(TextView textView, MotionEvent event, PageViewListener pageViewListener) {
+    private void getTouchWord(TextView textView, MotionEvent event, TranslateListener translateListener) {
         float x = event.getX();
         float y = event.getY();
         //因为行设置行间距后，文本在顶部，空白在底部，加上一半的行间距，可以实现与文本垂直居中一样的效果
@@ -406,7 +446,7 @@ public class JustifyTextView extends AppCompatTextView {
             return false;
         }*/
         int singleLineHeight = textView.getLineHeight();
-        StaticLayout layout = (StaticLayout) textView.getLayout();
+        Layout layout = textView.getLayout();
         //获取点击当前所在行
         int lineNumber = (int) (y / singleLineHeight);
         if (lineNumber < 0) {
@@ -443,9 +483,13 @@ public class JustifyTextView extends AppCompatTextView {
                 if (StringUtils.isEnChar(ch)) {//点击单词
                     for (int i = minOneIndex; i < lineText.length(); i++) {
                         char c = lineText.charAt(i);
-                        if (!StringUtils.isEnChar(c)) {
+                        if (StringUtils.isSpace(c)) {
                             endIndex = i;
                             break;
+                        } else {
+                            if (i == lineText.length() - 1) {
+                                endIndex = i + 1;
+                            }
                         }
                     }
                     for (int i = minOneIndex - 1; i >= 0; i--) {
@@ -463,30 +507,43 @@ public class JustifyTextView extends AppCompatTextView {
                     int end = endIndex + lineStart;
                     touchWordStartX = layout.getSecondaryHorizontal(start);
                     touchWordEndX = layout.getSecondaryHorizontal(end);
+                    setIsTranslate(word);
                     invalidate();
-
-                    if (pageViewListener != null) {
-                        pageViewListener.showTransDialog(word);
-                        pageViewListener.showBottom(true);
+                    int index = -1;
+                    if (paraText != null) {
+                        for (int i = 0; i < paraText.size(); i++) {
+                            if (!TextUtils.isEmpty(paraText.get(i).content)
+                                    && paraText.get(i).content.equals(word)) {
+                                index = i;
+                            }
+                        }
                     }
-                    /*SpannableStringBuilder span = new SpannableStringBuilder(textView.getText());
-                     int start = startIndex + lineStart;
-                     int end = endIndex + lineStart;
-                     span.setSpan(new ForegroundColorSpan(Color.RED), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                     setText(span);*/
+                    if (translateListener != null) {
+                        translateListener.showTransDialog(word, paraSeq, String.valueOf(index));
+                        //pageViewListener.showBottom(true);
+                    }
                 } else {
-                    if (pageViewListener != null) {
+                   /* if (pageViewListener != null) {
                         pageViewListener.showBottom(false);
-                    }
+                    }*/
                 }
             } else {
-                if (pageViewListener != null) {
+                /*if (pageViewListener != null) {
                     pageViewListener.showBottom(false);
-                }
+                }*/
             }
         } else {
-            if (pageViewListener != null) {
+           /* if (pageViewListener != null) {
                 pageViewListener.showBottom(false);
+            }*/
+        }
+    }
+
+    private void setIsTranslate(String word) {
+        for (int i = 0; i < paraText.size(); i++) {
+            if (!TextUtils.isEmpty(word) && word.equals(paraText.get(i).content)) {
+                paraText.get(i).translated = 1;
+                break;
             }
         }
     }

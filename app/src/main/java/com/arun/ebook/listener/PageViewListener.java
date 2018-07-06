@@ -9,15 +9,17 @@ public interface PageViewListener {
 
     void showPrePage();
 
-    void showTransDialog(String word);
+    void showTransDialog(String word, String seq, String index);
 
-    void showBottom(boolean isShowDialog);
+    //void showBottom(boolean isShowDialog);
 
     void setReadBackground(int bgColor);
 
     void setTextColor(int textColor);
 
     void setReadProgress(int progress);
+
+    void setScreenLight(int light);
 
     void setTextSize(int spSize);
 

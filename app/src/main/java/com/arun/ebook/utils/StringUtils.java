@@ -78,4 +78,11 @@ public class StringUtils {
         }
         return false;
     }
+
+    public static boolean isSpace(char c) {
+        if (c == ' ') {//空格
+            return true;
+        }
+        return false;
+    }
 }

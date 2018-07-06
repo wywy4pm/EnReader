@@ -9,9 +9,12 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.arun.ebook.R;
+import com.arun.ebook.activity.NewReadActivity;
 import com.arun.ebook.activity.ReadActivity;
 import com.arun.ebook.bean.BookBean;
+import com.arun.ebook.bean.booklist.BookListBean;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -21,9 +24,19 @@ import java.util.List;
 public class FileListAdapter extends BaseAdapter {
 
     private Context context;
-    private List<BookBean> books;
+    private List<BookListBean> books;
 
-    public FileListAdapter(Context context, List<BookBean> books) {
+    /*private OnClickItem onClickItem;
+
+    public interface OnClickItem {
+        void clickItem(int pos);
+    }
+
+    public void setOnClickItem(OnClickItem onClickItem) {
+        this.onClickItem = onClickItem;
+    }*/
+
+    public FileListAdapter(Context context, List<BookListBean> books) {
         this.context = context;
         this.books = books;
     }
@@ -44,7 +57,7 @@ public class FileListAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.layout_txt_list_item, parent, false);
@@ -53,21 +66,23 @@ public class FileListAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        final BookBean bean = books.get(position);
+        final BookListBean bean = books.get(position);
         if (bean != null) {
-            if (bean.txtFile != null) {
-                holder.mFileName.setText(bean.txtFile.getName());
-                holder.mFilePath.setText(bean.txtFile.getAbsolutePath());
-            }
+            holder.mFileName.setText(bean.name);
             holder.mFileReadTime.setText(!TextUtils.isEmpty(bean.lastReadTime) ? bean.lastReadTime : "");
-            holder.mFilePage.setText(bean.allPages > 0 && bean.currentPage > 0 ? String.valueOf(bean.currentPage + "/" + bean.allPages) : "");
+            holder.fileDetail.setText(bean.desc);
+            if (!TextUtils.isEmpty(bean.readProgress)) {
+                holder.mFilePage.setText(String.valueOf(bean.readProgress + "%"));
+            } else {
+                holder.mFilePage.setText("");
+            }
         }
 
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (bean != null && bean.txtFile != null && bean.txtFile.length() > 0) {
-                    ReadActivity.jumpToRead(context, bean.txtFile.getPath());
+                if (bean != null) {
+                    NewReadActivity.jumpToRead(context, bean);
                 }
             }
         });
@@ -78,13 +93,13 @@ public class FileListAdapter extends BaseAdapter {
     private static class ViewHolder {
         private TextView mFileName;
         private TextView mFileReadTime;
-        private TextView mFilePath;
+        private TextView fileDetail;
         private TextView mFilePage;
 
         public ViewHolder(View itemView) {
             mFileName = itemView.findViewById(R.id.fileName);
             mFileReadTime = itemView.findViewById(R.id.fileReadTime);
-            mFilePath = itemView.findViewById(R.id.filePath);
+            fileDetail = itemView.findViewById(R.id.fileDetail);
             mFilePage = itemView.findViewById(R.id.filePage);
         }
     }

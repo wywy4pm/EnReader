@@ -3,11 +3,8 @@ package com.arun.ebook.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
-import android.os.Build;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -15,15 +12,13 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arun.ebook.R;
+import com.arun.ebook.bean.BookBean;
 import com.arun.ebook.dialog.ReadBottomDialog;
 import com.arun.ebook.dialog.TranslateDialog;
 import com.arun.ebook.bean.TranslateResponse;
@@ -31,6 +26,8 @@ import com.arun.ebook.common.Constant;
 import com.arun.ebook.listener.DialogListener;
 import com.arun.ebook.listener.PageViewListener;
 import com.arun.ebook.utils.DensityUtil;
+import com.arun.ebook.utils.SharedPreferencesUtils;
+import com.arun.ebook.utils.Utils;
 import com.arun.ebook.widget.JustifyTextView;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -39,7 +36,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.channels.FileChannel;
@@ -47,9 +43,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import okhttp3.Call;
@@ -91,9 +85,9 @@ public class ReadActivity extends AppCompatActivity implements PageViewListener,
     private int currentPageParaIndex;
     private int readProgress;
 
-    public static void jumpToRead(Context context, String filePath) {
+    public static void jumpToRead(Context context, BookBean bookBean) {
         Intent intent = new Intent(context, ReadActivity.class);
-        intent.putExtra("filePath", filePath);
+        intent.putExtra("bookBean", bookBean);
         context.startActivity(intent);
     }
 
@@ -127,10 +121,13 @@ public class ReadActivity extends AppCompatActivity implements PageViewListener,
     }
 
     private void initFile() {
+        BookBean bookBean = null;
+        if (getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().containsKey("bookBean")) {
+            bookBean = (BookBean) getIntent().getExtras().getSerializable("bookBean");
+        }
         String filePath = "";
-        //filePath = Environment.getExternalStorageDirectory() + "/tencent/Lord of the Flies.txt";
-        if (getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().containsKey("filePath")) {
-            filePath = getIntent().getExtras().getString("filePath");
+        if (bookBean != null && bookBean.txtFile != null && !TextUtils.isEmpty(bookBean.txtFile.getPath())) {
+            filePath = bookBean.txtFile.getPath();
         }
         if (!TextUtils.isEmpty(filePath)) {
             file = new File(filePath);
@@ -375,7 +372,7 @@ public class ReadActivity extends AppCompatActivity implements PageViewListener,
     }
 
     @Override
-    public void showTransDialog(String word) {
+    public void showTransDialog(String word, String seq, String index) {
         if (dialog != null
                 && dialog.getDialog() != null
                 && dialog.getDialog().isShowing()) {
@@ -384,18 +381,22 @@ public class ReadActivity extends AppCompatActivity implements PageViewListener,
         }
     }
 
-    @Override
+    /*@Override
     public void showBottom(boolean isShowDialog) {
 
-    }
+    }*/
+
+    private int light, bgColor, textColor, spSize, lineSp, edgeSpace, paraSpace;
 
     @Override
     public void setReadBackground(int bgColor) {
+        this.bgColor = bgColor;
         contentView.setBackgroundColor(bgColor);
     }
 
     @Override
     public void setTextColor(int textColor) {
+        this.textColor = textColor;
         txtView.setTextColor(textColor);
     }
 
@@ -406,19 +407,28 @@ public class ReadActivity extends AppCompatActivity implements PageViewListener,
 
     @Override
     public void setTextSize(int spSize) {
+        this.spSize = spSize;
         txtView.setTextSize(TypedValue.COMPLEX_UNIT_SP, spSize);
     }
 
     @Override
     public void setLineSpace(int lineSpace) {
+        this.lineSp = lineSpace;
         txtView.setLineSpacing(DensityUtil.dp2px(lineSpace), 1);
     }
 
     @Override
     public void setEdgeSpace(int edgeSpace) {
+        this.edgeSpace = edgeSpace;
         if (txtView.getLayoutParams() != null && txtView.getLayoutParams() instanceof ScrollView.LayoutParams) {
             ((ScrollView.LayoutParams) txtView.getLayoutParams()).setMargins(DensityUtil.dp2px(edgeSpace), 0, DensityUtil.dp2px(edgeSpace), 0);
         }
+    }
+
+    @Override
+    public void setScreenLight(int light) {
+        this.light = light;
+        DensityUtil.changeAppBrightness(this, light);
     }
 
     /*@Override
@@ -428,6 +438,7 @@ public class ReadActivity extends AppCompatActivity implements PageViewListener,
 
     @Override
     public void setParaSpace(int paraSpace) {
+        this.paraSpace = paraSpace;
         txtView.setParaSpace(DensityUtil.dp2px(paraSpace));
     }
 
@@ -508,11 +519,13 @@ public class ReadActivity extends AppCompatActivity implements PageViewListener,
                         dialog.setListener(new DialogListener() {
                             @Override
                             public void onDismiss() {
-                                if (txtView != null) {
+                                dialog.onDestroy();
+                                dialog = null;
+                                /*if (txtView != null) {
                                     txtView.reset();
                                     txtView.invalidate();
                                     showBottom(false);
-                                }
+                                }*/
                             }
                         });
                     }
@@ -522,5 +535,22 @@ public class ReadActivity extends AppCompatActivity implements PageViewListener,
                 }
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        DecimalFormat format = new DecimalFormat("#0.00");
+        String readingProgress = format.format(currentProgress);
+        SharedPreferencesUtils.setConfigString(this, Utils.getFileKey(file),
+                System.currentTimeMillis() + "_"
+                        + readingProgress + "_"
+                        + light + "_"
+                        + bgColor + "_"
+                        + spSize + "_"
+                        + textColor + "_"
+                        + lineSp + "_"
+                        + edgeSpace + "_"
+                        + paraSpace);
     }
 }

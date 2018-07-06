@@ -18,13 +18,18 @@
         <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".activity.PermissionsActivity" />
-        <activity android:name=".activity.ReadActivity">
-
-        </activity>
+        <activity android:name=".activity.ReadActivity" />
+        <activity
+            android:name=".activity.NewReadActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity
+            android:name=".activity.FontActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
     </application>
 
 </manifest>

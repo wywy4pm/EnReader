@@ -20,6 +20,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.arun.ebook.R;
+import com.arun.ebook.activity.FontActivity;
 import com.arun.ebook.listener.PageViewListener;
 import com.arun.ebook.utils.DensityUtil;
 import com.arun.ebook.widget.StrokeTextView;
@@ -27,7 +28,7 @@ import com.arun.ebook.widget.StrokeTextView;
 import java.util.Hashtable;
 
 /**
- * Created by Administrator on 2018/4/23.
+ * Created by wy on 2018/4/23.
  */
 
 public class ReadBottomDialog extends DialogFragment {
@@ -35,7 +36,7 @@ public class ReadBottomDialog extends DialogFragment {
     private SeekBar mSeekBar;
     private LinearLayout color_panel;
     private LinearLayout edit_group;
-    private static final String[] BG_COLORS = new String[]{"#000000", "#363636", "#9C9C9C", "#B0E2FF", "#98FB98", "#FAFAD2", "#ffffff"};
+    private static final String[] BG_COLORS = new String[]{"#000000", "#363636", "#9C9C9C", "#F2F1ED", "#98FB98", "#FAFAD2", "#ffffff"};
     private static final String[] EDIT_NAMES = new String[]{"进度", "亮度", "背景", "字体", "字号", "字色", "行距", "边距", "段距"};
     //记录seekbar当前的进度
     private Hashtable<Integer, Integer> seekProgresses = new Hashtable<>();
@@ -50,6 +51,7 @@ public class ReadBottomDialog extends DialogFragment {
     private int defaultEdgeSpace;
     private float defaultParaSpace;
     private boolean isChangeTab;
+    private View bottomView;
 
     /*public void setReadProgress(int progress) {
         this.progress = progress;
@@ -66,6 +68,12 @@ public class ReadBottomDialog extends DialogFragment {
         this.defaultEdgeSpace = defaultEdgeSpace;
         this.defaultParaSpace = defaultParaSpace;
     }
+
+   /* public void setBgColor(int bgColor) {
+        if (bottomView != null) {
+            bottomView.setBackgroundColor(bgColor);
+        }
+    }*/
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -84,8 +92,8 @@ public class ReadBottomDialog extends DialogFragment {
         if (dialog == null) {
             dialog = new Dialog(getActivity(), R.style.DialogBottomStyle);
             //dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            View view = LayoutInflater.from(getActivity()).inflate(R.layout.layout_read_bottom, null);
-            dialog.setContentView(view);
+            bottomView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_read_bottom, null);
+            dialog.setContentView(bottomView);
             dialog.setCanceledOnTouchOutside(true);
             // 设置宽度为屏宽、位置靠近屏幕顶部
             Window window = dialog.getWindow();
@@ -98,7 +106,7 @@ public class ReadBottomDialog extends DialogFragment {
                 wlp.height = WindowManager.LayoutParams.WRAP_CONTENT;
                 window.setAttributes(wlp);
             }
-            initView(view);
+            initView(bottomView);
         }
         return dialog;
     }
@@ -148,9 +156,10 @@ public class ReadBottomDialog extends DialogFragment {
                     Log.d("TAG", "onProgressChanged progress = " + progress);
                     seekProgresses.put(currentShowTag, progress);
                     if (currentShowTag == 0) {//设置进度
-                        listener.setReadProgress(progress);
+                        //listener.setReadProgress(progress);
                     } else if (currentShowTag == 1) {//设置亮度
-                        DensityUtil.changeAppBrightness(getActivity(), progress);
+                        //DensityUtil.changeAppBrightness(getActivity(), progress);
+                        listener.setScreenLight(progress);
                     } else if (currentShowTag == 4) {//minSize设为5sp,设置字号
                         listener.setTextSize(MIN_TEXT_SP + progress);
                     } else if (currentShowTag == 6) {//设置行间距
@@ -171,6 +180,9 @@ public class ReadBottomDialog extends DialogFragment {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                if (currentShowTag == 0) {//设置进度
+                    listener.setReadProgress(seekBar.getProgress());
+                }
             }
         });
     }
@@ -237,11 +249,11 @@ public class ReadBottomDialog extends DialogFragment {
             } else if (tag == 4) {//字号范围
                 mSeekBar.setMax(15);
             } else if (tag == 6) {
-                mSeekBar.setMax(5);//行间距范围
+                mSeekBar.setMax(15);//行间距范围
             } else if (tag == 7) {
-                mSeekBar.setMax(10);//左右边距范围
+                mSeekBar.setMax(30);//左右边距范围
             } else {
-                mSeekBar.setMax(10);//段落间距范围
+                mSeekBar.setMax(30);//段落间距范围
             }
             int seekProgress = 0;
             if (seekProgresses.get(tag) != null) {
@@ -251,6 +263,8 @@ public class ReadBottomDialog extends DialogFragment {
             isChangeTab = false;
         } else if (tag == 2 || tag == 5) {
             showColorPanel(tag);
+        } else if (tag == 3) {
+            FontActivity.jumpToFont(getActivity());
         }
     }
 

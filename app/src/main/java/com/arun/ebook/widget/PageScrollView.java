@@ -30,7 +30,7 @@ public class PageScrollView extends ScrollView {
                 break;
             case MotionEvent.ACTION_MOVE:
                 float moveX = eventX - downX;
-                if (moveX > 8 || moveX < -8) {
+                if (moveX > 20 || moveX < -20) {
                     return false;
                 }
                 break;

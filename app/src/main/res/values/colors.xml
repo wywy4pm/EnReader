@@ -9,4 +9,5 @@
     <color name="black">#000000</color>
     <color name="bg_read">#F2F1ED</color>
     <color name="red">#FF0000</color>
+    <color name="txt_para_edit">#bebebe</color>
 </resources>

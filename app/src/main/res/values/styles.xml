@@ -10,7 +10,7 @@
 
     <!-- 自定义仿IOS的ActionSheet底部Dialog的样式 ，有模糊效果 -->
     <style name="DialogTopStyle" parent="@android:style/Theme.Dialog">
-
+        <item name="android:windowFullscreen">true</item>
         <!-- 背景透明 -->
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowContentOverlay">@null</item>
@@ -29,7 +29,7 @@
     </style>
 
     <style name="DialogBottomStyle" parent="@android:style/Theme.Dialog">
-
+        <item name="android:windowFullscreen">true</item>
         <!-- 背景透明 -->
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowContentOverlay">@null</item>
@@ -57,5 +57,5 @@
         <item name="android:windowEnterAnimation">@anim/dialog_bottom_enter</item>
         <item name="android:windowExitAnimation">@anim/dialog_bottom_exit</item>
     </style>
-    
+
 </resources>
