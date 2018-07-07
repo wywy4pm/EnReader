@@ -1,5 +1,7 @@
 package com.arun.ebook.activity;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -92,7 +94,7 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
             lineSp = 1,
             edgeSpace = 10,
             paraSpace = 10;
-    private Typeface typeface = Typeface.DEFAULT;
+    //private Typeface typeface = Typeface.DEFAULT;
 
     public static void jumpToRead(Context context, BookListBean bookListBean) {
         Intent intent = new Intent(context, NewReadActivity.class);
@@ -179,6 +181,7 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
                 if (files != null) {
                     for (int i = 0; i < files.length; i++) {
                         if (!TextUtils.isEmpty(fontName) && fontName.equals(files[i].getName())) {
+                            NewReadActivity.this.fontName = files[i].getName();
                             typeface = Typeface.createFromFile(files[i]);
                             break;
                         }
@@ -195,7 +198,7 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
         if (light > 0) {
             setScreenLight(light);
         }
-        setEdgeSpace(lineSp);
+        setEdgeSpace(edgeSpace);
         setReadBackground(bgColor);
         if (currentProgress >= 0 && currentProgress <= 100) {
             if (currentPageParaIndex == 0) {
@@ -222,9 +225,7 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
                 if (bottomDialog == null) {
                     bottomDialog = new ReadBottomDialog();
                     bottomDialog.setListener(this);
-                    bottomDialog.setDefaultConfig((int) currentProgress, DensityUtil.dp2px(spSize), DensityUtil.dp2px(lineSp),
-                            DensityUtil.dp2px(edgeSpace), DensityUtil.dp2px(paraSpace));
-                    //bottomDialog.setBgColor(bgColor);
+                    bottomDialog.setDefaultConfig((int) currentProgress, spSize, lineSp, edgeSpace, paraSpace);
                 }
                 bottomDialog.show(getFragmentManager(), "read_bottom");
                 break;
@@ -454,11 +455,13 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
     }
 
     @Override
-    public void setEdgeSpace(int edgeSpace) {
+    public void setEdgeSpace(final int edgeSpace) {
+        Log.d("TAG", "setEdgeSpace = " + edgeSpace);
         this.edgeSpace = edgeSpace;
-        if (recyclerView.getLayoutParams() != null && recyclerView.getLayoutParams() instanceof RelativeLayout.LayoutParams) {
-            ((RelativeLayout.LayoutParams) recyclerView.getLayoutParams()).setMargins(DensityUtil.dp2px(10 + edgeSpace), 0, DensityUtil.dp2px(10 + edgeSpace), 0);
-        }
+        recyclerView.setPadding(DensityUtil.dp2px(25 + edgeSpace), DensityUtil.dp2px(15), DensityUtil.dp2px(25 + edgeSpace), 0);
+        /*if (recyclerView.getLayoutParams() != null && recyclerView.getLayoutParams() instanceof RelativeLayout.LayoutParams) {
+            ((RelativeLayout.LayoutParams) recyclerView.getLayoutParams()).setMargins(DensityUtil.dp2px(15 + edgeSpace), 0, DensityUtil.dp2px(15 + edgeSpace), 0);
+        }*/
     }
 
     @Override
@@ -468,7 +471,7 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
     }
 
     private void setFont(Typeface typeface) {
-        this.typeface = typeface;
+//        this.typeface = typeface;
         if (readAdapter != null) {
             readAdapter.setFont(typeface);
         }
@@ -480,9 +483,6 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == FontActivity.REQUEST_CODE_FOR_FONT) {
             if (resultCode == FontActivity.RESULT_CODE_TO_READ) {
-                /*if (bottomDialog != null) {
-                    bottomDialog.getDialog().hide();
-                }*/
                 if (data != null && data.getExtras() != null && data.getExtras().containsKey("switchFont")) {
                     FontBean bean = (FontBean) data.getExtras().getSerializable("switchFont");
                     if (bean != null) {

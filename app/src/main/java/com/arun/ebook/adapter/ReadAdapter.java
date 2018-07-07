@@ -1,6 +1,7 @@
 package com.arun.ebook.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
@@ -158,7 +159,7 @@ public class ReadAdapter extends RecyclerView.Adapter {
         private void setParaCommon(TextView textView, PageParaBean pageParaBean) {
             textView.setTextColor(pageParaBean.textColor);
             textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, pageParaBean.spSize);
-            textView.setLineSpacing(pageParaBean.lineSpace, 1);
+            textView.setLineSpacing(DensityUtil.dp2px(pageParaBean.lineSpace + 10), 1);
             textView.setPadding(0, 0, 0, DensityUtil.dp2px(pageParaBean.paraSpace));
             textView.setTypeface(pageParaBean.typeface);
         }
@@ -187,17 +188,31 @@ public class ReadAdapter extends RecyclerView.Adapter {
 
         private void setParaCommon(PageParaBean pageParaBean, TextView... textViews) {
             for (int i = 0; i < textViews.length; i++) {
-                textViews[i].setTextColor(pageParaBean.textColor);
+                //color int值转换为16进制rgb string值
+                String hexColor = String.format("#%06X", (0xFFFFFF & pageParaBean.textColor));
+                String newColor = "#80" + hexColor.substring(1, hexColor.length());
+                textViews[i].setTextColor(Color.parseColor(newColor));
                 textViews[i].setTextSize(TypedValue.COMPLEX_UNIT_SP, pageParaBean.spSize);
-                textViews[i].setLineSpacing(pageParaBean.lineSpace, 1);
-                textViews[i].setPadding(0, 0, 0, DensityUtil.dp2px(pageParaBean.paraSpace));
+                if (pageParaBean.lineSpace > 3) {
+                    textViews[i].setLineSpacing(DensityUtil.dp2px(pageParaBean.lineSpace - 3), 1);
+                } else {
+                    textViews[i].setLineSpacing(0, 1);
+                }
+                if (i == 0) {
+                    textViews[i].setPadding(DensityUtil.dp2px(25), 0, DensityUtil.dp2px(25), DensityUtil.dp2px(pageParaBean.paraSpace));
+                } else if (i == 1) {
+                    textViews[i].setPadding(DensityUtil.dp2px(25), 0, 0, DensityUtil.dp2px(pageParaBean.paraSpace));
+                } else if (i == textViews.length - 1) {
+                    textViews[i].setPadding(0, 0, DensityUtil.dp2px(25), DensityUtil.dp2px(pageParaBean.paraSpace));
+                } else {
+                    textViews[i].setPadding(0, 0, 0, DensityUtil.dp2px(pageParaBean.paraSpace));
+                }
             }
         }
 
         private void setData(final NewBookBean bean, final NewBookBean preBean, final ParaEditListener paraEditListener, PageParaBean pageParaBean) {
             if (bean != null) {
-                setParaCommon(pageParaBean, chinese_para, book_id, cn_seq, en_seq, front_insert_space, current_delete, front_merge);
-
+                setParaCommon(pageParaBean, chinese_para, front_insert_space, current_delete, front_merge, book_id, en_seq, cn_seq);
                 chinese_para.setText(bean.content);
                 book_id.setText(String.valueOf(bean.book_id));
                 cn_seq.setText(bean.seq);

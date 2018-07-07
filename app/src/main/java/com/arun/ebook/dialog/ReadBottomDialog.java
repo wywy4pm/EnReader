@@ -2,6 +2,7 @@ package com.arun.ebook.dialog;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -45,6 +46,9 @@ public class ReadBottomDialog extends DialogFragment {
     private Dialog dialog;
     private int colorStyle = 5;
     private static final int MIN_TEXT_SP = 7;
+    private static final int MIN_EDGE_SPACE = 10;
+    private static final int MIN_LINE_SPACE = 1;
+    public static final int MIN_PARA_SPACE = 10;
     private int progress;
     private float defaultTextSize;
     private float defaultLineSpace;
@@ -72,6 +76,18 @@ public class ReadBottomDialog extends DialogFragment {
    /* public void setBgColor(int bgColor) {
         if (bottomView != null) {
             bottomView.setBackgroundColor(bgColor);
+        }
+    }*/
+
+    /*@Override
+    public void show(FragmentManager manager, String tag) {
+        try {
+            //在每个add事务前增加一个remove事务，防止连续的add
+            manager.beginTransaction().remove(this).commit();
+            super.show(manager, tag);
+        } catch (Exception e) {
+            //同一实例使用不同的tag会异常,这里捕获一下
+            e.printStackTrace();
         }
     }*/
 
@@ -133,11 +149,11 @@ public class ReadBottomDialog extends DialogFragment {
             } else if (i == 4) {
                 seekProgresses.put(i, (int) defaultTextSize - MIN_TEXT_SP);
             } else if (i == 6) {
-                seekProgresses.put(i, (int) defaultLineSpace);
+                seekProgresses.put(i, (int) defaultLineSpace - MIN_LINE_SPACE);
             } else if (i == 7) {
-                seekProgresses.put(i, defaultEdgeSpace);
+                seekProgresses.put(i, defaultEdgeSpace - MIN_EDGE_SPACE);
             } else if (i == 8) {
-                seekProgresses.put(i, (int) defaultParaSpace);
+                seekProgresses.put(i, (int) defaultParaSpace - MIN_PARA_SPACE);
             }
             textView.setText(EDIT_NAMES[i]);
             textView.setOnClickListener(new View.OnClickListener() {
@@ -163,13 +179,13 @@ public class ReadBottomDialog extends DialogFragment {
                     } else if (currentShowTag == 4) {//minSize设为5sp,设置字号
                         listener.setTextSize(MIN_TEXT_SP + progress);
                     } else if (currentShowTag == 6) {//设置行间距
-                        listener.setLineSpace(progress);
+                        listener.setLineSpace(MIN_LINE_SPACE + progress);
                     } else if (currentShowTag == 7) {//设置左右边距
-                        listener.setEdgeSpace(progress);
+                        listener.setEdgeSpace(MIN_EDGE_SPACE + progress);
                     } /*else if (currentShowTag == 8) {//设置字间距
                     listener.setWordSpace(progress);
                     } */ else if (currentShowTag == 8) {//设置段落间距
-                        listener.setParaSpace(progress);
+                        listener.setParaSpace(MIN_PARA_SPACE + progress);
                     }
                 }
             }
