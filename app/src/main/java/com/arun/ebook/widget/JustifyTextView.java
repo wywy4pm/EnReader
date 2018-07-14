@@ -22,6 +22,7 @@ import com.arun.ebook.listener.PageViewListener;
 import com.arun.ebook.listener.TranslateListener;
 import com.arun.ebook.utils.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -172,23 +173,13 @@ public class JustifyTextView extends AppCompatTextView {
         Layout layout = getLayout();
         if (layout != null) {
             int lineCount = layout.getLineCount();
-            //Log.d("TAG", "lineCount = " + lineCount + " isForward = " + isForward);
-            //int oneParaEndLine = -2;
             startIndex = 0;
             for (int i = 0; i < lineCount; i++) {//每行循环
                 int lineStart = layout.getLineStart(i);
                 int lineEnd = layout.getLineEnd(i);
                 String lineText = text.substring(lineStart, lineEnd);//获取TextView每行中的内容
                 Log.e("TAG", "lineText =" + lineText);
-                /*if (i == oneParaEndLine + 1) {
-                    drawLineText(i, canvas, lineText);
-                } else {
-                    drawLineText(i, canvas, lineText);
-                }*/
                 drawMultiText(canvas, lineText);
-                /*if (lineText.contains("\n")) {
-                    oneParaEndLine = i;
-                }*/
                 Log.e("TAG", "mLineY = " + mLineY + "  getLineHeight = " + getLineHeight() + "  getMeasuredHeight = " + getMeasuredHeight());
                 mLineY += getLineHeight();//写完一行以后，高度增加一行的高度//1770
             }
@@ -206,13 +197,13 @@ public class JustifyTextView extends AppCompatTextView {
                 int lineStart = layout.getLineStart(i);
                 int lineEnd = layout.getLineEnd(i);
                 String lineText = text.substring(lineStart, lineEnd);//获取TextView每行中的内容
-                if (i == lineCount - 1) {
+                /*if (i == lineCount - 1) {
                     Log.e("TAG", "lineText =--------------------------------------------start--------------------------------------------");
                 }
                 Log.e("TAG", "lineText =" + lineText);
                 if (i == 0) {
                     Log.e("TAG", "lineText =--------------------------------------------end---------------------------------------------");
-                }
+                }*/
                 drawMultiText(canvas, lineText);
                 Log.e("TAG", "mLineY = " + mLineY + "  getLineHeight = " + getLineHeight() + "  getMeasuredHeight = " + getMeasuredHeight());
                 mLineY -= getLineHeight();//写完一行以后，高度增加一行的高度//1770
@@ -278,51 +269,66 @@ public class JustifyTextView extends AppCompatTextView {
     }*/
 
     private void drawMultiText(Canvas canvas, String lineText) {
-//        Log.d("TAG", "drawMultiText:lineText =" + lineText);
-//        Log.d("TAG", "drawMultiText:lineText.length() = " + lineText.length());
-//        Log.d("TAG", "drawMultiText:touchWordStartIndex = " + touchWordStartIndex);
-
-        String[] words = lineText.split(" ");
+        Log.d("TAG", "drawTextTestTest lineText =" + lineText);
         Layout layout = getLayout();
-        for (int i = 0; i < words.length; i++) {
-            if (paraText != null) {
+        List<String> newWords = new ArrayList<>();
+        StringBuilder builder = new StringBuilder();
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < lineText.length(); i++) {
+            char one = lineText.charAt(i);
+            if (StringUtils.isPunctuation(String.valueOf(one)) || StringUtils.isSpace(one)) {
+                if (builder.length() > 0) {
+                    newWords.add(builder.toString());
+                    newWords.add(String.valueOf(one));
+                } else {
+                    newWords.add(String.valueOf(one));
+                    newWords.add(builder.toString());
+                }
+                builder.delete(0, builder.length());
+            } else {
+                builder.append(one);
+            }
+        }
+        long cha = System.currentTimeMillis() - start;
+//        Log.d("TAG", "text draw time = " + cha);
+
+        if (builder.length() > 0) {
+            newWords.add(builder.toString());
+        }
+
+        if (paraText != null) {
+            for (int i = 0; i < newWords.size(); i++) {
                 for (int j = 0; j < paraText.size(); j++) {
-                    if (!TextUtils.isEmpty(words[i]) && words[i].equals(paraText.get(j).content)) {
+                    if (!TextUtils.isEmpty(newWords.get(i)) && newWords.get(i).equals(paraText.get(j).content)) {
                         if (paraText.get(j).translated == 1) {
                             float pointX = layout.getSecondaryHorizontal(startIndex);
-                            String newText = words[i] + " ";
+                            String newText = newWords.get(i);
                             paint.setColor(Color.RED);
                             canvas.drawText(newText, pointX, mLineY, paint);
-                            Log.d("TAG", "drawTextTestTest word =" + newText + " startIndex = " + startIndex + " pointX = " + pointX);
+                            //Log.d("TAG", "drawTextTestTest word =" + newText + " startIndex = " + startIndex + " pointX = " + pointX);
                             startIndex += newText.length();
                             break;
                         } else {
                             float pointX = layout.getSecondaryHorizontal(startIndex);
-                            String newText = words[i] + " ";
+                            String newText = newWords.get(i);
                             paint.setColor(getCurrentTextColor());
                             canvas.drawText(newText, pointX, mLineY, paint);
-                            Log.d("TAG", "drawTextTestTest word =" + newText + " startIndex = " + startIndex + " pointX = " + pointX);
+                            //Log.d("TAG", "drawTextTestTest word =" + newText + " startIndex = " + startIndex + " pointX = " + pointX);
                             startIndex += newText.length();
                             break;
                         }
                     }
                 }
+                if (newWords.get(i).equals(" ")) {
+                    float pointX = layout.getSecondaryHorizontal(startIndex);
+                    String newText = newWords.get(i);
+                    paint.setColor(getCurrentTextColor());
+                    canvas.drawText(newText, pointX, mLineY, paint);
+                    //Log.d("TAG", "drawTextTestTest word =" + newText + " startIndex = " + startIndex + " pointX = " + pointX);
+                    startIndex += newText.length();
+                }
             }
         }
-        /*if (!TextUtils.isEmpty(lineText) && lineText.length() > 0) {
-            String touchLeft = lineText.substring(0, touchWordStartIndex);
-            String touchRight = lineText.substring(touchWordEndIndex, lineText.length());
-            String touchWord = lineText.substring(touchWordStartIndex, touchWordEndIndex);
-
-            paint.setColor(getCurrentTextColor());
-            canvas.drawText(touchLeft, 0, mLineY, paint);
-
-            paint.setColor(Color.RED);
-            canvas.drawText(touchWord, touchWordStartX, mLineY, paint);
-
-            paint.setColor(getCurrentTextColor());
-            canvas.drawText(touchRight, touchWordEndX, mLineY, paint);
-        }*/
     }
 
     /**
@@ -395,7 +401,7 @@ public class JustifyTextView extends AppCompatTextView {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float eventX = event.getX();
-        float eventY = event.getY();
+        //float eventY = event.getY();
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 downX = eventX;
@@ -405,7 +411,7 @@ public class JustifyTextView extends AppCompatTextView {
             case MotionEvent.ACTION_MOVE:
                 break;
             case MotionEvent.ACTION_UP:
-                reset();
+//                reset();
                 float moveUpX = eventX - downX;
                 //float moveY = Math.abs(eventY - downY);
                 if (translateListener != null) {
@@ -422,19 +428,19 @@ public class JustifyTextView extends AppCompatTextView {
         return true;
     }
 
-    private int touchLine = -1;
+   /* private int touchLine = -1;
     private int touchWordStartIndex = 0;
     private int touchWordEndIndex = 0;
     private float touchWordStartX = 0;
-    private float touchWordEndX = 0;
+    private float touchWordEndX = 0;*/
 
-    public void reset() {
+    /*public void reset() {
         touchLine = -1;
         touchWordStartIndex = 0;
         touchWordEndIndex = 0;
         touchWordStartX = 0;
         touchWordEndX = 0;
-    }
+    }*/
 
     private void getTouchWord(TextView textView, MotionEvent event, TranslateListener translateListener) {
         float x = event.getX();
@@ -452,7 +458,7 @@ public class JustifyTextView extends AppCompatTextView {
         if (lineNumber < 0) {
             lineNumber = 0;
         }
-        touchLine = lineNumber;
+//        touchLine = lineNumber;
         if (lineNumber <= textView.getLineCount() - 1) {
             int lineStart = layout.getLineStart(lineNumber);
             int lineEnd = layout.getLineEnd(lineNumber);
@@ -483,7 +489,7 @@ public class JustifyTextView extends AppCompatTextView {
                 if (StringUtils.isEnChar(ch)) {//点击单词
                     for (int i = minOneIndex; i < lineText.length(); i++) {
                         char c = lineText.charAt(i);
-                        if (StringUtils.isSpace(c)) {
+                        if (StringUtils.isSpace(c) || StringUtils.isPunctuation(String.valueOf(c))) {
                             endIndex = i;
                             break;
                         } else {
@@ -501,12 +507,12 @@ public class JustifyTextView extends AppCompatTextView {
                     }
                     String word = lineText.substring(startIndex, endIndex);
                     Log.d("TAG", "getTouchWord =" + word);
-                    touchWordStartIndex = startIndex;
-                    touchWordEndIndex = endIndex;
+//                    touchWordStartIndex = startIndex;
+//                    touchWordEndIndex = endIndex;
                     int start = startIndex + lineStart;
                     int end = endIndex + lineStart;
-                    touchWordStartX = layout.getSecondaryHorizontal(start);
-                    touchWordEndX = layout.getSecondaryHorizontal(end);
+//                    touchWordStartX = layout.getSecondaryHorizontal(start);
+//                    touchWordEndX = layout.getSecondaryHorizontal(end);
                     setIsTranslate(word);
                     invalidate();
                     int index = -1;

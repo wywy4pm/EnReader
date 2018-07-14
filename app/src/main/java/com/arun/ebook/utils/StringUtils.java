@@ -13,6 +13,7 @@ import com.arun.ebook.listener.ClickWordListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Created by Administrator on 2018/4/16.
@@ -72,8 +73,15 @@ public class StringUtils {
         return indexAry.toArray(new Integer[0]);
     }
 
+    public static boolean isEnNum(char c) {
+        if (Character.isLetterOrDigit(c) || c == '-') {
+            return true;
+        }
+        return false;
+    }
+
     public static boolean isEnChar(char c) {
-        if (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z') {//英文字符
+        if (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c == '-') {//英文字符
             return true;
         }
         return false;
@@ -82,6 +90,44 @@ public class StringUtils {
     public static boolean isSpace(char c) {
         if (c == ' ') {//空格
             return true;
+        }
+        return false;
+    }
+
+    /*public static boolean isPunctuation(char c) {
+        if (Pattern.matches("\\p{P}", String.valueOf(c)) && c != '\'') {
+            return true;
+        }
+        return false;
+    }*/
+
+    public static boolean isAddSpacePun(String s) {
+        switch (s) {
+            case ".":
+            case ",":
+            case "?":
+            case "!":
+            case ":":
+            case ";":
+                return true;
+        }
+        return false;
+    }
+
+    //['.', ',', '"', '"', '?', ';', ':', '!', '(', ')', '\'', '...']
+    public static boolean isPunctuation(String s) {
+        switch (s) {
+            case ".":
+            case ",":
+            case "\"":
+            case "?":
+            case ";":
+            case ":":
+            case "!":
+            case "(":
+            case ")":
+            case "...":
+                return true;
         }
         return false;
     }

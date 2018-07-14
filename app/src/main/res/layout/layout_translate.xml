@@ -69,9 +69,9 @@
         android:textColor="@color/text_common"
         android:textSize="14sp" />
 
-    <View
+    <!--<View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/text_common"
-        android:layout_below="@+id/translate_detail"/>
+        android:layout_below="@+id/translate_detail"/>-->
 </RelativeLayout>

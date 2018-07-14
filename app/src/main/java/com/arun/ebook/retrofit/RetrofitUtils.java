@@ -4,14 +4,10 @@ import com.arun.ebook.bean.CommonResponse;
 import com.arun.ebook.bean.book.NewBookResponse;
 import com.arun.ebook.bean.booklist.BookListResponse;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;

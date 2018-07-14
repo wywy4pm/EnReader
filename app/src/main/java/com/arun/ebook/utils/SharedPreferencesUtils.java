@@ -2,7 +2,6 @@ package com.arun.ebook.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.text.TextUtils;
 
 /**
  * Created by WY on 2017/5/7.

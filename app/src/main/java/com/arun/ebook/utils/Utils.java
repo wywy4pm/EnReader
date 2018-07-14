@@ -1,12 +1,9 @@
 package com.arun.ebook.utils;
 
 import android.content.Context;
-import android.os.Environment;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.arun.ebook.bean.BookBean;
-import com.arun.ebook.bean.FontBean;
 import com.arun.ebook.common.Constant;
 
 import org.mozilla.universalchardet.UniversalDetector;

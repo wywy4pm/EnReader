@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,9 +19,11 @@ import com.arun.ebook.listener.PageViewListener;
 import com.arun.ebook.listener.ParaEditListener;
 import com.arun.ebook.listener.TranslateListener;
 import com.arun.ebook.utils.DensityUtil;
+import com.arun.ebook.utils.StringUtils;
 import com.arun.ebook.widget.JustifyTextView;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class ReadAdapter extends RecyclerView.Adapter {
     private Context context;
@@ -138,20 +142,39 @@ public class ReadAdapter extends RecyclerView.Adapter {
         }
 
         private void setData(NewBookBean bean, PageParaBean pageParaBean) {
-            english_para.reset();
+            //english_para.reset();
             setParaCommon(english_para, pageParaBean);
             english_para.setTranslateListener(this);
             if (bean.separate_list != null && bean.separate_list.size() > 0) {
                 english_para.setParaText(bean.separate_list);
                 english_para.setParaSeq(bean.seq);
                 StringBuilder stringBuilder = new StringBuilder();
+                //long start = System.currentTimeMillis();
                 for (int i = 0; i < bean.separate_list.size(); i++) {
-                    if (i != bean.separate_list.size() - 1) {
-                        stringBuilder.append(bean.separate_list.get(i).content).append(" ");
-                    } else {
-                        stringBuilder.append(bean.separate_list.get(i).content);
+                    String content = bean.separate_list.get(i).content;
+                    int isQuote = bean.separate_list.get(i).only_quote;
+                    if (!TextUtils.isEmpty(content) && isQuote != 1) {
+                        stringBuilder.append(content);
+                        if (i < bean.separate_list.size() - 1) {
+                            String nextContent = bean.separate_list.get(i + 1).content;
+                            int nextQuote = bean.separate_list.get(i + 1).only_quote;
+                            if (!TextUtils.isEmpty(nextContent)) {
+                                if (nextQuote == 1) {
+                                    if (StringUtils.isAddSpacePun(nextContent)) {
+                                        stringBuilder.append(nextContent).append(" ");
+                                    } else {
+                                        stringBuilder.append(nextContent);
+                                    }
+                                } else if (StringUtils.isEnNum(nextContent.charAt(nextContent.length() - 1))) {
+                                    stringBuilder.append(" ");
+                                } else {
+                                    stringBuilder.append(nextContent);
+                                }
+                            }
+                        }
                     }
                 }
+                Log.d("TAG", "stringBuilder text = " + stringBuilder.toString());
                 english_para.setText(stringBuilder.toString());
             }
         }

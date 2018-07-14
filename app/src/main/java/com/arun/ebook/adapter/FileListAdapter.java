@@ -10,11 +10,8 @@ import android.widget.TextView;
 
 import com.arun.ebook.R;
 import com.arun.ebook.activity.NewReadActivity;
-import com.arun.ebook.activity.ReadActivity;
-import com.arun.ebook.bean.BookBean;
 import com.arun.ebook.bean.booklist.BookListBean;
 
-import java.io.File;
 import java.util.List;
 
 /**
