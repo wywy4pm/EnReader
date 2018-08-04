@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
+import com.arun.ebook.bean.ConfigData;
 import com.arun.ebook.bean.book.NewBookWordBean;
 import com.arun.ebook.listener.PageViewListener;
 import com.arun.ebook.listener.TranslateListener;
@@ -65,11 +66,17 @@ public class JustifyTextView extends AppCompatTextView {
         //this.pageViewListener = pageViewListener;
     }
 
-    private List<NewBookWordBean> paraText;
+    private List<String> trans_words;
+
+    public void setTrans_words(List<String> trans_words) {
+        this.trans_words = trans_words;
+    }
+
+    /*private List<NewBookWordBean> paraText;
 
     public void setParaText(List<NewBookWordBean> paraText) {
         this.paraText = paraText;
-    }
+    }*/
 
     private String paraSeq;
 
@@ -270,6 +277,10 @@ public class JustifyTextView extends AppCompatTextView {
 
     private void drawMultiText(Canvas canvas, String lineText) {
         Log.d("TAG", "drawTextTestTest lineText =" + lineText);
+        if (trans_words == null || trans_words.size() == 0) {
+            canvas.drawText(lineText, 0, mLineY, paint);
+            return;
+        }
         Layout layout = getLayout();
         List<String> newWords = new ArrayList<>();
         StringBuilder builder = new StringBuilder();
@@ -282,28 +293,49 @@ public class JustifyTextView extends AppCompatTextView {
                     newWords.add(String.valueOf(one));
                 } else {
                     newWords.add(String.valueOf(one));
-                    newWords.add(builder.toString());
+                    //newWords.add(builder.toString());
                 }
                 builder.delete(0, builder.length());
             } else {
                 builder.append(one);
             }
         }
-        long cha = System.currentTimeMillis() - start;
-//        Log.d("TAG", "text draw time = " + cha);
 
         if (builder.length() > 0) {
             newWords.add(builder.toString());
         }
+        if (newWords.size() > 0) {
+            for (int i = 0; i < newWords.size(); i++) {
+                String newText = newWords.get(i);
+                boolean isTranslated = false;
+                for (int j = 0; j < trans_words.size(); j++) {
+                    String translatedWord = trans_words.get(j);
+                    if (!TextUtils.isEmpty(translatedWord) && translatedWord.equals(newText)) {
+                        isTranslated = true;
+                        float pointX = layout.getSecondaryHorizontal(startIndex);
+                        paint.setColor(ConfigData.lightColor);
+                        canvas.drawText(newText, pointX, mLineY, paint);
+                        startIndex += newText.length();
+                        break;
+                    }
+                }
+                if (!isTranslated) {
+                    float pointX = layout.getSecondaryHorizontal(startIndex);
+                    paint.setColor(getCurrentTextColor());
+                    canvas.drawText(newText, pointX, mLineY, paint);
+                    startIndex += newText.length();
+                }
+            }
+        }
 
-        if (paraText != null) {
+       /* if (paraText != null) {
             for (int i = 0; i < newWords.size(); i++) {
                 for (int j = 0; j < paraText.size(); j++) {
                     if (!TextUtils.isEmpty(newWords.get(i)) && newWords.get(i).equals(paraText.get(j).content)) {
                         if (paraText.get(j).translated == 1) {
                             float pointX = layout.getSecondaryHorizontal(startIndex);
                             String newText = newWords.get(i);
-                            paint.setColor(Color.RED);
+                            paint.setColor(ConfigData.lightColor);
                             canvas.drawText(newText, pointX, mLineY, paint);
                             //Log.d("TAG", "drawTextTestTest word =" + newText + " startIndex = " + startIndex + " pointX = " + pointX);
                             startIndex += newText.length();
@@ -328,7 +360,7 @@ public class JustifyTextView extends AppCompatTextView {
                     startIndex += newText.length();
                 }
             }
-        }
+        }*/
     }
 
     /**
@@ -405,27 +437,26 @@ public class JustifyTextView extends AppCompatTextView {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 downX = eventX;
-                //downY = eventY;
-                //Log.d("TAG", "---------------ACTION_DOWN------------------");
-                break;
+                return isTouchWord(this, event);
             case MotionEvent.ACTION_MOVE:
                 break;
             case MotionEvent.ACTION_UP:
-//                reset();
                 float moveUpX = eventX - downX;
                 //float moveY = Math.abs(eventY - downY);
-                if (translateListener != null) {
-                    if (moveUpX > 20) {//上一页
+                if (translateListener != null && !TextUtils.isEmpty(touchWord)) {
+                    setTouchWord(touchWord, translateListener);
+                    return true;
+                    /*if (moveUpX > 50) {//上一页
                         return true;
-                    } else if (moveUpX < -20) {
+                    } else if (moveUpX < -50) {
                         return true;
-                    }
-                    getTouchWord(this, event, translateListener);
+                    }*/
+                    //return getTouchWord(this, event, translateListener);
                 }
                 //Log.d("TAG", "---------------ACTION_UP------------------");
                 break;
         }
-        return true;
+        return super.onTouchEvent(event);
     }
 
    /* private int touchLine = -1;
@@ -441,8 +472,11 @@ public class JustifyTextView extends AppCompatTextView {
         touchWordStartX = 0;
         touchWordEndX = 0;
     }*/
+    private String touchWord;
 
-    private void getTouchWord(TextView textView, MotionEvent event, TranslateListener translateListener) {
+    private boolean isTouchWord(TextView textView, MotionEvent event) {
+        touchWord = "";
+        boolean isTouch = false;
         float x = event.getX();
         float y = event.getY();
         //因为行设置行间距后，文本在顶部，空白在底部，加上一半的行间距，可以实现与文本垂直居中一样的效果
@@ -463,15 +497,11 @@ public class JustifyTextView extends AppCompatTextView {
             int lineStart = layout.getLineStart(lineNumber);
             int lineEnd = layout.getLineEnd(lineNumber);
             String lineText = textView.getText().toString().substring(lineStart, lineEnd);
-            //Log.d("TAG", "getTouchWord : line = " + lineNumber + "  lineStart = " + lineStart + "  lineEnd = " + lineEnd + "  text =" + lineText);
-            //int lineWidth = (int) layout.getLineWidth(lineNumber);
             if (!TextUtils.isEmpty(lineText) && lineText.length() > 0) {
                 float minCha = 0;
                 int minOneIndex = 0;
                 for (int i = 0; i < lineText.length(); i++) {
                     float oneX = layout.getSecondaryHorizontal(lineStart + i);
-                    //String charSeq = String.valueOf(lineText.charAt(i));
-                    //float oneX = StaticLayout.getDesiredWidth(charSeq, paint);
                     float currentCha = Math.abs(x - oneX);
                     if (i == 0) {
                         minCha = currentCha;
@@ -507,50 +537,31 @@ public class JustifyTextView extends AppCompatTextView {
                     }
                     String word = lineText.substring(startIndex, endIndex);
                     Log.d("TAG", "getTouchWord =" + word);
-//                    touchWordStartIndex = startIndex;
-//                    touchWordEndIndex = endIndex;
-                    int start = startIndex + lineStart;
-                    int end = endIndex + lineStart;
-//                    touchWordStartX = layout.getSecondaryHorizontal(start);
-//                    touchWordEndX = layout.getSecondaryHorizontal(end);
-                    setIsTranslate(word);
-                    invalidate();
-                    int index = -1;
-                    if (paraText != null) {
-                        for (int i = 0; i < paraText.size(); i++) {
-                            if (!TextUtils.isEmpty(paraText.get(i).content)
-                                    && paraText.get(i).content.equals(word)) {
-                                index = i;
-                            }
-                        }
-                    }
-                    if (translateListener != null) {
-                        translateListener.showTransDialog(word, paraSeq, String.valueOf(index));
-                        //pageViewListener.showBottom(true);
-                    }
+                    touchWord = word;
+                    isTouch = true;
                 } else {
-                   /* if (pageViewListener != null) {
-                        pageViewListener.showBottom(false);
-                    }*/
+                    isTouch = false;
                 }
             } else {
-                /*if (pageViewListener != null) {
-                    pageViewListener.showBottom(false);
-                }*/
+                isTouch = false;
             }
         } else {
-           /* if (pageViewListener != null) {
-                pageViewListener.showBottom(false);
-            }*/
+            isTouch = false;
+        }
+        return isTouch;
+    }
+
+    private void setTouchWord(String word, TranslateListener translateListener) {
+        addTranslated(word);
+        invalidate();
+        if (translateListener != null) {
+            translateListener.showTransDialog(word, paraSeq);
         }
     }
 
-    private void setIsTranslate(String word) {
-        for (int i = 0; i < paraText.size(); i++) {
-            if (!TextUtils.isEmpty(word) && word.equals(paraText.get(i).content)) {
-                paraText.get(i).translated = 1;
-                break;
-            }
+    private void addTranslated(String word) {
+        if (trans_words != null) {
+            trans_words.add(word);
         }
     }
 }

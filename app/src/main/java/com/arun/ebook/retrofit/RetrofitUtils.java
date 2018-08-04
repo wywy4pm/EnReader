@@ -1,8 +1,10 @@
 package com.arun.ebook.retrofit;
 
+import com.arun.ebook.bean.ConfigResponse;
 import com.arun.ebook.bean.CommonResponse;
 import com.arun.ebook.bean.book.NewBookResponse;
 import com.arun.ebook.bean.booklist.BookListResponse;
+import com.arun.ebook.utils.Utils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -83,11 +85,19 @@ public class RetrofitUtils {
     }
 
     public void paraEdit(Subscriber<CommonResponse> subscriber, int op_type, int bookId, String cnseq) {
-        Subscription subscription = mRetrofit.create(ApiService.class).paraEdit(op_type,bookId,cnseq)
+        Subscription subscription = mRetrofit.create(ApiService.class).paraEdit(op_type, bookId, cnseq)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);
         subscriptionMap.put("paraEdit", subscription);
+    }
+
+    public void getConfig(Subscriber<ConfigResponse> subscriber) {
+        Subscription subscription = mRetrofit.create(ApiService.class).getConfig(Utils.getDeviceId())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+        subscriptionMap.put("getConfig", subscription);
     }
 
     public void unSubscribe(String name) {

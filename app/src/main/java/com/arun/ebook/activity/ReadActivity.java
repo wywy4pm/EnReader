@@ -372,7 +372,7 @@ public class ReadActivity extends AppCompatActivity implements PageViewListener,
     }
 
     @Override
-    public void showTransDialog(String word, String seq, String index) {
+    public void showTransDialog(String word, String seq) {
         if (dialog != null
                 && dialog.getDialog() != null
                 && dialog.getDialog().isShowing()) {

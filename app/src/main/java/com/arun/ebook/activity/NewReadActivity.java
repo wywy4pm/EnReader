@@ -9,6 +9,7 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,6 +37,7 @@ import com.arun.ebook.retrofit.RetrofitUtils;
 import com.arun.ebook.utils.DensityUtil;
 import com.arun.ebook.utils.SharedPreferencesUtils;
 import com.arun.ebook.utils.Utils;
+import com.arun.ebook.widget.PageReadViewGroup;
 import com.arun.ebook.widget.PageRecyclerView;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -73,6 +75,7 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
     private BookListBean bookListBean;
     private int bookId;
     private PageRecyclerView recyclerView;
+    private PageReadViewGroup readGroup;
     private ReadAdapter readAdapter;
     private List<NewBookBean> allParas = new ArrayList<>();
     private static final int MODE_CURRENT = 0;
@@ -89,7 +92,7 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
             spSize = 15,
             lineSp = 1,
             edgeSpace = 10,
-            paraSpace = 10;
+            paraSpace = Constant.DEFAULT_PARA_SPACE_DP;
     //private Typeface typeface = Typeface.DEFAULT;
 
     public static void jumpToRead(Context context, BookListBean bookListBean) {
@@ -111,7 +114,9 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
 
     private void initViewAndListener() {
         recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setPageViewListener(this);
+        readGroup = findViewById(R.id.readGroup);
+        //recyclerView.setPageViewListener(this);
+        readGroup.setPageViewListener(this);
         tvCurrentTime = findViewById(R.id.currentTime);
         tvCurrentProgress = findViewById(R.id.currentProgress);
         LinearLayoutManager manager = new LinearLayoutManager(this);
@@ -120,6 +125,7 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
         readAdapter.setParaEditListener(this);
         readAdapter.setPageViewListener(this);
         recyclerView.setAdapter(readAdapter);
+        recyclerView.setPageViewListener(this);
 
         to_main = findViewById(R.id.to_main);
         to_edit = findViewById(R.id.to_edit);
@@ -169,7 +175,11 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
                     if (p_c.length == 2) {
                         currentPageParaIndex = Integer.parseInt(p_c[0]);
                         currentTotalPages = Integer.parseInt(p_c[1]);
-                        currentProgress = (double) currentPageParaIndex / currentTotalPages * 100;
+                        if (currentTotalPages == 0) {
+                            currentProgress = 0;
+                        } else {
+                            currentProgress = (double) currentPageParaIndex / currentTotalPages * 100;
+                        }
                     }
                 }
                 Typeface typeface = Typeface.DEFAULT;
@@ -270,7 +280,7 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
     public void showPage(final int mode) {
         switch (mode) {
             case MODE_NEXT_PAGE:
-                if (currentPageParaIndex == 0 || currentPageParaIndex <= currentTotalPages) {
+                if (currentPageParaIndex == 0 || currentPageParaIndex < currentTotalPages) {
                     currentPageParaIndex++;
                 } else {
                     Toast.makeText(NewReadActivity.this, "已经到最后一页", Toast.LENGTH_SHORT).show();
@@ -294,6 +304,8 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
                 }
                 break;
         }
+        allParas.clear();
+        readAdapter.notifyDataSetChanged();
         RetrofitUtils.getInstance().getBookContent(new Subscriber<NewBookResponse>() {
             @Override
             public void onCompleted() {
@@ -380,12 +392,12 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
     }
 
     @Override
-    public void showTransDialog(String word, String seq, String index) {
+    public void showTransDialog(String word, String seq) {
         if (dialog != null
                 && dialog.getDialog() != null
                 && dialog.getDialog().isShowing()) {
         } else {
-            getTranslateData(word, seq, index);
+            getTranslateData(word, seq);
         }
     }
 
@@ -506,9 +518,9 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
         super.onResume();
     }
 
-    private void getTranslateData(final String word, String seq, final String index) {
+    private void getTranslateData(final String word, String seq) {
         Request request = new Request.Builder()
-                .url(Constant.GET_TRANSLATE_DATA + "?book_id=" + bookId + "&word=" + word + "&seq=" + seq + "&index=" + index)
+                .url(Constant.GET_TRANSLATE_DATA + "?book_id=" + bookId + "&word=" + word + "&seq=" + seq)
                 .build();
         Call call = okHttpClient.newCall(request);
         call.enqueue(new Callback() {

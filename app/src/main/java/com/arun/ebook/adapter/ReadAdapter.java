@@ -145,38 +145,50 @@ public class ReadAdapter extends RecyclerView.Adapter {
             //english_para.reset();
             setParaCommon(english_para, pageParaBean);
             english_para.setTranslateListener(this);
-            if (bean.separate_list != null && bean.separate_list.size() > 0) {
+            english_para.setParaSeq(bean.seq);
+            if (bean.trans_words != null) {
+                english_para.setTrans_words(bean.trans_words);
+            }
+            if (!TextUtils.isEmpty(bean.content)) {
+                english_para.setText(bean.content);
+            } else {
+                english_para.setText("");
+            }
+            /*if (bean.separate_list != null && bean.separate_list.size() > 0) {
                 english_para.setParaText(bean.separate_list);
-                english_para.setParaSeq(bean.seq);
                 StringBuilder stringBuilder = new StringBuilder();
                 //long start = System.currentTimeMillis();
                 for (int i = 0; i < bean.separate_list.size(); i++) {
                     String content = bean.separate_list.get(i).content;
                     int isQuote = bean.separate_list.get(i).only_quote;
-                    if (!TextUtils.isEmpty(content) && isQuote != 1) {
-                        stringBuilder.append(content);
-                        if (i < bean.separate_list.size() - 1) {
-                            String nextContent = bean.separate_list.get(i + 1).content;
-                            int nextQuote = bean.separate_list.get(i + 1).only_quote;
-                            if (!TextUtils.isEmpty(nextContent)) {
-                                if (nextQuote == 1) {
-                                    if (StringUtils.isAddSpacePun(nextContent)) {
-                                        stringBuilder.append(nextContent).append(" ");
+                    if (!TextUtils.isEmpty(content)) {
+                        if (isQuote != 1) {
+                            stringBuilder.append(content);
+                            bean.separate_list.get(i).isAdd = true;
+                            if (i < bean.separate_list.size() - 1) {
+                                String nextContent = bean.separate_list.get(i + 1).content;
+                                int nextQuote = bean.separate_list.get(i + 1).only_quote;
+                                if (!TextUtils.isEmpty(nextContent)) {
+                                    if (nextQuote == 1) {
+                                        if (StringUtils.isAddSpacePun(nextContent)) {
+                                            stringBuilder.append(nextContent).append(" ");
+                                        } else {
+                                            stringBuilder.append(nextContent);
+                                        }
+                                        bean.separate_list.get(i + 1).isAdd = true;
                                     } else {
-                                        stringBuilder.append(nextContent);
+                                        stringBuilder.append(" ");
                                     }
-                                } else if (StringUtils.isEnNum(nextContent.charAt(nextContent.length() - 1))) {
-                                    stringBuilder.append(" ");
-                                } else {
-                                    stringBuilder.append(nextContent);
                                 }
                             }
+                        } else if (!bean.separate_list.get(i).isAdd) {
+                            stringBuilder.append(content);
                         }
                     }
                 }
                 Log.d("TAG", "stringBuilder text = " + stringBuilder.toString());
                 english_para.setText(stringBuilder.toString());
-            }
+            }*/
         }
 
         private void setParaCommon(TextView textView, PageParaBean pageParaBean) {
@@ -188,9 +200,9 @@ public class ReadAdapter extends RecyclerView.Adapter {
         }
 
         @Override
-        public void showTransDialog(String word, String seq, String index) {
+        public void showTransDialog(String word, String seq) {
             if (pageViewListener != null) {
-                pageViewListener.showTransDialog(word, seq, index);
+                pageViewListener.showTransDialog(word, seq);
             }
         }
     }
@@ -222,7 +234,7 @@ public class ReadAdapter extends RecyclerView.Adapter {
                     textViews[i].setLineSpacing(0, 1);
                 }
                 if (i == 0) {
-                    textViews[i].setPadding(DensityUtil.dp2px(25), 0, DensityUtil.dp2px(25), DensityUtil.dp2px(pageParaBean.paraSpace));
+                    textViews[i].setPadding(DensityUtil.dp2px(25), 0, DensityUtil.dp2px(25), DensityUtil.dp2px(5));
                 } else if (i == 1) {
                     textViews[i].setPadding(DensityUtil.dp2px(25), 0, 0, DensityUtil.dp2px(pageParaBean.paraSpace));
                 } else if (i == textViews.length - 1) {

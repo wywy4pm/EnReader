@@ -7,16 +7,21 @@
     android:background="@color/bg_read"
     tools:context="com.arun.ebook.activity.ReadActivity">
 
-    <com.arun.ebook.widget.PageRecyclerView
-        android:id="@+id/recyclerView"
+    <com.arun.ebook.widget.PageReadViewGroup
+        android:id="@+id/readGroup"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/layout_bottom"
-        android:paddingBottom="10dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="15dp" />
+        android:layout_above="@+id/layout_bottom">
 
+        <com.arun.ebook.widget.PageRecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="15dp" />
+    </com.arun.ebook.widget.PageReadViewGroup>
     <!--<com.arun.ebook.widget.PageScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
@@ -45,9 +50,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:paddingBottom="10dp"
-        android:paddingTop="5dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
+        android:paddingTop="5dp"
         android:visibility="visible">
 
         <TextView

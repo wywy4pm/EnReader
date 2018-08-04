@@ -12,6 +12,7 @@ import com.arun.ebook.listener.PageViewListener;
 
 public class PageRecyclerView extends RecyclerView {
     private float downX = 0;
+    private float downY = 0;
     private PageViewListener pageViewListener;
 
     public PageRecyclerView(Context context) {
@@ -38,7 +39,7 @@ public class PageRecyclerView extends RecyclerView {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
-        float eventX = event.getX();
+        /*float eventX = event.getX();
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 downX = eventX;
@@ -61,7 +62,40 @@ public class PageRecyclerView extends RecyclerView {
                     }
                 }
                 break;
-        }
+        }*/
         return super.onInterceptTouchEvent(event);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        //Log.d("TAG", "PageRecyclerView onTouchEvent");
+        float eventX = event.getX();
+        float eventY = event.getY();
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                downX = eventX;
+                downY = eventY;
+                break;
+            case MotionEvent.ACTION_MOVE:
+                break;
+            case MotionEvent.ACTION_UP:
+                float moveUpX = Math.abs(eventX - downX);
+                float moveUpY = Math.abs(eventY - downY);
+                if (pageViewListener != null) {
+                    if (moveUpX < 2 && moveUpY < 2) {
+                        boolean isLeft = downX > 0 && downX < (getWidth() / 2);
+                        if (isLeft) {
+                            Log.d("TAG", "PageRecyclerView showPrePage");
+                            pageViewListener.showPrePage();
+                        } else {
+                            Log.d("TAG", "PageRecyclerView showNextPage");
+                            pageViewListener.showNextPage();
+                        }
+                        return false;
+                    }
+                }
+                break;
+        }
+        return super.onTouchEvent(event);
     }
 }

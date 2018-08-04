@@ -2,12 +2,18 @@ package com.arun.ebook.activity;
 
 import android.Manifest;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.arun.ebook.bean.ConfigData;
+import com.arun.ebook.bean.ConfigResponse;
+import com.arun.ebook.bean.ConfigBean;
 import com.arun.ebook.bean.booklist.BookListBean;
 import com.arun.ebook.bean.booklist.BookListResponse;
 import com.arun.ebook.helper.PermissionsChecker;
@@ -50,8 +56,43 @@ public class MainActivity extends AppCompatActivity {
         adapter = new FileListAdapter(this, books);
         //adapter.setOnClickItem(this);
         listView.setAdapter(adapter);
+        getConfig();
+    }
 
-        requestData();
+    private void getConfig() {
+        RetrofitUtils.getInstance().getConfig(new Subscriber<ConfigResponse>() {
+            @Override
+            public void onCompleted() {
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d("TAG", "getConfig error" + e.getMessage());
+            }
+
+            @Override
+            public void onNext(ConfigResponse configResponse) {
+                if (configResponse != null && configResponse.code == 200) {
+                    if (configResponse.data != null) {
+                        ConfigBean bean = configResponse.data;
+                        if (bean.canrun == 1) {//可用
+                            ConfigData.canRun = bean.canrun;
+                            ConfigData.bgColor = bean.bgcolor;
+                            ConfigData.textColor = bean.textcolor;
+                            ConfigData.highlightcolor = bean.highlightcolor;
+                            ConfigData.lightColor = Color.parseColor(bean.highlightcolor);
+                            requestData();
+                        } else {
+                            cannotUse();
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    private void cannotUse() {
+        Toast.makeText(this, "暂无使用权限", Toast.LENGTH_LONG).show();
     }
 
     private void requestData() {
@@ -110,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         RetrofitUtils.getInstance().unSubscribe("getBookList");
+        RetrofitUtils.getInstance().unSubscribe("getConfig");
     }
 
     @Override
@@ -119,30 +161,9 @@ public class MainActivity extends AppCompatActivity {
         if (mPermissionsChecker.lacksPermissions(PERMISSIONS)) {
             startPermissionsActivity();
         }
-
-        /*if (clickFile != null
-                && !TextUtils.isEmpty(Utils.getExtensionName(clickFile.getName()))
-                && Utils.getExtensionName(clickFile.getName()).equals("txt")) {
-            BookBean bean = new BookBean();
-            String configString = SharedPreferencesUtils.getConfigString(this, Utils.getFileKey(clickFile));
-            if (!TextUtils.isEmpty(configString)) {
-                String[] configs = configString.split("_");
-                bean.lastReadTime = Utils.longToDate(Long.valueOf(configs[0]));
-                bean.readProgress = configs[1];
-                bean.light = Integer.parseInt(configs[2]);
-                bean.bgColor = Integer.parseInt(configs[3]);
-                bean.spSize = Integer.parseInt(configs[4]);
-                bean.textColor = Integer.parseInt(configs[5]);
-                bean.lineSpace = Integer.parseInt(configs[6]);
-                bean.edgeSpace = Integer.parseInt(configs[7]);
-                bean.paraSpace = Integer.parseInt(configs[8]);
-            }
-            bean.txtFile = clickFile;
-            books.remove(pos);
-            books.add(pos, bean);
-            adapter.notifyDataSetChanged();
-        }*/
-        requestData();
+        if (ConfigData.canRun == 1) {
+            requestData();
+        }
     }
 
     /*private void setViewData() {
@@ -178,8 +199,4 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /*@Override
-    public void clickItem(int pos) {
-        this.pos = pos;
-    }*/
 }

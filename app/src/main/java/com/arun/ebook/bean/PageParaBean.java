@@ -3,11 +3,13 @@ package com.arun.ebook.bean;
 import android.graphics.Color;
 import android.graphics.Typeface;
 
+import com.arun.ebook.common.Constant;
+
 public class PageParaBean {
     public int textColor = Color.parseColor("#15140F");
     public int spSize = 15;
     public int lineSpace = 1;
-    public int paraSpace = 10;
+    public int paraSpace = Constant.DEFAULT_PARA_SPACE_DP;
     public Typeface typeface = Typeface.DEFAULT;
 
     public PageParaBean create() {

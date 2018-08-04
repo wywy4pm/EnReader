@@ -8,5 +8,6 @@ public class NewBookBean {
     public String seq;
     public int book_id;
     public String content;
-    public List<NewBookWordBean> separate_list;
+//    public List<NewBookWordBean> separate_list;
+    public List<String> trans_words;
 }

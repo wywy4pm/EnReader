@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--<com.arun.ebook.widget.TextGroupView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">-->
+
 <com.arun.ebook.widget.JustifyTextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/english_para"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:includeFontPadding="false"
     android:lineSpacingExtra="1dp"
-    android:paddingBottom="10dp"
+    android:paddingBottom="20dp"
     android:text=""
     android:textColor="@color/text_common"
-    android:textSize="15sp" />
+    android:textSize="15sp" /><!--
+</com.arun.ebook.widget.TextGroupView>-->

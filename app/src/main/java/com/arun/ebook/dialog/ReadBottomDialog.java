@@ -15,17 +15,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.arun.ebook.R;
 import com.arun.ebook.activity.FontActivity;
+import com.arun.ebook.bean.ConfigData;
+import com.arun.ebook.common.Constant;
 import com.arun.ebook.listener.PageViewListener;
 import com.arun.ebook.utils.DensityUtil;
 import com.arun.ebook.widget.StrokeTextView;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 /**
  * Created by wy on 2018/4/23.
@@ -34,20 +39,23 @@ import java.util.Hashtable;
 public class ReadBottomDialog extends DialogFragment {
 
     private SeekBar mSeekBar;
+    private HorizontalScrollView color_group;
     private LinearLayout color_panel;
     private LinearLayout edit_group;
     private static final String[] BG_COLORS = new String[]{"#000000", "#363636", "#9C9C9C", "#F2F1ED", "#98FB98", "#FAFAD2", "#ffffff"};
     private static final String[] EDIT_NAMES = new String[]{"进度", "亮度", "背景", "字体", "字号", "字色", "行距", "边距", "段距"};
+    private List<String> bg_colors = new ArrayList<>();
+    private List<String> text_colors = new ArrayList<>();
     //记录seekbar当前的进度
     private Hashtable<Integer, Integer> seekProgresses = new Hashtable<>();
     private PageViewListener listener;
     private int currentShowTag;
     private Dialog dialog;
-    private int colorStyle = 5;
+    //private int colorStyle = 5;
     private static final int MIN_TEXT_SP = 7;
     private static final int MIN_EDGE_SPACE = 10;
     private static final int MIN_LINE_SPACE = 1;
-    public static final int MIN_PARA_SPACE = 10;
+    public static final int MIN_PARA_SPACE = Constant.DEFAULT_PARA_SPACE_DP;
     private int progress;
     private float defaultTextSize;
     private float defaultLineSpace;
@@ -56,9 +64,11 @@ public class ReadBottomDialog extends DialogFragment {
     private boolean isChangeTab;
     private View bottomView;
 
-    /*public void setReadProgress(int progress) {
-        this.progress = progress;
-    }*/
+    //颜色区域距离
+    private static final int itemWidthDp = 33;
+    private static final int itemMarginDp = 10;
+    private static final int itemRadiusDp = 8;
+    private static final int itemStrokeWidthDp = 2;
 
     public void setListener(PageViewListener listener) {
         this.listener = listener;
@@ -68,8 +78,9 @@ public class ReadBottomDialog extends DialogFragment {
         this.progress = progress;
         this.defaultTextSize = defaultTextSize;
         this.defaultLineSpace = defaultLineSpace;
-        this.defaultEdgeSpace = defaultEdgeSpace;
+
         this.defaultParaSpace = defaultParaSpace;
+        this.defaultEdgeSpace = defaultEdgeSpace;
     }
 
    /* public void setBgColor(int bgColor) {
@@ -121,6 +132,12 @@ public class ReadBottomDialog extends DialogFragment {
                 wlp.height = WindowManager.LayoutParams.WRAP_CONTENT;
                 window.setAttributes(wlp);
             }
+            if (ConfigData.bgColor != null) {
+                bg_colors = ConfigData.bgColor;
+            }
+            if (ConfigData.textColor != null) {
+                text_colors = ConfigData.textColor;
+            }
             initView(bottomView);
         }
         return dialog;
@@ -130,6 +147,7 @@ public class ReadBottomDialog extends DialogFragment {
         mSeekBar = itemView.findViewById(R.id.seekBar);
         edit_group = itemView.findViewById(R.id.edit_group);
         color_panel = itemView.findViewById(R.id.color_panel);
+        color_group = itemView.findViewById(R.id.color_group);
         edit_group.removeAllViews();
         for (int i = 0; i < EDIT_NAMES.length; i++) {
             final TextView textView = new TextView(getActivity());
@@ -163,7 +181,6 @@ public class ReadBottomDialog extends DialogFragment {
             });
             edit_group.addView(textView);
         }
-        initColorPanel();
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -202,46 +219,52 @@ public class ReadBottomDialog extends DialogFragment {
         });
     }
 
-    private void initColorPanel() {
+    private void showColorPanel(final int tag) {
+        color_group.setVisibility(View.VISIBLE);
+        mSeekBar.setVisibility(View.INVISIBLE);
         color_panel.removeAllViews();
-        int itemWidthDp = 33;
-        int itemMarginDp = 10;
-        int itemRadiusDp = 8;
-        int itemStrokeWidthDp = 2;
-        for (int i = 0; i < BG_COLORS.length; i++) {
-            LinearLayout.LayoutParams params =
-                    new LinearLayout.LayoutParams(DensityUtil.dp2px(itemWidthDp), DensityUtil.dp2px(itemWidthDp));
-            params.setMargins(0, 0, DensityUtil.dp2px(itemMarginDp), 0);
-            StrokeTextView textView = new StrokeTextView(getActivity(), itemWidthDp, itemRadiusDp, itemStrokeWidthDp, BG_COLORS[i]);
-            textView.setLayoutParams(params);
-            final int finalI = i;
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (listener != null) {
-                        if (colorStyle == 2) {//修改背景色
-                            listener.setReadBackground(Color.parseColor(BG_COLORS[finalI]));
-                        } else if (colorStyle == 5) {//修改文字颜色
-                            listener.setTextColor(Color.parseColor(BG_COLORS[finalI]));
+        int size = 0;
+        if (tag == 2) {//背景色
+            size = bg_colors.size();
+        } else if (tag == 5) {//字色
+            size = text_colors.size();
+        }
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                final String color = tag == 2 ? bg_colors.get(i) : text_colors.get(i);
+                LinearLayout.LayoutParams params =
+                        new LinearLayout.LayoutParams(DensityUtil.dp2px(itemWidthDp), DensityUtil.dp2px(itemWidthDp));
+                params.setMargins(0, 0, DensityUtil.dp2px(itemMarginDp), 0);
+                StrokeTextView textView = new StrokeTextView(getActivity(), itemWidthDp, itemRadiusDp, itemStrokeWidthDp, color);
+                textView.setLayoutParams(params);
+                textView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (listener != null) {
+                            if (tag == 2) {//修改背景色
+                                listener.setReadBackground(Color.parseColor(color));
+                            } else {//修改文字颜色
+                                listener.setTextColor(Color.parseColor(color));
+                            }
                         }
                     }
-                }
-            });
-            color_panel.addView(textView);
+                });
+                color_panel.addView(textView);
+            }
         }
-    }
-
-    private void showColorPanel(int colorStyle) {
-        this.colorStyle = colorStyle;
-        color_panel.setVisibility(View.VISIBLE);
-        mSeekBar.setVisibility(View.INVISIBLE);
     }
 
     private void showSeekBar(int tag, int progress) {
         currentShowTag = tag;
         mSeekBar.setProgress(progress);
         mSeekBar.setVisibility(View.VISIBLE);
-        color_panel.setVisibility(View.INVISIBLE);
+        color_group.setVisibility(View.INVISIBLE);
+    }
+
+    private void showFontView() {
+        mSeekBar.setVisibility(View.INVISIBLE);
+        color_group.setVisibility(View.INVISIBLE);
+        FontActivity.jumpToFont(getActivity());
     }
 
     private void setTextSelected(TextView textView) {
@@ -279,7 +302,7 @@ public class ReadBottomDialog extends DialogFragment {
         } else if (tag == 2 || tag == 5) {
             showColorPanel(tag);
         } else if (tag == 3) {
-            FontActivity.jumpToFont(getActivity());
+            showFontView();
         }
     }
 

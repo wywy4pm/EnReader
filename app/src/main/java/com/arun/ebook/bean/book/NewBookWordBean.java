@@ -6,4 +6,5 @@ public class NewBookWordBean {
     public int translated;
     //是否是标点，0：否，1：是
     public int only_quote;
+    public boolean isAdd;
 }

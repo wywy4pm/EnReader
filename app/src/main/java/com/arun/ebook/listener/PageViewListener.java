@@ -9,7 +9,7 @@ public interface PageViewListener {
 
     void showPrePage();
 
-    void showTransDialog(String word, String seq, String index);
+    void showTransDialog(String word, String seq);
 
     //void showBottom(boolean isShowDialog);
 

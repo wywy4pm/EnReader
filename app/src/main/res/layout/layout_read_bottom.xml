@@ -17,12 +17,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <LinearLayout
-            android:id="@+id/color_panel"
+        <HorizontalScrollView
+            android:id="@+id/color_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:visibility="invisible" />
+            android:scrollbars="none"
+            android:visibility="invisible">
+
+            <LinearLayout
+                android:id="@+id/color_panel"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
 
     </RelativeLayout>
 
@@ -41,7 +48,7 @@
             android:id="@+id/edit_group"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="horizontal"/>
+            android:orientation="horizontal" />
     </HorizontalScrollView>
 
 </RelativeLayout>
