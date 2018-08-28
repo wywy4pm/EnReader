@@ -278,6 +278,7 @@ public class JustifyTextView extends AppCompatTextView {
     private void drawMultiText(Canvas canvas, String lineText) {
         Log.d("TAG", "drawTextTestTest lineText =" + lineText);
         if (trans_words == null || trans_words.size() == 0) {
+            paint.setColor(getCurrentTextColor());
             canvas.drawText(lineText, 0, mLineY, paint);
             return;
         }

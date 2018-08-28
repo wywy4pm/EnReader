@@ -82,7 +82,7 @@ public class PageRecyclerView extends RecyclerView {
                 float moveUpX = Math.abs(eventX - downX);
                 float moveUpY = Math.abs(eventY - downY);
                 if (pageViewListener != null) {
-                    if (moveUpX < 2 && moveUpY < 2) {
+                    if (moveUpX < 4 && moveUpY < 4) {
                         boolean isLeft = downX > 0 && downX < (getWidth() / 2);
                         if (isLeft) {
                             Log.d("TAG", "PageRecyclerView showPrePage");

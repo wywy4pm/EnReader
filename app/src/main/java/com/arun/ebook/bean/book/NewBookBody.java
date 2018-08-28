@@ -1,6 +1,5 @@
 package com.arun.ebook.bean.book;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class NewBookBody {

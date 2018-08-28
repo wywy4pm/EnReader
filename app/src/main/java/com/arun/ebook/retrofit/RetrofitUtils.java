@@ -2,6 +2,7 @@ package com.arun.ebook.retrofit;
 
 import com.arun.ebook.bean.ConfigResponse;
 import com.arun.ebook.bean.CommonResponse;
+import com.arun.ebook.bean.book.BookThreeResponse;
 import com.arun.ebook.bean.book.NewBookResponse;
 import com.arun.ebook.bean.booklist.BookListResponse;
 import com.arun.ebook.utils.Utils;
@@ -76,12 +77,20 @@ public class RetrofitUtils {
         subscriptionMap.put("getBookList", subscription);
     }
 
-    public void getBookContent(Subscriber<NewBookResponse> subscriber, int booId, int page) {
-        Subscription subscription = mRetrofit.create(ApiService.class).getBookContent(booId, page)
+    public void getBookContent(Subscriber<NewBookResponse> subscriber, int bookId, int page) {
+        Subscription subscription = mRetrofit.create(ApiService.class).getBookContent(bookId, page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);
         subscriptionMap.put("getBookContent", subscription);
+    }
+
+    public void getBookThreeContent(Subscriber<BookThreeResponse> subscriber, int bookId, int page) {
+        Subscription subscription = mRetrofit.create(ApiService.class).getBookThreeContent(bookId, page)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+        subscriptionMap.put("getBookThreeContent", subscription);
     }
 
     public void paraEdit(Subscriber<CommonResponse> subscriber, int op_type, int bookId, String cnseq) {
