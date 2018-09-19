@@ -514,34 +514,38 @@ public class JustifyTextView extends AppCompatTextView {
                         }
                     }
                 }
-                int startIndex = 0;
-                int endIndex = 0;
-                char ch = lineText.charAt(minOneIndex);
-                if (StringUtils.isEnChar(ch)) {//点击单词
-                    for (int i = minOneIndex; i < lineText.length(); i++) {
-                        char c = lineText.charAt(i);
-                        if (StringUtils.isSpace(c) || StringUtils.isPunctuation(String.valueOf(c))) {
-                            endIndex = i;
-                            break;
-                        } else {
-                            if (i == lineText.length() - 1) {
-                                endIndex = i + 1;
+                if (minCha > getTextSize()) {
+                    isTouch = false;
+                } else {
+                    int startIndex = 0;
+                    int endIndex = 0;
+                    char ch = lineText.charAt(minOneIndex);
+                    if (StringUtils.isEnChar(ch)) {//点击单词
+                        for (int i = minOneIndex; i < lineText.length(); i++) {
+                            char c = lineText.charAt(i);
+                            if (StringUtils.isSpace(c) || StringUtils.isPunctuation(String.valueOf(c))) {
+                                endIndex = i;
+                                break;
+                            } else {
+                                if (i == lineText.length() - 1) {
+                                    endIndex = i + 1;
+                                }
                             }
                         }
-                    }
-                    for (int i = minOneIndex - 1; i >= 0; i--) {
-                        char c = lineText.charAt(i);
-                        if (!StringUtils.isEnChar(c)) {
-                            startIndex = i + 1;
-                            break;
+                        for (int i = minOneIndex - 1; i >= 0; i--) {
+                            char c = lineText.charAt(i);
+                            if (!StringUtils.isEnChar(c)) {
+                                startIndex = i + 1;
+                                break;
+                            }
                         }
+                        String word = lineText.substring(startIndex, endIndex);
+                        Log.d("TAG", "getTouchWord =" + word);
+                        touchWord = word;
+                        isTouch = true;
+                    } else {
+                        isTouch = false;
                     }
-                    String word = lineText.substring(startIndex, endIndex);
-                    Log.d("TAG", "getTouchWord =" + word);
-                    touchWord = word;
-                    isTouch = true;
-                } else {
-                    isTouch = false;
                 }
             } else {
                 isTouch = false;
