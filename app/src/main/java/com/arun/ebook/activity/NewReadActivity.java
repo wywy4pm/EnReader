@@ -84,6 +84,7 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
     private static final int MODE_PRE_PAGE = 2;
     private static final int MODE_ONE_PAGE = 3;
     private static final int MODE_PARA_EDIT = 4;
+    private static final int MODE_PROGRESS_PAGE = 5;
 
     private int currentTotalPages = 0;
 
@@ -489,14 +490,14 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
 
     private void requestThreePage(final int mode) {
         switch (mode) {
-            case MODE_ONE_PAGE:
+            case MODE_PROGRESS_PAGE:
                 if (currentProgress >= 0 && currentProgress <= 100 && currentTotalPages >= 0) {
                     currentPageParaIndex = (int) (currentTotalPages * (currentProgress / 100));
-                    if (currentPageParaIndex == 0) {
-                        currentPageParaIndex = 1;
-                    }
                 }
                 break;
+        }
+        if (currentPageParaIndex == 0) {
+            currentPageParaIndex = 1;
         }
         allParas.clear();
         readAdapter.notifyDataSetChanged();
@@ -538,7 +539,7 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
     }
 
     private void renderCurrentPage(NewBookBody bookBody, int mode) {
-        currentProgress = (float) (currentPageParaIndex - 1) / currentTotalPages * 100;
+        currentProgress = (double) currentPageParaIndex / currentTotalPages * 100;
         tvCurrentProgress.setText(String.valueOf(currentPageParaIndex + "/" + currentTotalPages));
 
         if (bookBody.enparalist != null && bookBody.enparalist.size() > 0) {
@@ -628,7 +629,7 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
     @Override
     public void setReadProgress(int progress) {
         currentProgress = progress;
-        requestThreePage(MODE_ONE_PAGE);
+        requestThreePage(MODE_PROGRESS_PAGE);
     }
 
     @Override
