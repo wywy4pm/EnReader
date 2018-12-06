@@ -22,27 +22,6 @@
             android:paddingRight="10dp"
             android:paddingTop="15dp" />
     </com.arun.ebook.widget.PageReadViewGroup>
-    <!--<com.arun.ebook.widget.PageScrollView
-        android:id="@+id/scrollView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/layout_bottom"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="15dp">
-
-        <com.arun.ebook.widget.JustifyTextView
-            android:id="@+id/text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:includeFontPadding="false"
-            android:lineSpacingExtra="5dp"
-            android:lineSpacingMultiplier="1"
-            android:text=""
-            android:textColor="@color/text_common"
-            android:textSize="18sp" />
-    </com.arun.ebook.widget.PageScrollView>-->
 
     <RelativeLayout
         android:id="@+id/layout_bottom"
