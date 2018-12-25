@@ -1,3 +1,4 @@
+/*
 package com.arun.ebook.retrofit;
 
 import com.arun.ebook.bean.ConfigResponse;
@@ -8,18 +9,13 @@ import com.arun.ebook.bean.booklist.BookListResponse;
 import com.arun.ebook.utils.Utils;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 public class RetrofitUtils {
+    public static final String BASE_URL = "http://fd.link365.cn/";
     public static final String baseUrl = "http://tps.link365.cn/wx/article/";
     private static RetrofitUtils self;
     private Retrofit mRetrofit;
@@ -27,30 +23,16 @@ public class RetrofitUtils {
     //public static boolean isDebugger = false;
 
     private RetrofitUtils() {
-        /*Interceptor mInterceptor = new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                Request request = chain.request()
-                        .newBuilder()
-                        .build();
-                return chain.proceed(request);
-            }
-        };*/
-        /*//添加日志
-        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
-        if (isDebugger) {
-            httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        } else {
-            httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.NONE);
-        }*/
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                /*.addInterceptor(httpLoggingInterceptor)
-                .addInterceptor(mInterceptor)*/
+                */
+/*.addInterceptor(httpLoggingInterceptor)
+                .addInterceptor(mInterceptor)*//*
+
                 .build();
 
         mRetrofit = new Retrofit.Builder()
                 .client(okHttpClient)
-                .baseUrl(baseUrl)
+                .baseUrl(BASE_URL)
                 //JSON转化器
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
@@ -116,3 +98,4 @@ public class RetrofitUtils {
         }
     }
 }
+*/

@@ -34,7 +34,6 @@ import com.arun.ebook.dialog.TranslateDialog;
 import com.arun.ebook.listener.DialogListener;
 import com.arun.ebook.listener.PageViewListener;
 import com.arun.ebook.listener.ParaEditListener;
-import com.arun.ebook.retrofit.RetrofitUtils;
 import com.arun.ebook.utils.DensityUtil;
 import com.arun.ebook.utils.SharedPreferencesUtils;
 import com.arun.ebook.utils.Utils;
@@ -46,7 +45,6 @@ import com.google.gson.reflect.TypeToken;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -58,7 +56,6 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import rx.Subscriber;
 
 public class NewReadActivity extends AppCompatActivity implements PageViewListener, View.OnClickListener, ParaEditListener {
 
@@ -278,88 +275,6 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
         }
     }
 
-    /*public void showPage(final int mode) {
-        switch (mode) {
-            case MODE_NEXT_PAGE:
-                if (currentPageParaIndex == 0 || currentPageParaIndex < currentTotalPages) {
-                    currentPageParaIndex++;
-                } else {
-                    Toast.makeText(NewReadActivity.this, "已经到最后一页", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                break;
-            case MODE_PRE_PAGE:
-                if (currentPageParaIndex > 1) {
-                    currentPageParaIndex--;
-                } else {
-                    Toast.makeText(NewReadActivity.this, "当前为第一页", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                break;
-            case MODE_ONE_PAGE:
-                if (currentProgress >= 0 && currentProgress <= 100 && currentTotalPages >= 0) {
-                    currentPageParaIndex = (int) (currentTotalPages * (currentProgress / 100));
-                    if (currentPageParaIndex == 0) {
-                        currentPageParaIndex = 1;
-                    }
-                }
-                break;
-        }
-        allParas.clear();
-        readAdapter.notifyDataSetChanged();
-        RetrofitUtils.getInstance().getBookContent(new Subscriber<NewBookResponse>() {
-            @Override
-            public void onCompleted() {
-
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onNext(NewBookResponse newBookResponse) {
-                if (newBookResponse != null && newBookResponse.code == 200
-                        && newBookResponse.data != null) {
-
-                    currentTotalPages = newBookResponse.data.totalpage;
-                    currentProgress = (float) (currentPageParaIndex - 1) / currentTotalPages * 100;
-                    tvCurrentProgress.setText(String.valueOf(currentPageParaIndex + "/" + currentTotalPages));
-
-                    if (newBookResponse.data.enparalist != null && newBookResponse.data.enparalist.size() > 0) {
-                        allParas.clear();
-                        for (int i = 0; i < newBookResponse.data.enparalist.size(); i++) {
-                            newBookResponse.data.enparalist.get(i).type = ReadAdapter.DATA_TYPE_EN;
-                            allParas.add(newBookResponse.data.enparalist.get(i));
-                            if (newBookResponse.data.cnparalist != null && i <= newBookResponse.data.cnparalist.size() - 1) {
-                                newBookResponse.data.cnparalist.get(i).type = ReadAdapter.DATA_TYPE_CN;
-                                allParas.add(newBookResponse.data.cnparalist.get(i));
-                            }
-                        }
-                        readAdapter.notifyDataSetChanged();
-                        if (mode != MODE_PARA_EDIT) {
-                            recyclerView.scrollToPosition(0);
-                        }
-                    } else {
-                        if (newBookResponse.data.cnparalist != null && newBookResponse.data.cnparalist.size() > 0) {
-                            for (int i = 0; i < newBookResponse.data.cnparalist.size(); i++) {
-                                newBookResponse.data.cnparalist.get(i).type = ReadAdapter.DATA_TYPE_CN;
-                                allParas.add(newBookResponse.data.cnparalist.get(i));
-                            }
-                            readAdapter.notifyDataSetChanged();
-                            if (mode != MODE_PARA_EDIT) {
-                                recyclerView.scrollToPosition(0);
-                            }
-                        } else {
-                            Toast.makeText(NewReadActivity.this, "已经到最后一页", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }
-            }
-        }, bookId, currentPageParaIndex);
-    }*/
-
     private void requestOnePage(final int mode) {
         if (threePageDataList != null && threePageDataList.size() > 0) {
             switch (mode) {
@@ -444,7 +359,7 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
 
     private void requestNextPreData(final boolean isRequestCurrent, final int mode) {
         isLoading = true;
-        RetrofitUtils.getInstance().getBookContent(new Subscriber<NewBookResponse>() {
+        /*RetrofitUtils.getInstance().getBookContent(new Subscriber<NewBookResponse>() {
 
             @Override
             public void onCompleted() {
@@ -485,7 +400,7 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
                 }
                 isLoading = false;
             }
-        }, bookId, !isRequestCurrent ? mode == MODE_PRE_PAGE ? currentPageParaIndex - 1 : currentPageParaIndex + 1 : mode == MODE_PRE_PAGE ? currentPageParaIndex : currentPageParaIndex);
+        }, bookId, !isRequestCurrent ? mode == MODE_PRE_PAGE ? currentPageParaIndex - 1 : currentPageParaIndex + 1 : mode == MODE_PRE_PAGE ? currentPageParaIndex : currentPageParaIndex);*/
     }
 
     private void requestThreePage(final int mode) {
@@ -501,7 +416,7 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
         }
         allParas.clear();
         readAdapter.notifyDataSetChanged();
-        RetrofitUtils.getInstance().getBookThreeContent(new Subscriber<BookThreeResponse>() {
+        /*RetrofitUtils.getInstance().getBookThreeContent(new Subscriber<BookThreeResponse>() {
             @Override
             public void onCompleted() {
 
@@ -535,7 +450,7 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
                     }
                 }
             }
-        }, bookId, currentPageParaIndex);
+        }, bookId, currentPageParaIndex);*/
     }
 
     private void renderCurrentPage(NewBookBody bookBody, int mode) {
@@ -582,7 +497,7 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
 
     @Override
     public void paraEdit(int op_type, int bookId, final String cnSeq) {
-        RetrofitUtils.getInstance().paraEdit(new Subscriber<CommonResponse>() {
+        /*RetrofitUtils.getInstance().paraEdit(new Subscriber<CommonResponse>() {
             @Override
             public void onCompleted() {
 
@@ -599,7 +514,7 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
                     requestOnePage(MODE_PARA_EDIT);
                 }
             }
-        }, op_type, bookId, cnSeq);
+        }, op_type, bookId, cnSeq);*/
     }
 
     @Override
@@ -775,8 +690,8 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        RetrofitUtils.getInstance().unSubscribe("getBookContent");
-        RetrofitUtils.getInstance().unSubscribe("paraEdit");
+        /*RetrofitUtils.getInstance().unSubscribe("getBookContent");
+        RetrofitUtils.getInstance().unSubscribe("paraEdit");*/
         if (dialog != null) {
             dialog = null;
         }

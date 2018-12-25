@@ -19,15 +19,12 @@ import com.arun.ebook.bean.booklist.BookListResponse;
 import com.arun.ebook.helper.PermissionsChecker;
 import com.arun.ebook.R;
 import com.arun.ebook.adapter.FileListAdapter;
-import com.arun.ebook.retrofit.RetrofitUtils;
 import com.arun.ebook.utils.SharedPreferencesUtils;
 import com.arun.ebook.utils.Utils;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-
-import rx.Subscriber;
 
 public class MainActivity extends AppCompatActivity {
     // 所需的全部权限
@@ -60,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getConfig() {
-        RetrofitUtils.getInstance().getConfig(new Subscriber<ConfigResponse>() {
+        /*RetrofitUtils.getInstance().getConfig(new Subscriber<ConfigResponse>() {
             @Override
             public void onCompleted() {
             }
@@ -88,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
-        });
+        });*/
     }
 
     private void cannotUse() {
@@ -96,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void requestData() {
-        RetrofitUtils.getInstance().getBookList(new Subscriber<BookListResponse>() {
+        /*RetrofitUtils.getInstance().getBookList(new Subscriber<BookListResponse>() {
             @Override
             public void onCompleted() {
 
@@ -127,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
                     adapter.notifyDataSetChanged();
                 }
             }
-        }, page);
+        }, page);*/
     }
 
     private double getProgress(int bookId) {
@@ -150,8 +147,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        RetrofitUtils.getInstance().unSubscribe("getBookList");
-        RetrofitUtils.getInstance().unSubscribe("getConfig");
     }
 
     @Override
