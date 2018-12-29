@@ -1,7 +1,9 @@
 package com.arun.ebook.activity;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 import com.arun.ebook.R;
 import com.arun.ebook.utils.DensityUtil;
 import com.arun.ebook.utils.SharedPreferencesUtils;
+import com.arun.ebook.utils.StatusBarUtils;
 import com.arun.ebook.utils.ToastUtils;
 import com.arun.ebook.view.MvpView;
 
@@ -31,9 +34,16 @@ public abstract class BaseActivity extends AppCompatActivity implements MvpView 
         screenWidth = DensityUtil.getScreenWidth(this);
     }
 
-    public void setFullScreen(){
-        if (getWindow() != null) {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    public void setFullScreen() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            if (getWindow() != null) {
+                WindowManager.LayoutParams lp = getWindow().getAttributes();
+                lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+                getWindow().setAttributes(lp);
+                StatusBarUtils.setStatusBar(this, true);
+            }
+        } else {
+            StatusBarUtils.setStatusBar(this, true);
         }
     }
 

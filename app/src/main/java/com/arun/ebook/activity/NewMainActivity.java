@@ -1,6 +1,7 @@
 package com.arun.ebook.activity;
 
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
@@ -75,6 +76,13 @@ public class NewMainActivity extends BaseActivity implements CommonView4<List<Bo
         fragmentList.add(messageFragment);
         fragmentList.add(mineFragment);
         viewPager.setAdapter(new MainAdapter(getSupportFragmentManager(), fragmentList));
+        viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener(){
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                setSelectTab(position);
+            }
+        });
         viewPager.setCurrentItem(0);
         if (tabViews != null && tabViews.size() > 0) {
             tabViews.get(0).setSelected(true);
@@ -114,26 +122,26 @@ public class NewMainActivity extends BaseActivity implements CommonView4<List<Bo
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.main_tab:
-                viewPager.setCurrentItem(Constant.TAB_INDEX_MAIN);
-                setSelect(Constant.TAB_INDEX_MAIN);
+                setSelectTab(Constant.TAB_INDEX_MAIN);
                 break;
             case R.id.answer_tab:
-                viewPager.setCurrentItem(Constant.TAB_INDEX_ANSWER);
-                setSelect(Constant.TAB_INDEX_ANSWER);
+                setSelectTab(Constant.TAB_INDEX_ANSWER);
                 break;
             case R.id.interact_tab:
-                viewPager.setCurrentItem(Constant.TAB_INDEX_INTERACT);
-                setSelect(Constant.TAB_INDEX_INTERACT);
+                setSelectTab(Constant.TAB_INDEX_INTERACT);
                 break;
             case R.id.message_tab:
-                viewPager.setCurrentItem(Constant.TAB_INDEX_MESSAGE);
-                setSelect(Constant.TAB_INDEX_MESSAGE);
+                setSelectTab(Constant.TAB_INDEX_MESSAGE);
                 break;
             case R.id.mine_tab:
-                viewPager.setCurrentItem(Constant.TAB_INDEX_MINE);
-                setSelect(Constant.TAB_INDEX_MINE);
+                setSelectTab(Constant.TAB_INDEX_MINE);
                 break;
         }
+    }
+
+    private void setSelectTab(int index){
+        viewPager.setCurrentItem(index);
+        setSelect(index);
     }
 
     private void setSelect(int selectPos) {

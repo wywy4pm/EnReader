@@ -61,7 +61,6 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                currentPage = position + 1;
                 if (position == pageList.size() - 1) {
                     getMoreData();
                 }
