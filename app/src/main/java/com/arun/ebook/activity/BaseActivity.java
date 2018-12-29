@@ -5,6 +5,7 @@ import android.support.annotation.LayoutRes;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -28,6 +29,12 @@ public abstract class BaseActivity extends AppCompatActivity implements MvpView 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         screenWidth = DensityUtil.getScreenWidth(this);
+    }
+
+    public void setFullScreen(){
+        if (getWindow() != null) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
     }
 
     public void setContentView(@LayoutRes int layoutResID) {

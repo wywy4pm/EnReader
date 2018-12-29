@@ -7,10 +7,10 @@ def releaseTime() {
 android {
     compileSdkVersion 26
     defaultConfig {
-        applicationId "com.arun.ebook"
+        applicationId "com.arun.fd"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 1011
+        versionCode 1012
         versionName "1.0.1.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -38,7 +38,7 @@ android {
 
             android.applicationVariants.all { variant ->
                 variant.outputs.all { output ->
-                    outputFileName = "EnReader_v${defaultConfig.versionName}" + "_${releaseTime()}" + ".apk"
+                    outputFileName = "FD_v${defaultConfig.versionName}" + "_${releaseTime()}" + ".apk"
                 }
             }
         }

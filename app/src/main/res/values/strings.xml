@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">EnReader</string>
+    <string name="app_name">洗马</string>
     <string name="font_use">使用说明：\n请把字体文件放到 enreader/fonts/文件夹下</string>
     <string name="font_example"> ABCDEFG abcdefg 0123456789</string>
 
@@ -11,4 +11,7 @@
     <string name="error_unknown">未知错误</string>
 
     <string name="android">android</string>
+
+    <string name="copy">复制</string>
+    <string name="select_all">全选</string>
 </resources>

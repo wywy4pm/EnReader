@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.arun.ebook.R;
+import com.arun.ebook.activity.BookActivity;
 import com.arun.ebook.bean.BookItemBean;
 import com.bumptech.glide.Glide;
 
@@ -45,9 +46,15 @@ public class MainListAdapter extends BaseRecyclerAdapter<BookItemBean> {
             book_author = itemView.findViewById(R.id.book_author);*/
         }
 
-        private void setData(Context context, BookItemBean item) {
+        private void setData(final Context context, final BookItemBean item) {
             if (item != null) {
                 Glide.with(context).load(item.listImage).into(book_bg);
+                book_bg.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        BookActivity.jumpToBook(context, item);
+                    }
+                });
             }
         }
     }

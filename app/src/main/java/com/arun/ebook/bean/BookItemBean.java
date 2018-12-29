@@ -1,6 +1,8 @@
 package com.arun.ebook.bean;
 
-public class BookItemBean {
+import java.io.Serializable;
+
+public class BookItemBean implements Serializable{
     public String bookId;
     public String name;
     public String author;

@@ -23,5 +23,9 @@ public class Constant {
     public static final int TAB_INDEX_MINE = 4;
 
     public static final String INTENT_UID = "uid";
+    public static final String INTENT_BOOK_ITEM = "book_item";
+    public static final String INTENT_BOOK_DETAIL = "book_detail";
+    /*public static final String INTENT_TOTAL_COUNT = "total_count";
+    public static final String INTENT_CURRENT_PAGE = "current_page";*/
 
 }

@@ -8,6 +8,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Handler;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.Layout;
 import android.text.TextPaint;
@@ -18,7 +19,7 @@ import android.view.MotionEvent;
 import android.widget.TextView;
 
 import com.arun.ebook.bean.ConfigData;
-import com.arun.ebook.bean.book.NewBookWordBean;
+import com.arun.ebook.listener.LongPressListener;
 import com.arun.ebook.listener.PageViewListener;
 import com.arun.ebook.listener.TranslateListener;
 import com.arun.ebook.utils.StringUtils;
@@ -35,6 +36,7 @@ public class JustifyTextView extends AppCompatTextView {
     private int mViewWidth;//TextView的总宽度
     private TextPaint paint;
     private TranslateListener translateListener;
+    private Handler mHandler;
     //private PageViewListener pageViewListener;
 
     public JustifyTextView(Context context) {
@@ -56,6 +58,7 @@ public class JustifyTextView extends AppCompatTextView {
         paint = getPaint();
         paint.setColor(getCurrentTextColor());
         paint.drawableState = getDrawableState();
+        mHandler = new Handler();
     }
 
     public void setTranslateListener(TranslateListener translateListener) {
@@ -427,37 +430,79 @@ public class JustifyTextView extends AppCompatTextView {
         }
     }
 
+    private LongPressListener longPressListener;
+
+    public void setOnLongPressListener(LongPressListener longPressListener) {
+        this.longPressListener = longPressListener;
+    }
+
     private float downX = 0;
-    //private float downY = 0;
-    //private boolean isTurnPage;
+    private float downY = 0;
+    private boolean isLongPress;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float eventX = event.getX();
-        //float eventY = event.getY();
+        float eventY = event.getY();
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 downX = eventX;
+                downY = eventY;
+                /* 长按操作 */
+                isLongPress = false;
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        isLongPress = true;
+                        Log.d("TAG", "---------------onTouchEvent ACTION_LONG_PRESS------------------");
+                        if (longPressListener != null) {
+                            longPressListener.onLongPress();
+                        }
+                    }
+                }, 500);
                 return isTouchWord(this, event);
             case MotionEvent.ACTION_MOVE:
+                int lastX = (int) event.getX();
+                int lastY = (int) event.getY();
+                if (Math.abs(lastX - downX) > 10 || Math.abs(lastY - downY) > 10) {
+                    this.mHandler.removeCallbacksAndMessages(null);
+                }
                 break;
             case MotionEvent.ACTION_UP:
-                float moveUpX = eventX - downX;
-                //float moveY = Math.abs(eventY - downY);
-                if (translateListener != null && !TextUtils.isEmpty(touchWord)) {
-                    setTouchWord(touchWord, translateListener);
-                    return true;
-                    /*if (moveUpX > 50) {//上一页
+                this.mHandler.removeCallbacksAndMessages(null);
+                if (!isLongPress) {
+                    isLongPress = false;
+                    Log.d("TAG", "---------------onTouchEvent ACTION_UP------------------");
+                    if (translateListener != null && !TextUtils.isEmpty(touchWord)) {
+                        setTouchWord(touchWord, translateListener);
                         return true;
-                    } else if (moveUpX < -50) {
-                        return true;
-                    }*/
-                    //return getTouchWord(this, event, translateListener);
+                    }
                 }
-                //Log.d("TAG", "---------------ACTION_UP------------------");
                 break;
         }
         return super.onTouchEvent(event);
+    }
+
+
+    /**
+     * * 判断是否有长按动作发生 * @param lastX 按下时X坐标 * @param lastY 按下时Y坐标 *
+     *
+     * @param thisX         移动时X坐标 *
+     * @param thisY         移动时Y坐标 *
+     * @param lastDownTime  按下时间 *
+     * @param thisEventTime 移动时间 *
+     * @param longPressTime 判断长按时间的阀值
+     */
+    public static boolean isLongPressed(float lastX, float lastY, float thisX,
+                                        float thisY, long lastDownTime, long thisEventTime,
+                                        long longPressTime) {
+        float offsetX = Math.abs(thisX - lastX);
+        float offsetY = Math.abs(thisY - lastY);
+        long intervalTime = thisEventTime - lastDownTime;
+        if (offsetX <= 10 && offsetY <= 10 && intervalTime >= longPressTime) {
+            return true;
+        }
+        return false;
     }
 
    /* private int touchLine = -1;
