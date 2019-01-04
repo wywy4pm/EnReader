@@ -160,18 +160,22 @@ public class JustifyTextView extends AppCompatTextView {
     @Override
     protected void onDraw(Canvas canvas) {
         Log.d("TAG", "Drawing TextView Address= " + this.toString());
-        //设置remove间距
-        if (fontMetricsInt == null) {
-            fontMetricsInt = new Paint.FontMetricsInt();
-            getPaint().getFontMetricsInt(fontMetricsInt);
-        }
-        //canvas.translate(0, fontMetricsInt.top - fontMetricsInt.ascent);
-        mLineY = 0;
-        //mViewWidth = getMeasuredWidth();
-        if (isForward) {
-            drawNextPage(canvas);
+        if (isLongPress) {
+            super.onDraw(canvas);
         } else {
-            drawPrePage(canvas);
+            //设置remove间距
+            if (fontMetricsInt == null) {
+                fontMetricsInt = new Paint.FontMetricsInt();
+                getPaint().getFontMetricsInt(fontMetricsInt);
+            }
+            //canvas.translate(0, fontMetricsInt.top - fontMetricsInt.ascent);
+            mLineY = 0;
+            //mViewWidth = getMeasuredWidth();
+            if (isForward) {
+                drawNextPage(canvas);
+            } else {
+                drawPrePage(canvas);
+            }
         }
     }
 
@@ -439,6 +443,11 @@ public class JustifyTextView extends AppCompatTextView {
     private float downX = 0;
     private float downY = 0;
     private boolean isLongPress;
+    private boolean isShowPop;
+
+    public void setShowPop(boolean showPop) {
+        isShowPop = showPop;
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -464,6 +473,7 @@ public class JustifyTextView extends AppCompatTextView {
             case MotionEvent.ACTION_MOVE:
                 int lastX = (int) event.getX();
                 int lastY = (int) event.getY();
+                Log.d("TAG", "---------------onTouchEvent ACTION_MOVE------------------");
                 if (Math.abs(lastX - downX) > 10 || Math.abs(lastY - downY) > 10) {
                     this.mHandler.removeCallbacksAndMessages(null);
                 }
@@ -472,10 +482,16 @@ public class JustifyTextView extends AppCompatTextView {
                 this.mHandler.removeCallbacksAndMessages(null);
                 if (!isLongPress) {
                     isLongPress = false;
-                    Log.d("TAG", "---------------onTouchEvent ACTION_UP------------------");
-                    if (translateListener != null && !TextUtils.isEmpty(touchWord)) {
-                        setTouchWord(touchWord, translateListener);
-                        return true;
+                    if (!isShowPop) {
+                        Log.d("TAG", "---------------onTouchEvent ACTION_UP------------------");
+                        if (translateListener != null && !TextUtils.isEmpty(touchWord)) {
+                            setTouchWord(touchWord, translateListener);
+                            return true;
+                        }
+                    } else {
+                        if (longPressListener != null) {
+                            longPressListener.onHidePop();
+                        }
                     }
                 }
                 break;

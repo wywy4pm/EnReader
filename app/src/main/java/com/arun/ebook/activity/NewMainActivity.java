@@ -46,6 +46,12 @@ public class NewMainActivity extends BaseActivity implements CommonView4<List<Bo
         initData();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setFullScreen();
+    }
+
     private void initView() {
         viewPager = findViewById(R.id.viewPager);
         for (int i = 0; i < tabIds.length; i++) {

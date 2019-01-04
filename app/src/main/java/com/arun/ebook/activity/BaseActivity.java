@@ -3,7 +3,6 @@ package com.arun.ebook.activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -36,14 +35,14 @@ public abstract class BaseActivity extends AppCompatActivity implements MvpView 
 
     public void setFullScreen() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            if (getWindow() != null) {
-                WindowManager.LayoutParams lp = getWindow().getAttributes();
-                lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-                getWindow().setAttributes(lp);
-                StatusBarUtils.setStatusBar(this, true);
+            if(!DensityUtil.isNavigationBarExist(this)){
+                if (getWindow() != null) {
+                    WindowManager.LayoutParams lp = getWindow().getAttributes();
+                    lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+                    getWindow().setAttributes(lp);
+                    StatusBarUtils.setStatusBarVisible(this, false);
+                }
             }
-        } else {
-            StatusBarUtils.setStatusBar(this, true);
         }
     }
 

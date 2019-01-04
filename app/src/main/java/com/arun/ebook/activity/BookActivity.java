@@ -10,8 +10,14 @@ import com.arun.ebook.adapter.ReadPageAdapter;
 import com.arun.ebook.bean.BookDetailBean;
 import com.arun.ebook.bean.BookItemBean;
 import com.arun.ebook.common.Constant;
+import com.arun.ebook.event.LongPressEvent;
 import com.arun.ebook.presenter.BookPresenter;
 import com.arun.ebook.view.CommonView4;
+import com.arun.ebook.widget.ReadViewPager;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +27,13 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
     private String bookId;
     private static final int PAGE_SIZE = 3;
     private BookPresenter bookPresenter;
-    private ViewPager viewPager;
+    private ReadViewPager viewPager;
     private ReadPageAdapter readPageAdapter;
     private int currentPage = 1;
     private int totalCount;
     private List<BookDetailBean> pageList = new ArrayList<>();
+    //private PageViewGroup groupView;
+    private boolean isPressPopShow;
 
     public static void jumpToBook(Context context, BookItemBean item) {
         Intent intent = new Intent(context, BookActivity.class);
@@ -37,9 +45,17 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setFullScreen();
+        //groupView = (PageViewGroup) LayoutInflater.from(this).inflate(R.layout.activity_book, null);
         setContentView(R.layout.activity_book);
+        EventBus.getDefault().register(this);
         initData();
         initView();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setFullScreen();
     }
 
     private void initData() {
@@ -111,5 +127,17 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
     @Override
     public void refresh(int type, Object data) {
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLongPressPopChanged(LongPressEvent longPressEvent) {
+        isPressPopShow = !longPressEvent.isHide;
+        viewPager.setLongPressPopShow(isPressPopShow);
     }
 }

@@ -21,8 +21,11 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.arun.ebook.R;
+import com.arun.ebook.event.LongPressEvent;
 import com.arun.ebook.listener.LongPressListener;
 import com.arun.ebook.widget.JustifyTextView;
+
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Created by Jaeger on 16/8/30.
@@ -80,6 +83,12 @@ public class SelectableTextHelper {
             @Override
             public void onLongPress() {
                 showSelectView(mTouchX, mTouchY);
+            }
+
+            @Override
+            public void onHidePop() {
+                resetSelectionInfo();
+                hideSelectView();
             }
         });
 
@@ -170,8 +179,9 @@ public class SelectableTextHelper {
         }
     };
 
-    private void hideSelectView() {
+    public void hideSelectView() {
         isHide = true;
+        EventBus.getDefault().post(new LongPressEvent(isHide));
         if (mStartHandle != null) {
             mStartHandle.dismiss();
         }
@@ -181,9 +191,12 @@ public class SelectableTextHelper {
         if (mOperateWindow != null) {
             mOperateWindow.dismiss();
         }
+        if(mTextView!=null){
+            mTextView.setShowPop(false);
+        }
     }
 
-    private void resetSelectionInfo() {
+    public void resetSelectionInfo() {
         mSelectionInfo.mSelectionContent = null;
         if (mSpannable != null && mSpan != null) {
             mSpannable.removeSpan(mSpan);
@@ -195,6 +208,7 @@ public class SelectableTextHelper {
         hideSelectView();
         resetSelectionInfo();
         isHide = false;
+        EventBus.getDefault().post(new LongPressEvent(isHide));
         if (mStartHandle == null) mStartHandle = new CursorHandle(true);
         if (mEndHandle == null) mEndHandle = new CursorHandle(false);
 
@@ -210,6 +224,9 @@ public class SelectableTextHelper {
         showCursorHandle(mStartHandle);
         showCursorHandle(mEndHandle);
         mOperateWindow.show();
+        if(mTextView!=null){
+            mTextView.setShowPop(true);
+        }
     }
 
     private void showCursorHandle(CursorHandle cursorHandle) {

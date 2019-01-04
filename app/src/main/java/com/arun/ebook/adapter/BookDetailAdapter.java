@@ -10,9 +10,16 @@ import android.widget.TextView;
 import com.arun.ebook.R;
 import com.arun.ebook.bean.BookDetailBean;
 import com.arun.ebook.bean.BookDetailItemBean;
+import com.arun.ebook.event.HidePopEvent;
+import com.arun.ebook.listener.TranslateListener;
 import com.arun.ebook.selectable.OnSelectListener;
 import com.arun.ebook.selectable.SelectableTextHelper;
+import com.arun.ebook.utils.ToastUtils;
 import com.arun.ebook.widget.JustifyTextView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -52,16 +59,27 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
         return type;
     }
 
-    private static class BookContentHolder extends RecyclerView.ViewHolder {
+    @Override
+    public void onViewRecycled(RecyclerView.ViewHolder holder) {
+        super.onViewRecycled(holder);
+        if (holder instanceof BookContentHolder) {
+            ((BookContentHolder) holder).recycler();
+        }
+    }
+
+    private static class BookContentHolder extends RecyclerView.ViewHolder implements TranslateListener {
+        private Context context;
         private JustifyTextView contentView;
         private TextView pageText;
         private SelectableTextHelper mSelectableTextHelper;
 
-        private BookContentHolder(Context context,View itemView) {
+        private BookContentHolder(Context context, View itemView) {
             super(itemView);
+            this.context = context;
+            EventBus.getDefault().register(this);
             contentView = itemView.findViewById(R.id.contentView);
             pageText = itemView.findViewById(R.id.pageText);
-            /*mSelectableTextHelper = new SelectableTextHelper.Builder(contentView)
+            mSelectableTextHelper = new SelectableTextHelper.Builder(contentView)
                     .setSelectedColor(context.getResources().getColor(R.color.text_green))
                     .setCursorHandleSizeInDp(20)
                     .setCursorHandleColor(context.getResources().getColor(R.color.red))
@@ -72,14 +90,32 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
                 public void onTextSelected(CharSequence content) {
 
                 }
-            });*/
+            });
         }
 
         private void setData(BookDetailBean bean) {
             if (bean != null) {
                 contentView.setText(bean.content);
+                contentView.setTranslateListener(this);
                 pageText.setText((bean.currentPage + 1) + "/" + bean.totalPage);
             }
+        }
+
+        private void recycler() {
+            EventBus.getDefault().unregister(this);
+        }
+
+        @Subscribe(threadMode = ThreadMode.MAIN)
+        public void onHidePop(HidePopEvent hidePopEvent) {
+            if (mSelectableTextHelper != null) {
+                mSelectableTextHelper.resetSelectionInfo();
+                mSelectableTextHelper.hideSelectView();
+            }
+        }
+
+        @Override
+        public void showTransDialog(String word, String seq) {
+            ToastUtils.getInstance(context).showToast(word);
         }
     }
 

@@ -37,6 +37,20 @@ public class StatusBarUtils {
         }
     }
 
+    public static void setStatusBarVisible(Activity activity,boolean show) {
+        if (show) {
+            int uiFlags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+            uiFlags |= 0x00001000;
+            activity.getWindow().getDecorView().setSystemUiVisibility(uiFlags);
+        } else {
+            int uiFlags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN;
+            uiFlags |= 0x00001000;
+            activity.getWindow().getDecorView().setSystemUiVisibility(uiFlags);
+        }
+    }
+
     /**
      * 修改状态栏为全透明
      *
