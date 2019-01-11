@@ -19,8 +19,7 @@ import com.arun.ebook.utils.ToastUtils;
 import com.arun.ebook.view.MvpView;
 
 public abstract class BaseActivity extends AppCompatActivity implements MvpView {
-    public ImageView image_back;
-    public TextView titleView;
+    public TextView text_back, text_name, text_right;
     public String userId;
     public String deviceId;
     public int screenWidth;
@@ -35,7 +34,7 @@ public abstract class BaseActivity extends AppCompatActivity implements MvpView 
 
     public void setFullScreen() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            if(!DensityUtil.isNavigationBarExist(this)){
+            if (!DensityUtil.isNavigationBarExist(this)) {
                 if (getWindow() != null) {
                     WindowManager.LayoutParams lp = getWindow().getAttributes();
                     lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
@@ -53,17 +52,47 @@ public abstract class BaseActivity extends AppCompatActivity implements MvpView 
 
     public void initCommonView() {
         initProgressBar();
-        initTitle();
+        initTextTitle();
     }
 
-    private void initTitle() {
-        //titleView = findViewById(R.id.title_name);
+    private void initTextTitle() {
+        text_back = findViewById(R.id.text_back);
+        text_name = findViewById(R.id.text_name);
+        text_right = findViewById(R.id.text_right);
+        setTextBack();
+        setTextRight();
     }
 
-    public void setTitleName(String titleName) {
-        if (titleView != null && !TextUtils.isEmpty(titleName)) {
-            titleView.setText(titleName);
+    public void setTextTitleName(String titleName) {
+        if (text_name != null && !TextUtils.isEmpty(titleName)) {
+            text_name.setText(titleName);
         }
+    }
+
+    public void setTextBack() {
+        if (text_back != null) {
+            text_back.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+        }
+    }
+
+    public void setTextRight() {
+        if (text_right != null) {
+            text_right.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClickTextRight();
+                }
+            });
+        }
+    }
+
+    public void onClickTextRight() {
+
     }
 
     private void initProgressBar() {

@@ -10,6 +10,7 @@ import com.arun.ebook.adapter.ReadPageAdapter;
 import com.arun.ebook.bean.BookDetailBean;
 import com.arun.ebook.bean.BookItemBean;
 import com.arun.ebook.common.Constant;
+import com.arun.ebook.event.HidePopEvent;
 import com.arun.ebook.event.LongPressEvent;
 import com.arun.ebook.presenter.BookPresenter;
 import com.arun.ebook.view.CommonView4;
@@ -77,6 +78,7 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
+                EventBus.getDefault().post(new HidePopEvent());
                 if (position == pageList.size() - 1) {
                     getMoreData();
                 }
@@ -139,5 +141,10 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
     public void onLongPressPopChanged(LongPressEvent longPressEvent) {
         isPressPopShow = !longPressEvent.isHide;
         viewPager.setLongPressPopShow(isPressPopShow);
+    }
+
+    public void removeList(int position){
+        pageList.remove(position);
+        readPageAdapter.updateData(pageList, totalCount);
     }
 }

@@ -9,6 +9,8 @@ import com.arun.ebook.model.BookModel;
 import com.arun.ebook.view.CommonView4;
 
 public class BookPresenter extends BasePresenter<CommonView4> {
+    public static final int TYPE_BOOK_EDIT = 1;
+
     public BookPresenter() {
         super();
     }
@@ -31,6 +33,19 @@ public class BookPresenter extends BasePresenter<CommonView4> {
                                     getMvpView().refreshMore(bean.data);
                                 }
                             }
+                        }
+                    }
+                });
+    }
+
+    public void bookEdit(int paragraphId, int type, String content, int styleId) {
+        BookModel.getInstance().bookEdit(
+                paragraphId, type, content, styleId, new RequestListenerImpl(getMvpView(), this) {
+                    @SuppressWarnings("unchecked")
+                    @Override
+                    public void onSuccess(CommonApiResponse data) {
+                        if (getMvpView() != null && data != null && data.errno == ErrorCode.SUC_NO) {
+                            getMvpView().refresh(TYPE_BOOK_EDIT, data.data);
                         }
                     }
                 });

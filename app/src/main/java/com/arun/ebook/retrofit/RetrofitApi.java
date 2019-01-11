@@ -25,4 +25,7 @@ public interface RetrofitApi {
 
     @GET(RetrofitUrl.BOOK_DETAIL)
     Observable<CommonApiResponse<CommonListData<BookDetailBean>>> getBookDetail(@Path("bookId") String bookId, @Path("pageSize") int pageSize, @Query("page") int currentPage);
+
+    @GET(RetrofitUrl.BOOK_EDIT)
+    Observable<CommonApiResponse<Boolean>> bookEdit(@Path("paragraphId") int paragraphId, @Path("type") int type, @Query("content") String content, @Query("styleId") int styleId);
 }

@@ -10,7 +10,7 @@ import com.arun.ebook.event.HidePopEvent;
 
 import org.greenrobot.eventbus.EventBus;
 
-public class ReadViewPager extends ViewPager{
+public class ReadViewPager extends ViewPager {
     private boolean isLongPressPopShow;
     private float downX = 0;
     private float downY = 0;
@@ -39,12 +39,11 @@ public class ReadViewPager extends ViewPager{
             case MotionEvent.ACTION_MOVE:
                 float moveUpX = Math.abs(eventX - downX);
                 float moveUpY = Math.abs(eventY - downY);
-                if (moveUpX > 10 && moveUpY > 10) {
-                    if (isLongPressPopShow) {
-                        Log.d("TAG", "ReadRecyclerView isLongPressPopShow");
-                        EventBus.getDefault().post(new HidePopEvent());
-                        return true;
-                    }
+                Log.d("TAG", "ReadViewPager ACTION_MOVE");
+                if (moveUpX > 1 || moveUpY > 1) {
+                    Log.d("TAG", "ReadViewPager isLongPressPopShow");
+                    EventBus.getDefault().post(new HidePopEvent());
+                    //return true;
                 }
                 break;
             case MotionEvent.ACTION_UP:

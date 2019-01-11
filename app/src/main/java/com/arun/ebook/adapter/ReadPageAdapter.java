@@ -3,6 +3,8 @@ package com.arun.ebook.adapter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
 
 import com.arun.ebook.bean.BookDetailBean;
 import com.arun.ebook.fragment.ReadFragment;
@@ -10,7 +12,7 @@ import com.arun.ebook.fragment.ReadFragment;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReadPageAdapter extends FragmentPagerAdapter {
+public class ReadPageAdapter extends FragmentStatePagerAdapter{
 
     private List<BookDetailBean> data = new ArrayList<>();
     private int totalCount;
@@ -41,5 +43,10 @@ public class ReadPageAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         return data.size();
+    }
+
+    @Override
+    public int getItemPosition(Object object) {
+        return PagerAdapter.POSITION_NONE;
     }
 }

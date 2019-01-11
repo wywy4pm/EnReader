@@ -185,7 +185,7 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
                     }
                 }
                 Typeface typeface = Typeface.DEFAULT;
-                File[] files = Utils.readFontsFile(NewReadActivity.this);
+                File[] files = Utils.readFontsFile(NewReadActivity.this, "fonts", Constant.PATH_FONT);
                 if (files != null) {
                     for (int i = 0; i < files.length; i++) {
                         if (!TextUtils.isEmpty(fontName) && fontName.equals(files[i].getName())) {

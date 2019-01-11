@@ -1,6 +1,8 @@
 package com.arun.ebook.utils;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextPaint;
@@ -9,8 +11,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.arun.ebook.common.Constant;
 import com.arun.ebook.listener.ClickWordListener;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -130,5 +134,15 @@ public class StringUtils {
                 return true;
         }
         return false;
+    }
+
+    public static void setEnTextFont(Context context, TextView content) {
+        File[] files = Utils.readFontsFile(context, "new_fonts", Constant.PATH_FONT_NEW);
+        if (files != null && files.length > 0) {
+            Typeface typeface = Typeface.createFromFile(files[0]);
+            if (typeface != null) {
+                content.setTypeface(typeface);
+            }
+        }
     }
 }

@@ -187,36 +187,36 @@ public class Utils {
         return detector.getDetectedCharset();
     }
 
-    public static File[] readFontsFile(Context context) {
+    public static File[] readFontsFile(Context context, String assetsFolder, String filePath) {
         File[] fileNames = null;
-        File dir = new File(Constant.PATH_FONT);
+        File dir = new File(filePath);
         if (!dir.exists()) {
             try {
-                String[] fontNames = context.getAssets().list("fonts");
+                String[] fontNames = context.getAssets().list(assetsFolder);
                 int writeCount = 0;
                 for (int i = 0; i < fontNames.length; i++) {
-                    InputStream inputStream = context.getAssets().open("fonts/" + fontNames[i]);
-                    boolean isWrite = writeFontFileToDisk(inputStream, fontNames[i]);
+                    InputStream inputStream = context.getAssets().open(assetsFolder + File.separator + fontNames[i]);
+                    boolean isWrite = writeFontFileToDisk(inputStream, filePath, fontNames[i]);
                     if (isWrite) {
                         writeCount++;
                     }
                 }
                 if (writeCount == fontNames.length) {
-                    fileNames = readFontFileFromDisk();
+                    fileNames = readFontFileFromDisk(filePath);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
-            fileNames = readFontFileFromDisk();
+            fileNames = readFontFileFromDisk(filePath);
         }
         return fileNames;
     }
 
-    private static File[] readFontFileFromDisk() {
+    private static File[] readFontFileFromDisk(String path) {
         File[] files = null;
         try {
-            File dir = new File(Constant.PATH_FONT);
+            File dir = new File(path);
             if (dir.exists()) {
                 files = dir.listFiles();
             }
@@ -226,9 +226,9 @@ public class Utils {
         return files;
     }
 
-    private static boolean writeFontFileToDisk(InputStream inputStream, String fileName) {
+    private static boolean writeFontFileToDisk(InputStream inputStream, String filePath, String fileName) {
         try {
-            final File file = createDirAndFile(Constant.PATH_FONT, fileName);
+            final File file = createDirAndFile(filePath, fileName);
             OutputStream outputStream = null;
             try {
                 byte[] fileReader = new byte[4096];

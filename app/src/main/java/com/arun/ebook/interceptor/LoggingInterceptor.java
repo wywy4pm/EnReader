@@ -41,8 +41,10 @@ public class LoggingInterceptor implements Interceptor {
             body = buffer.readString(charset);
         }
 
-        Logger.e("发送请求\nmethod：%s\nurl：%s\nheaders: %sbody：%s",
-                request.method(), request.url(), request.headers(), body);
+        Log.d("LoggingInterceptor", "method = " + request.method());
+        Log.d("LoggingInterceptor", "url = " + request.url());
+        Log.d("LoggingInterceptor", "headers = " + request.headers());
+        Log.d("LoggingInterceptor", "body = " + body);
 
         long startNs = System.nanoTime();
         Response response = chain.proceed(request);
@@ -70,7 +72,7 @@ public class LoggingInterceptor implements Interceptor {
 
         /*Logger.e("收到响应 %s%s %ss\n请求url：%s\n请求body：%s\n响应body：%s",
                 response.code(), response.message(), tookMs, response.request().url(), body, rBody);*/
-        Log.d("TAG", "rBody = " + rBody);
+        Log.d("LoggingInterceptor", "rBody = " + rBody);
 
         return response;
     }

@@ -29,7 +29,7 @@ import org.greenrobot.eventbus.EventBus;
 
 /**
  * Created by Jaeger on 16/8/30.
- *
+ * <p>
  * Email: chjie.jaeger@gmail.com
  * GitHub: https://github.com/laobie
  */
@@ -116,7 +116,7 @@ public class SelectableTextHelper {
 
             @Override
             public void onViewDetachedFromWindow(View v) {
-                destroy();
+                //destroy();
             }
         });
 
@@ -191,7 +191,7 @@ public class SelectableTextHelper {
         if (mOperateWindow != null) {
             mOperateWindow.dismiss();
         }
-        if(mTextView!=null){
+        if (mTextView != null) {
             mTextView.setShowPop(false);
         }
     }
@@ -223,8 +223,10 @@ public class SelectableTextHelper {
         selectText(startOffset, endOffset);
         showCursorHandle(mStartHandle);
         showCursorHandle(mEndHandle);
-        mOperateWindow.show();
-        if(mTextView!=null){
+        if (mOperateWindow != null) {
+            mOperateWindow.show();
+        }
+        if (mTextView != null) {
             mTextView.setShowPop(true);
         }
     }
@@ -288,11 +290,11 @@ public class SelectableTextHelper {
         public OperateWindow(final Context context) {
             View contentView = LayoutInflater.from(context).inflate(R.layout.layout_operate_windows, null);
             contentView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
             mWidth = contentView.getMeasuredWidth();
             mHeight = contentView.getMeasuredHeight();
             mWindow =
-                new PopupWindow(contentView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, false);
+                    new PopupWindow(contentView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, false);
             mWindow.setClippingEnabled(false);
 
             contentView.findViewById(R.id.tv_copy).setOnClickListener(new View.OnClickListener() {
@@ -300,7 +302,7 @@ public class SelectableTextHelper {
                 public void onClick(View v) {
                     ClipboardManager clip = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
                     clip.setPrimaryClip(
-                        ClipData.newPlainText(mSelectionInfo.mSelectionContent, mSelectionInfo.mSelectionContent));
+                            ClipData.newPlainText(mSelectionInfo.mSelectionContent, mSelectionInfo.mSelectionContent));
                     if (mSelectListener != null) {
                         mSelectListener.onTextSelected(mSelectionInfo.mSelectionContent);
                     }
@@ -316,7 +318,9 @@ public class SelectableTextHelper {
                     isHide = false;
                     showCursorHandle(mStartHandle);
                     showCursorHandle(mEndHandle);
-                    mOperateWindow.show();
+                    if (mOperateWindow != null) {
+                        mOperateWindow.show();
+                    }
                 }
             });
         }
@@ -397,10 +401,14 @@ public class SelectableTextHelper {
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
-                    mOperateWindow.show();
+                    if (mOperateWindow != null) {
+                        mOperateWindow.show();
+                    }
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    mOperateWindow.dismiss();
+                    if (mOperateWindow != null) {
+                        mOperateWindow.dismiss();
+                    }
                     int rawX = (int) event.getRawX();
                     int rawY = (int) event.getRawY();
                     update(rawX + mAdjustX - mWidth, rawY + mAdjustY - mHeight);
@@ -468,10 +476,10 @@ public class SelectableTextHelper {
             Layout layout = mTextView.getLayout();
             if (isLeft) {
                 mPopupWindow.update((int) layout.getPrimaryHorizontal(mSelectionInfo.mStart) - mWidth + getExtraX(),
-                    layout.getLineBottom(layout.getLineForOffset(mSelectionInfo.mStart)) + getExtraY(), -1, -1);
+                        layout.getLineBottom(layout.getLineForOffset(mSelectionInfo.mStart)) + getExtraY(), -1, -1);
             } else {
                 mPopupWindow.update((int) layout.getPrimaryHorizontal(mSelectionInfo.mEnd) + getExtraX(),
-                    layout.getLineBottom(layout.getLineForOffset(mSelectionInfo.mEnd)) + getExtraY(), -1, -1);
+                        layout.getLineBottom(layout.getLineForOffset(mSelectionInfo.mEnd)) + getExtraY(), -1, -1);
             }
         }
 

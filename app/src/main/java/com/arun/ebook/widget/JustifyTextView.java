@@ -480,10 +480,10 @@ public class JustifyTextView extends AppCompatTextView {
                 break;
             case MotionEvent.ACTION_UP:
                 this.mHandler.removeCallbacksAndMessages(null);
+                Log.d("TAG", "---------------onTouchEvent ACTION_UP------------------");
                 if (!isLongPress) {
                     isLongPress = false;
                     if (!isShowPop) {
-                        Log.d("TAG", "---------------onTouchEvent ACTION_UP------------------");
                         if (translateListener != null && !TextUtils.isEmpty(touchWord)) {
                             setTouchWord(touchWord, translateListener);
                             return true;
@@ -491,6 +491,7 @@ public class JustifyTextView extends AppCompatTextView {
                     } else {
                         if (longPressListener != null) {
                             longPressListener.onHidePop();
+                            return true;
                         }
                     }
                 }
@@ -499,6 +500,9 @@ public class JustifyTextView extends AppCompatTextView {
         return super.onTouchEvent(event);
     }
 
+    public void removeHandlerCallBack(){
+        this.mHandler.removeCallbacksAndMessages(null);
+    }
 
     /**
      * * 判断是否有长按动作发生 * @param lastX 按下时X坐标 * @param lastY 按下时Y坐标 *

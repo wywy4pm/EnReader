@@ -20,4 +20,8 @@ public class BookModel extends BaseModel {
     public void getBookDetail(String bookId, int pageSize, int currentPage, CommonRequestListener listener) {
         request(RetrofitInit.getApi().getBookDetail(bookId, pageSize, currentPage), listener);
     }
+
+    public void bookEdit(int paragraphId, int style, String content, int styleId, CommonRequestListener listener) {
+        request(RetrofitInit.getApi().bookEdit(paragraphId, style, content, styleId), listener);
+    }
 }

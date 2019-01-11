@@ -16,7 +16,7 @@
         android:roundIcon="@mipmap/spotlight"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".activity.MainActivity"></activity>
+        <activity android:name=".activity.MainActivity" />
         <activity android:name=".activity.PermissionsActivity" />
         <activity android:name=".activity.ReadActivity" />
         <activity
@@ -36,11 +36,17 @@
         </activity>
         <activity
             android:name=".activity.BookActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="android.max_aspect"
             android:value="2.1" />
+
+        <activity
+            android:name=".activity.EditPageActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

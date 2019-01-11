@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import com.arun.ebook.R;
 import com.arun.ebook.adapter.FontAdapter;
 import com.arun.ebook.bean.FontBean;
+import com.arun.ebook.common.Constant;
 import com.arun.ebook.listener.SwitchFontListener;
 import com.arun.ebook.utils.Utils;
 
@@ -50,7 +51,7 @@ public class FontActivity extends AppCompatActivity implements SwitchFontListene
         FontBean top = new FontBean();
         top.fontName = "默认";
         list.add(top);
-        File[] files = Utils.readFontsFile(this);
+        File[] files = Utils.readFontsFile(this, "fonts",Constant.PATH_FONT);
         if (files != null) {
             for (int i = 0; i < files.length; i++) {
                 FontBean bean = new FontBean();
