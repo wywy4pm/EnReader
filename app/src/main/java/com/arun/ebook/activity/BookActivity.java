@@ -31,10 +31,14 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
     private ReadViewPager viewPager;
     private ReadPageAdapter readPageAdapter;
     private int currentPage = 1;
+    private int posOne = 0;
+    private int currentShowPage = 1;
     private int totalCount;
+    //private List<BookDetailBean> cacheThreePageList = new ArrayList<>();
     private List<BookDetailBean> pageList = new ArrayList<>();
     //private PageViewGroup groupView;
     private boolean isPressPopShow;
+    private boolean isEdit;
 
     public static void jumpToBook(Context context, BookItemBean item) {
         Intent intent = new Intent(context, BookActivity.class);
@@ -78,6 +82,8 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
+                currentShowPage = position / 3 + 1;
+                posOne = (currentShowPage - 1) * 3;
                 EventBus.getDefault().post(new HidePopEvent());
                 if (position == pageList.size() - 1) {
                     getMoreData();
@@ -121,7 +127,14 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
     @Override
     public void refreshMore(List<BookDetailBean> data) {
         if (data != null && data.size() > 0) {
-            pageList.addAll(data);
+            if (isEdit) {
+                if (data.size() == 3) {
+                    addList(data, posOne, posOne + 1, posOne + 2);
+                }
+                isEdit = false;
+            } else {
+                pageList.addAll(data);
+            }
             readPageAdapter.updateData(pageList, totalCount);
         }
     }
@@ -143,8 +156,25 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
         viewPager.setLongPressPopShow(isPressPopShow);
     }
 
-    public void removeList(int position){
-        pageList.remove(position);
-        readPageAdapter.updateData(pageList, totalCount);
+    public void refreshData(boolean isEdit) {
+        this.isEdit = isEdit;
+        removeList(posOne, posOne + 1, posOne + 2);
+        if (bookPresenter != null) {
+            bookPresenter.getBookDetail(bookId, PAGE_SIZE, currentShowPage);
+        }
+    }
+
+    public void addList(List<BookDetailBean> beanList, int... position) {
+        for (int i = 0; i < position.length; i++) {
+            pageList.add(position[i], beanList.get(i));
+        }
+    }
+
+    public void removeList(int... position) {
+        List<BookDetailBean> deleteList = new ArrayList<>();
+        for (int i = 0; i < position.length; i++) {
+            deleteList.add(pageList.get(i));
+        }
+        pageList.removeAll(deleteList);
     }
 }

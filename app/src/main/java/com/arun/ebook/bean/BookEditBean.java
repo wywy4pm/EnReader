@@ -7,9 +7,9 @@ public class BookEditBean {
     public static final int TYPE_EDIT = 4;
     public static final int TYPE_STYLE = 5;
 
+    public static final int STYLE_MAIN_BODY = 1;
     public static final int STYLE_TITLE = 2;
     public static final int STYLE_QUOTE = 3;
-    public static final int STYLE_MAIN_BODY = 4;
 
     //paragraphId是段落的id
     public int paragraphId;
@@ -17,7 +17,7 @@ public class BookEditBean {
     public int type;
     //修改的内容；当type等于4的时候必传
     public String content;
-    //样式id，当type等于5的时候传（//1:文本样式；2：标题；3：引用；4：正文）
+    //样式id，当type等于5的时候传（//1:正文；2：标题；3：引用）
     public int styleId;
 
     public BookEditBean(int paragraphId, int type) {
@@ -31,10 +31,9 @@ public class BookEditBean {
         this.content = content;
     }
 
-    public BookEditBean(int paragraphId, int type, String content, int styleId) {
+    public BookEditBean(int paragraphId, int type, int styleId) {
         this.paragraphId = paragraphId;
         this.type = type;
-        this.content = content;
         this.styleId = styleId;
     }
 

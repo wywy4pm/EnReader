@@ -68,6 +68,7 @@ public class EditPageActivity extends BaseActivity {
         if (!TextUtils.isEmpty(content.getText())) {
             String text = content.getText().toString();
             EventBus.getDefault().post(new EditPageEvent(text, paragraphId, currentPage, isEditPage));
+            finish();
         } else {
             showToast(getString(R.string.page_edit_tips));
         }

@@ -101,12 +101,12 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
     public void onEditBack(EditPageEvent editPageEvent) {
         if (currentPage == editPageEvent.currentPage) {
             BookEditBean bean = null;
-            if (editPageEvent.isEdit) {
-                if (!TextUtils.isEmpty(editPageEvent.content)) {
+            if (!TextUtils.isEmpty(editPageEvent.content)) {
+                if (editPageEvent.isEdit) {
                     bean = new BookEditBean(editPageEvent.paragraphId, BookEditBean.TYPE_EDIT, editPageEvent.content);
+                } else {
+                    bean = new BookEditBean(editPageEvent.paragraphId, BookEditBean.TYPE_INSERT, editPageEvent.content);
                 }
-            } else {
-                bean = new BookEditBean(editPageEvent.paragraphId, BookEditBean.TYPE_INSERT);
             }
             if (bean != null) {
                 onBookEdit(bean);
@@ -129,6 +129,9 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
                 Boolean bool = (Boolean) data;
                 if (bool) {
                     Log.d("TAG", "TYPE_BOOK_EDIT SUCCESS");
+                    if (getActivity() instanceof BookActivity) {
+                        ((BookActivity) getActivity()).refreshData(true);
+                    }
                 }
             }
         }

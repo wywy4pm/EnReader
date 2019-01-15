@@ -25,10 +25,11 @@
         android:layout_marginLeft="28dp"
         android:layout_marginRight="28dp"
         android:layout_marginTop="115dp"
-        android:lineSpacingExtra="3dp"
+        android:lineSpacingExtra="2dp"
         android:text=""
+        android:lineSpacingMultiplier="1"
         android:textColor="@color/charcoalgrey"
-        android:textSize="18sp" />
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/pageText"

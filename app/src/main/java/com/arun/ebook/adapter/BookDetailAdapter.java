@@ -3,6 +3,7 @@ package com.arun.ebook.adapter;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import com.arun.ebook.listener.BookEditListener;
 import com.arun.ebook.listener.TranslateListener;
 import com.arun.ebook.selectable.OnSelectListener;
 import com.arun.ebook.selectable.SelectableTextHelper;
+import com.arun.ebook.utils.DensityUtil;
 import com.arun.ebook.utils.ToastUtils;
 import com.arun.ebook.widget.JustifyTextView;
 
@@ -129,9 +131,27 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
             if (bean != null) {
                 this.detailBean = bean;
                 initFont(contentView, bean);
+                setTextStyle(bean.style);
                 contentView.setText(bean.content);
                 contentView.setTranslateListener(this);
                 pageText.setText((bean.currentPage + 1) + "/" + bean.totalPage);
+            }
+        }
+
+        public void setTextStyle(int style) {
+            switch (style) {
+                case BookEditBean.STYLE_TITLE:
+                    contentView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                    contentView.setLineSpacing(DensityUtil.dp2px(8), 1);
+                    break;
+                case BookEditBean.STYLE_QUOTE:
+                    contentView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+                    contentView.setLineSpacing(DensityUtil.dp2px(4), 1);
+                    break;
+                case BookEditBean.STYLE_MAIN_BODY:
+                    contentView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+                    contentView.setLineSpacing(DensityUtil.dp2px(2), 1);
+                    break;
             }
         }
 
@@ -178,7 +198,11 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
             BookEditBean bean = null;
             switch (v.getId()) {
                 case R.id.front_merge:
-                    bean = new BookEditBean(detailBean.paragraphId, BookEditBean.TYPE_FRONT_MERGE);
+                    if (detailBean.currentPage > 0) {
+                        bean = new BookEditBean(detailBean.paragraphId, BookEditBean.TYPE_FRONT_MERGE);
+                    } else {
+                        ToastUtils.getInstance(context).showToast("当前处于第一页，不能向前合并");
+                    }
                     break;
                 case R.id.insert:
                     EditPageActivity.jumpToEditPage(context, detailBean.paragraphId, detailBean.currentPage, "");
@@ -188,6 +212,18 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
                     break;
                 case R.id.edit:
                     EditPageActivity.jumpToEditPage(context, detailBean.paragraphId, detailBean.currentPage, contentView.getText().toString());
+                    break;
+                case R.id.style_title:
+                    bean = new BookEditBean(detailBean.paragraphId, BookEditBean.TYPE_STYLE, BookEditBean.STYLE_TITLE);
+                    setTextStyle(BookEditBean.STYLE_TITLE);
+                    break;
+                case R.id.style_quote:
+                    bean = new BookEditBean(detailBean.paragraphId, BookEditBean.TYPE_STYLE, BookEditBean.STYLE_QUOTE);
+                    setTextStyle(BookEditBean.STYLE_QUOTE);
+                    break;
+                case R.id.style_main_body:
+                    bean = new BookEditBean(detailBean.paragraphId, BookEditBean.TYPE_STYLE, BookEditBean.STYLE_MAIN_BODY);
+                    setTextStyle(BookEditBean.STYLE_MAIN_BODY);
                     break;
             }
             if (bookEditListener != null && bean != null) {
