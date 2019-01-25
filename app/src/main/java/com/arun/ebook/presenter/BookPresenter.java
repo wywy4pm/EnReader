@@ -10,6 +10,7 @@ import com.arun.ebook.view.CommonView4;
 
 public class BookPresenter extends BasePresenter<CommonView4> {
     public static final int TYPE_BOOK_EDIT = 1;
+    public static final int TYPE_BOOK_TRANSLATE = 2;
 
     public BookPresenter() {
         super();
@@ -38,14 +39,27 @@ public class BookPresenter extends BasePresenter<CommonView4> {
                 });
     }
 
-    public void bookEdit(int paragraphId, int type, String content, int styleId) {
+    public void bookEdit(int pageId, int type, String content, int styleId) {
         BookModel.getInstance().bookEdit(
-                paragraphId, type, content, styleId, new RequestListenerImpl(getMvpView(), this) {
+                pageId, type, content, styleId, new RequestListenerImpl(getMvpView(), this) {
                     @SuppressWarnings("unchecked")
                     @Override
                     public void onSuccess(CommonApiResponse data) {
                         if (getMvpView() != null && data != null && data.errno == ErrorCode.SUC_NO) {
                             getMvpView().refresh(TYPE_BOOK_EDIT, data.data);
+                        }
+                    }
+                });
+    }
+
+    public void bookTranslate(String keyword, int page_id) {
+        BookModel.getInstance().bookTranslate(
+                keyword, String.valueOf(page_id), new RequestListenerImpl(getMvpView(), this) {
+                    @SuppressWarnings("unchecked")
+                    @Override
+                    public void onSuccess(CommonApiResponse data) {
+                        if (getMvpView() != null && data != null && data.errno == ErrorCode.SUC_NO) {
+                            getMvpView().refresh(TYPE_BOOK_TRANSLATE, data.data);
                         }
                     }
                 });

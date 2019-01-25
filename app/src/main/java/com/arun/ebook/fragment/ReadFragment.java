@@ -12,10 +12,14 @@ import com.arun.ebook.bean.BookDetailBean;
 import com.arun.ebook.bean.BookDetailItemBean;
 import com.arun.ebook.bean.BookEditBean;
 import com.arun.ebook.bean.FontBean;
+import com.arun.ebook.bean.TranslateData;
 import com.arun.ebook.common.Constant;
+import com.arun.ebook.dialog.NewTranslateDialog;
+import com.arun.ebook.dialog.TranslateDialog;
 import com.arun.ebook.event.EditPageEvent;
 import com.arun.ebook.event.LongPressEvent;
 import com.arun.ebook.listener.BookEditListener;
+import com.arun.ebook.listener.DialogListener;
 import com.arun.ebook.model.BookModel;
 import com.arun.ebook.presenter.BookPresenter;
 import com.arun.ebook.utils.Utils;
@@ -37,6 +41,7 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
     private boolean isPressPopShow;
     private BookPresenter bookPresenter;
     private int currentPage;
+    private NewTranslateDialog translateDialog;
 
     public static ReadFragment newInstance(BookDetailBean bean) {
         ReadFragment readFragment = new ReadFragment();
@@ -134,14 +139,50 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
                     }
                 }
             }
+        } else if (type == BookPresenter.TYPE_BOOK_TRANSLATE) {
+            if (data instanceof TranslateData) {
+                TranslateData translateData = (TranslateData) data;
+                translateDialog = new NewTranslateDialog();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("TranslateData", translateData);
+                /*bundle.putInt("bgColor", bgColor);
+                bundle.putInt("textColor", textColor);*/
+                translateDialog.setArguments(bundle);
+                translateDialog.show(getFragmentManager(), "dialog");
+                translateDialog.setListener(new DialogListener() {
+                    @Override
+                    public void onDismiss() {
+                    }
+                });
+            }
         }
     }
 
     @Override
     public void onBookEdit(BookEditBean bean) {
         if (bookPresenter != null) {
-            bookPresenter.bookEdit(bean.paragraphId, bean.type, bean.content, bean.styleId);
+            bookPresenter.bookEdit(bean.pageId, bean.type, bean.content, bean.styleId);
         }
         //((BookActivity) getActivity()).removeList(currentPage);
+    }
+
+    @Override
+    public void translateWord(String keyword, int page_id) {
+        if (translateDialog != null
+                && translateDialog.getDialog() != null
+                && translateDialog.getDialog().isShowing()) {
+        } else {
+            if (bookPresenter != null) {
+                bookPresenter.bookTranslate(keyword, page_id);
+            }
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (translateDialog != null) {
+            translateDialog = null;
+        }
     }
 }

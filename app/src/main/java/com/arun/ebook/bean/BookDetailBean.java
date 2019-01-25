@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public class BookDetailBean implements Serializable {
-    public int paragraphId;
+    public int pageId;
     public int bookId;
     public String content;
     public int totalPage;

@@ -132,6 +132,8 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
                 this.detailBean = bean;
                 initFont(contentView, bean);
                 setTextStyle(bean.style);
+                contentView.setPageId(bean.pageId);
+                contentView.setTrans_words(bean.keyword);
                 contentView.setText(bean.content);
                 contentView.setTranslateListener(this);
                 pageText.setText((bean.currentPage + 1) + "/" + bean.totalPage);
@@ -189,8 +191,11 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
         }
 
         @Override
-        public void showTransDialog(String word, String seq) {
-            ToastUtils.getInstance(context).showToast(word);
+        public void showTransDialog(String word, int page_id) {
+            //ToastUtils.getInstance(context).showToast(word);
+            if (bookEditListener != null) {
+                bookEditListener.translateWord(word, page_id);
+            }
         }
 
         @Override
@@ -199,30 +204,30 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
             switch (v.getId()) {
                 case R.id.front_merge:
                     if (detailBean.currentPage > 0) {
-                        bean = new BookEditBean(detailBean.paragraphId, BookEditBean.TYPE_FRONT_MERGE);
+                        bean = new BookEditBean(detailBean.pageId, BookEditBean.TYPE_FRONT_MERGE);
                     } else {
                         ToastUtils.getInstance(context).showToast("当前处于第一页，不能向前合并");
                     }
                     break;
                 case R.id.insert:
-                    EditPageActivity.jumpToEditPage(context, detailBean.paragraphId, detailBean.currentPage, "");
+                    EditPageActivity.jumpToEditPage(context, detailBean.pageId, detailBean.currentPage, "");
                     break;
                 case R.id.delete:
-                    bean = new BookEditBean(detailBean.paragraphId, BookEditBean.TYPE_DELETE);
+                    bean = new BookEditBean(detailBean.pageId, BookEditBean.TYPE_DELETE);
                     break;
                 case R.id.edit:
-                    EditPageActivity.jumpToEditPage(context, detailBean.paragraphId, detailBean.currentPage, contentView.getText().toString());
+                    EditPageActivity.jumpToEditPage(context, detailBean.pageId, detailBean.currentPage, contentView.getText().toString());
                     break;
                 case R.id.style_title:
-                    bean = new BookEditBean(detailBean.paragraphId, BookEditBean.TYPE_STYLE, BookEditBean.STYLE_TITLE);
+                    bean = new BookEditBean(detailBean.pageId, BookEditBean.TYPE_STYLE, BookEditBean.STYLE_TITLE);
                     setTextStyle(BookEditBean.STYLE_TITLE);
                     break;
                 case R.id.style_quote:
-                    bean = new BookEditBean(detailBean.paragraphId, BookEditBean.TYPE_STYLE, BookEditBean.STYLE_QUOTE);
+                    bean = new BookEditBean(detailBean.pageId, BookEditBean.TYPE_STYLE, BookEditBean.STYLE_QUOTE);
                     setTextStyle(BookEditBean.STYLE_QUOTE);
                     break;
                 case R.id.style_main_body:
-                    bean = new BookEditBean(detailBean.paragraphId, BookEditBean.TYPE_STYLE, BookEditBean.STYLE_MAIN_BODY);
+                    bean = new BookEditBean(detailBean.pageId, BookEditBean.TYPE_STYLE, BookEditBean.STYLE_MAIN_BODY);
                     setTextStyle(BookEditBean.STYLE_MAIN_BODY);
                     break;
             }

@@ -87,6 +87,12 @@ public class JustifyTextView extends AppCompatTextView {
         this.paraSeq = paraSeq;
     }
 
+    private int page_id;
+
+    public void setPageId(int page_id) {
+        this.page_id = page_id;
+    }
+
     /*@Override
     public void setTextColor(int color) {
         paint.setColor(color);
@@ -500,7 +506,7 @@ public class JustifyTextView extends AppCompatTextView {
         return super.onTouchEvent(event);
     }
 
-    public void removeHandlerCallBack(){
+    public void removeHandlerCallBack() {
         this.mHandler.removeCallbacksAndMessages(null);
     }
 
@@ -625,13 +631,14 @@ public class JustifyTextView extends AppCompatTextView {
         addTranslated(word);
         invalidate();
         if (translateListener != null) {
-            translateListener.showTransDialog(word, paraSeq);
+            translateListener.showTransDialog(word, page_id);
         }
     }
 
     private void addTranslated(String word) {
-        if (trans_words != null) {
-            trans_words.add(word);
+        if (trans_words == null) {
+            trans_words = new ArrayList<>();
         }
+        trans_words.add(word);
     }
 }

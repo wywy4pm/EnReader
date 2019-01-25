@@ -131,7 +131,7 @@ public class ReadAdapter extends RecyclerView.Adapter {
         return list.size();
     }
 
-    private static class EnglishHolder extends RecyclerView.ViewHolder implements TranslateListener {
+    private static class EnglishHolder extends RecyclerView.ViewHolder {
         private JustifyTextView english_para;
         private PageViewListener pageViewListener;
 
@@ -144,8 +144,8 @@ public class ReadAdapter extends RecyclerView.Adapter {
         private void setData(NewBookBean bean, PageParaBean pageParaBean) {
             //english_para.reset();
             setParaCommon(english_para, pageParaBean);
-            english_para.setTranslateListener(this);
-            english_para.setParaSeq(bean.seq);
+            //english_para.setTranslateListener(this);
+            //english_para.setParaSeq(bean.seq);
             if (bean.trans_words != null) {
                 english_para.setTrans_words(bean.trans_words);
             }
@@ -199,12 +199,12 @@ public class ReadAdapter extends RecyclerView.Adapter {
             textView.setTypeface(pageParaBean.typeface);
         }
 
-        @Override
+        /*@Override
         public void showTransDialog(String word, String seq) {
             if (pageViewListener != null) {
                 pageViewListener.showTransDialog(word, seq);
             }
-        }
+        }*/
     }
 
     private static class ChineseHolder extends RecyclerView.ViewHolder {
