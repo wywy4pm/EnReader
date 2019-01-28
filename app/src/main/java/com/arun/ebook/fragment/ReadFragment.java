@@ -130,7 +130,7 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
     @Override
     public void refresh(int type, Object data) {
         if (type == BookPresenter.TYPE_BOOK_EDIT) {
-            if (data instanceof Boolean) {
+            /*if (data instanceof Boolean) {
                 Boolean bool = (Boolean) data;
                 if (bool) {
                     Log.d("TAG", "TYPE_BOOK_EDIT SUCCESS");
@@ -138,6 +138,10 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
                         ((BookActivity) getActivity()).refreshData(true);
                     }
                 }
+            }*/
+            Log.d("TAG", "TYPE_BOOK_EDIT SUCCESS");
+            if (getActivity() instanceof BookActivity) {
+                ((BookActivity) getActivity()).refreshData(true);
             }
         } else if (type == BookPresenter.TYPE_BOOK_TRANSLATE) {
             if (data instanceof TranslateData) {

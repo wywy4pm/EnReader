@@ -7,6 +7,8 @@ import com.arun.ebook.bean.CommonApiResponse;
 import com.arun.ebook.bean.CommonListData;
 import com.arun.ebook.bean.TranslateData;
 
+import java.util.List;
+
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import retrofit2.http.Body;
@@ -28,7 +30,7 @@ public interface RetrofitApi {
     Observable<CommonApiResponse<CommonListData<BookDetailBean>>> getBookDetail(@Path("bookId") String bookId, @Path("pageSize") int pageSize, @Query("page") int currentPage);
 
     @GET(RetrofitUrl.BOOK_EDIT)
-    Observable<CommonApiResponse<Boolean>> bookEdit(@Path("pageId") int pageId, @Path("type") int type, @Query("content") String content, @Query("styleId") int styleId);
+    Observable<CommonApiResponse<List<String>>> bookEdit(@Path("pageId") int pageId, @Path("type") int type, @Query("content") String content, @Query("styleId") int styleId);
 
     @GET(RetrofitUrl.BOOK_TRANSLATE)
     Observable<CommonApiResponse<TranslateData>> bookTranslate(@Query("keyword") String keyword, @Query("page_id") String page_id);
