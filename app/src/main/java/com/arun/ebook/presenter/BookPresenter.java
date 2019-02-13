@@ -16,7 +16,7 @@ public class BookPresenter extends BasePresenter<CommonView4> {
         super();
     }
 
-    public void getBookDetail(String bookId, int pageSize, int currentPage) {
+    public void getBookDetail(String bookId, int pageSize, int currentPage, final boolean isNext) {
         BookModel.getInstance().getBookDetail(
                 bookId, pageSize, currentPage, new RequestListenerImpl(getMvpView(), this) {
                     @SuppressWarnings("unchecked")
@@ -30,8 +30,8 @@ public class BookPresenter extends BasePresenter<CommonView4> {
                                 }
                                 if (bean.current_page == 1) {
                                     getMvpView().refresh(bean.data);
-                                } else {
-                                    getMvpView().refreshMore(bean.data);
+                                } else if (getMvpView() instanceof BookActivity) {
+                                    ((BookActivity) getMvpView()).refreshMoreData(bean.data, isNext);
                                 }
                             }
                         }

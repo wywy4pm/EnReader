@@ -48,7 +48,8 @@
         android:src="@drawable/selector_answer"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/main_tab"
-        app:layout_constraintRight_toLeftOf="@+id/interact_tab" />
+        app:layout_constraintRight_toLeftOf="@+id/interact_tab"
+        android:visibility="gone"/>
 
     <ImageView
         android:id="@+id/interact_tab"
@@ -58,7 +59,8 @@
         android:src="@drawable/selector_interact"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/answer_tab"
-        app:layout_constraintRight_toLeftOf="@+id/message_tab" />
+        app:layout_constraintRight_toLeftOf="@+id/message_tab"
+        android:visibility="gone"/>
 
     <ImageView
         android:id="@+id/message_tab"
@@ -68,7 +70,8 @@
         android:src="@drawable/selector_message"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/interact_tab"
-        app:layout_constraintRight_toLeftOf="@+id/mine_tab" />
+        app:layout_constraintRight_toLeftOf="@+id/mine_tab"
+        android:visibility="gone"/>
 
     <ImageView
         android:id="@+id/mine_tab"

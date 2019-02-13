@@ -7,7 +7,7 @@ import com.arun.ebook.R;
 public class MineFragment extends BaseFragment {
     @Override
     protected int preparedCreate(Bundle savedInstanceState) {
-        return R.layout.layout_font_item;
+        return R.layout.layout_mine;
     }
 
     @Override

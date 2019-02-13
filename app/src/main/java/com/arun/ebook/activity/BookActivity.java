@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.view.View;
 
 import com.arun.ebook.R;
 import com.arun.ebook.adapter.ReadPageAdapter;
@@ -13,6 +14,7 @@ import com.arun.ebook.common.Constant;
 import com.arun.ebook.event.HidePopEvent;
 import com.arun.ebook.event.LongPressEvent;
 import com.arun.ebook.presenter.BookPresenter;
+import com.arun.ebook.utils.SharedPreferencesUtils;
 import com.arun.ebook.view.CommonView4;
 import com.arun.ebook.widget.ReadViewPager;
 
@@ -39,6 +41,7 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
     //private PageViewGroup groupView;
     private boolean isPressPopShow;
     private boolean isEdit;
+    private int currentPos;
 
     public static void jumpToBook(Context context, BookItemBean item) {
         Intent intent = new Intent(context, BookActivity.class);
@@ -72,6 +75,8 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
                 }
             }
         }
+        currentPos = SharedPreferencesUtils.getConfigInt(this, SharedPreferencesUtils.KEY_READ_POS);
+        currentPage = currentPos / PAGE_SIZE + 1;
     }
 
     private void initView() {
@@ -82,11 +87,16 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                currentShowPage = position / 3 + 1;
-                posOne = (currentShowPage - 1) * 3;
+                if (pageList != null && pageList.get(position) != null) {
+                    currentPos = pageList.get(position).currentPage - 1;
+                }
+                currentShowPage = position / PAGE_SIZE + 1;
+                posOne = (currentShowPage - 1) * PAGE_SIZE;
                 EventBus.getDefault().post(new HidePopEvent());
                 if (position == pageList.size() - 1) {
-                    getMoreData();
+                    getNextData();
+                } else if (position == 0) {
+                    getPreData();
                 }
             }
         });
@@ -97,22 +107,45 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
 
     private void getData() {
         currentPage = 1;
-        getBookDetail();
+        getBookDetail(true);
     }
 
-    private void getMoreData() {
+    private void getNextData() {
         currentPage++;
-        getBookDetail();
+        getBookDetail(true);
     }
 
-    private void getBookDetail() {
+    private void getPreData() {
+        currentPage--;
+        getBookDetail(false);
+    }
+
+    private void getBookDetail(boolean isNext) {
         if (bookPresenter != null) {
-            bookPresenter.getBookDetail(bookId, PAGE_SIZE, currentPage);
+            bookPresenter.getBookDetail(bookId, PAGE_SIZE, currentPage, isNext);
         }
     }
 
     public void setTotalCount(int totalCount) {
         this.totalCount = totalCount;
+    }
+
+    public void refreshMoreData(List<BookDetailBean> data, boolean isNext) {
+        if (data != null && data.size() > 0) {
+            if (isEdit) {
+                if (data.size() == 3) {
+                    addList(data, posOne, posOne + 1, posOne + 2);
+                }
+                isEdit = false;
+            } else {
+                if (isNext) {
+                    pageList.addAll(data);
+                } else {
+                    pageList.addAll(0, data);
+                }
+            }
+            readPageAdapter.updateData(pageList, totalCount);
+        }
     }
 
     @Override
@@ -126,7 +159,7 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
 
     @Override
     public void refreshMore(List<BookDetailBean> data) {
-        if (data != null && data.size() > 0) {
+       /* if (data != null && data.size() > 0) {
             if (isEdit) {
                 if (data.size() == 3) {
                     addList(data, posOne, posOne + 1, posOne + 2);
@@ -136,7 +169,7 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
                 pageList.addAll(data);
             }
             readPageAdapter.updateData(pageList, totalCount);
-        }
+        }*/
     }
 
     @Override
@@ -160,7 +193,7 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
         this.isEdit = isEdit;
         removeList(posOne, posOne + 1, posOne + 2);
         if (bookPresenter != null) {
-            bookPresenter.getBookDetail(bookId, PAGE_SIZE, currentShowPage);
+            bookPresenter.getBookDetail(bookId, PAGE_SIZE, currentShowPage, true);
         }
     }
 
@@ -176,5 +209,15 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
             deleteList.add(pageList.get(i));
         }
         pageList.removeAll(deleteList);
+    }
+
+    public void backMain(View view) {
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        SharedPreferencesUtils.setConfigInt(this, SharedPreferencesUtils.KEY_READ_POS, currentPos);
     }
 }

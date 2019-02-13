@@ -13,6 +13,7 @@ public class SharedPreferencesUtils {
     private static final String KEY_USER_UID = "uid";
     public static final String KEY_READ_CONFIG = "read_config";
     public static final String KEY_READ_FONT = "read_font";
+    public static final String KEY_READ_POS = "read_pos";
 
     public static void saveUid(Context context, String uid) {
         if (!TextUtils.isEmpty(uid)) {

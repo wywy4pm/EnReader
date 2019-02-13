@@ -1,5 +1,6 @@
 package com.arun.ebook.activity;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
@@ -30,6 +31,14 @@ public abstract class BaseActivity extends AppCompatActivity implements MvpView 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         screenWidth = DensityUtil.getScreenWidth(this);
+        if (!this.isTaskRoot()) {
+            Intent mainIntent = getIntent();
+            String action = mainIntent.getAction();
+            if (mainIntent.hasCategory(Intent.CATEGORY_LAUNCHER) && Intent.ACTION_MAIN.equals(action)) {
+                finish();
+                return;
+            }
+        }
     }
 
     public void setFullScreen() {
@@ -43,6 +52,12 @@ public abstract class BaseActivity extends AppCompatActivity implements MvpView 
                 }
             }
         }
+    }
+
+
+    @Override
+    public boolean moveTaskToBack(boolean nonRoot) {
+        return super.moveTaskToBack(true);
     }
 
     public void setContentView(@LayoutRes int layoutResID) {

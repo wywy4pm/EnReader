@@ -36,8 +36,7 @@
         </activity>
         <activity
             android:name=".activity.BookActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait" />
+            android:configChanges="keyboardHidden|orientation|screenSize" />
 
         <meta-data
             android:name="android.max_aspect"
@@ -45,8 +44,7 @@
 
         <activity
             android:name=".activity.EditPageActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait" />
+            android:configChanges="keyboardHidden|orientation|screenSize" />
     </application>
 
 </manifest>

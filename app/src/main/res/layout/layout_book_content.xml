@@ -26,8 +26,8 @@
         android:layout_marginRight="28dp"
         android:layout_marginTop="115dp"
         android:lineSpacingExtra="2dp"
-        android:text=""
         android:lineSpacingMultiplier="1"
+        android:text=""
         android:textColor="@color/charcoalgrey"
         android:textSize="16sp" />
 
@@ -51,7 +51,8 @@
         android:paddingBottom="10dp"
         android:text="@string/front_merge"
         android:textColor="@color/darkgrey"
-        android:textSize="15sp" />
+        android:textSize="15sp"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/insert"
@@ -63,7 +64,8 @@
         android:paddingBottom="10dp"
         android:text="@string/insert"
         android:textColor="@color/darkgrey"
-        android:textSize="15sp" />
+        android:textSize="15sp"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/delete"
@@ -75,7 +77,8 @@
         android:paddingBottom="10dp"
         android:text="@string/delete"
         android:textColor="@color/darkgrey"
-        android:textSize="15sp" />
+        android:textSize="15sp"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/edit"
@@ -87,7 +90,8 @@
         android:paddingBottom="10dp"
         android:text="@string/edit"
         android:textColor="@color/darkgrey"
-        android:textSize="15sp" />
+        android:textSize="15sp"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/style_title"
@@ -99,7 +103,8 @@
         android:paddingBottom="10dp"
         android:text="@string/title"
         android:textColor="@color/darkgrey"
-        android:textSize="15sp" />
+        android:textSize="15sp"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/style_quote"
@@ -111,7 +116,8 @@
         android:paddingBottom="10dp"
         android:text="@string/quote"
         android:textColor="@color/darkgrey"
-        android:textSize="15sp" />
+        android:textSize="15sp"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/style_main_body"
@@ -123,6 +129,7 @@
         android:paddingBottom="10dp"
         android:text="@string/main_body"
         android:textColor="@color/darkgrey"
-        android:textSize="15sp" />
+        android:textSize="15sp"
+        android:visibility="gone" />
 
 </RelativeLayout>
