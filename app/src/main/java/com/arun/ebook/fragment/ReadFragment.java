@@ -80,7 +80,7 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
                     bean.file = files[0];
                 }
                 if (bean != null) {
-                    currentPage = bean.currentPage;
+                    currentPage = bean.seq;
                 }
                 bookDetailList.add(itemBean);
 

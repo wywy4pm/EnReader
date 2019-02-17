@@ -21,7 +21,7 @@ public class MainModel extends BaseModel {
         request(RetrofitInit.getApi().userRegister(), listener);
     }
 
-    public void getBookList(int page, int pageSize,CommonRequestListener listener) {
-        request(RetrofitInit.getApi().getBookList(page,pageSize),listener);
+    public void getBookList(int page,CommonRequestListener listener) {
+        request(RetrofitInit.getApi().getBookList(page),listener);
     }
 }

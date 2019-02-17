@@ -33,4 +33,5 @@
     <string name="question">提问</string>
     <string name="comment">评论</string>
     <string name="close">关闭</string>
+    <string name="mine">我的</string>
 </resources>

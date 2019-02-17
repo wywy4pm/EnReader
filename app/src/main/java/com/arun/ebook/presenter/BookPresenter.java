@@ -16,13 +16,13 @@ public class BookPresenter extends BasePresenter<CommonView4> {
         super();
     }
 
-    public void getBookDetail(String bookId, int pageSize, int currentPage, final boolean isNext) {
+    public void getBookDetail(int bookId, String page_ids, final boolean isNext) {
         BookModel.getInstance().getBookDetail(
-                bookId, pageSize, currentPage, new RequestListenerImpl(getMvpView(), this) {
+                bookId, page_ids, new RequestListenerImpl(getMvpView(), this) {
                     @SuppressWarnings("unchecked")
                     @Override
                     public void onSuccess(CommonApiResponse data) {
-                        if (getMvpView() != null && data != null && data.errno == ErrorCode.SUC_NO) {
+                        if (getMvpView() != null && data != null && data.code == ErrorCode.SUC_NO) {
                             if (data.data instanceof CommonListData) {
                                 CommonListData bean = (CommonListData) data.data;
                                 if (getMvpView() instanceof BookActivity) {
@@ -45,7 +45,7 @@ public class BookPresenter extends BasePresenter<CommonView4> {
                     @SuppressWarnings("unchecked")
                     @Override
                     public void onSuccess(CommonApiResponse data) {
-                        if (getMvpView() != null && data != null && data.errno == ErrorCode.SUC_NO) {
+                        if (getMvpView() != null && data != null && data.code == ErrorCode.SUC_NO) {
                             getMvpView().refresh(TYPE_BOOK_EDIT, data.data);
                         }
                     }
@@ -58,7 +58,7 @@ public class BookPresenter extends BasePresenter<CommonView4> {
                     @SuppressWarnings("unchecked")
                     @Override
                     public void onSuccess(CommonApiResponse data) {
-                        if (getMvpView() != null && data != null && data.errno == ErrorCode.SUC_NO) {
+                        if (getMvpView() != null && data != null && data.code == ErrorCode.SUC_NO) {
                             getMvpView().refresh(TYPE_BOOK_TRANSLATE, data.data);
                         }
                     }

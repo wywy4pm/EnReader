@@ -34,7 +34,8 @@ public class NewMainActivity extends BaseActivity implements CommonView4<List<Bo
     private ViewPager viewPager;
     private List<Fragment> fragmentList = new ArrayList<>();
     //private ImageView main_tab, answer_tab, interact_tab, message_tab, mine_tab;
-    private int[] tabIds = new int[]{R.id.main_tab, R.id.answer_tab, R.id.interact_tab, R.id.message_tab, R.id.mine_tab};
+    //private int[] tabIds = new int[]{R.id.main_tab, R.id.answer_tab, R.id.interact_tab, R.id.message_tab, R.id.mine_tab};
+    private int[] tabIds = new int[]{R.id.main_tab, R.id.mine_tab};
     private List<ImageView> tabViews = new ArrayList<>();
 
     @Override
@@ -72,14 +73,14 @@ public class NewMainActivity extends BaseActivity implements CommonView4<List<Bo
         mine_tab.setOnClickListener(this);*/
 
         MainFragment mainFragment = MainFragment.newInstance();
-        AnswerFragment answerFragment = new AnswerFragment();
+        /*AnswerFragment answerFragment = new AnswerFragment();
         InteractFragment interactFragment = new InteractFragment();
-        MessageFragment messageFragment = new MessageFragment();
+        MessageFragment messageFragment = new MessageFragment();*/
         MineFragment mineFragment = new MineFragment();
         fragmentList.add(mainFragment);
-        fragmentList.add(answerFragment);
+        /*fragmentList.add(answerFragment);
         fragmentList.add(interactFragment);
-        fragmentList.add(messageFragment);
+        fragmentList.add(messageFragment);*/
         fragmentList.add(mineFragment);
         viewPager.setAdapter(new MainAdapter(getSupportFragmentManager(), fragmentList));
         viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener(){
@@ -113,7 +114,7 @@ public class NewMainActivity extends BaseActivity implements CommonView4<List<Bo
     @Override
     public void refresh(int type, Object data) {
         if (type == MainPresenter.TYPE_REGISTER) {
-            if (data != null && data instanceof AppBean) {
+            if (data instanceof AppBean) {
                 AppBean bean = (AppBean) data;
                 if (!TextUtils.isEmpty((bean.uid))) {
                     SharedPreferencesUtils.saveUid(this, bean.uid);
@@ -130,7 +131,7 @@ public class NewMainActivity extends BaseActivity implements CommonView4<List<Bo
             case R.id.main_tab:
                 setSelectTab(Constant.TAB_INDEX_MAIN);
                 break;
-            case R.id.answer_tab:
+            /*case R.id.answer_tab:
                 setSelectTab(Constant.TAB_INDEX_ANSWER);
                 break;
             case R.id.interact_tab:
@@ -138,7 +139,7 @@ public class NewMainActivity extends BaseActivity implements CommonView4<List<Bo
                 break;
             case R.id.message_tab:
                 setSelectTab(Constant.TAB_INDEX_MESSAGE);
-                break;
+                break;*/
             case R.id.mine_tab:
                 setSelectTab(Constant.TAB_INDEX_MINE);
                 break;

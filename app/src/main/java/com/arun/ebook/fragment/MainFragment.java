@@ -68,7 +68,7 @@ public class MainFragment extends BaseFragment implements CommonView4<List<BookI
 
     private void request() {
         if (mainPresenter != null) {
-            mainPresenter.getBookList(currentPage, PAGE_SIZE);
+            mainPresenter.getBookList(currentPage);
         }
     }
 

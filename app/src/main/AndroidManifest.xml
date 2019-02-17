@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.arun.ebook">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -15,7 +16,8 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/spotlight"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+        tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".activity.MainActivity" />
         <activity android:name=".activity.PermissionsActivity" />
         <activity android:name=".activity.ReadActivity" />
@@ -44,6 +46,10 @@
 
         <activity
             android:name=".activity.EditPageActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+
+        <activity
+            android:name=".activity.WebViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
     </application>
 

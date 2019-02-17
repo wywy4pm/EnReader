@@ -27,7 +27,7 @@ import java.util.List;
 
 public class BookActivity extends BaseActivity implements CommonView4<List<BookDetailBean>> {
     private BookItemBean bookItem;
-    private String bookId;
+    private int bookId;
     private static final int PAGE_SIZE = 3;
     private BookPresenter bookPresenter;
     private ReadViewPager viewPager;
@@ -71,7 +71,7 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
             if (getIntent().getExtras().containsKey(Constant.INTENT_BOOK_ITEM)) {
                 bookItem = (BookItemBean) getIntent().getExtras().getSerializable(Constant.INTENT_BOOK_ITEM);
                 if (bookItem != null) {
-                    bookId = bookItem.bookId;
+                    bookId = bookItem.book_id;
                 }
             }
         }
@@ -88,7 +88,7 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 if (pageList != null && pageList.get(position) != null) {
-                    currentPos = pageList.get(position).currentPage - 1;
+                    currentPos = pageList.get(position).seq - 1;
                 }
                 currentShowPage = position / PAGE_SIZE + 1;
                 posOne = (currentShowPage - 1) * PAGE_SIZE;
@@ -122,7 +122,7 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
 
     private void getBookDetail(boolean isNext) {
         if (bookPresenter != null) {
-            bookPresenter.getBookDetail(bookId, PAGE_SIZE, currentPage, isNext);
+            bookPresenter.getBookDetail(bookId, "", isNext);
         }
     }
 
@@ -193,7 +193,7 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
         this.isEdit = isEdit;
         removeList(posOne, posOne + 1, posOne + 2);
         if (bookPresenter != null) {
-            bookPresenter.getBookDetail(bookId, PAGE_SIZE, currentShowPage, true);
+            bookPresenter.getBookDetail(bookId, "", true);
         }
     }
 

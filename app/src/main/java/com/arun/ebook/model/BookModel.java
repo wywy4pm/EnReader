@@ -17,8 +17,8 @@ public class BookModel extends BaseModel {
         return instance;
     }
 
-    public void getBookDetail(String bookId, int pageSize, int currentPage, CommonRequestListener listener) {
-        request(RetrofitInit.getApi().getBookDetail(bookId, pageSize, currentPage), listener);
+    public void getBookDetail(int bookId, String page_ids, CommonRequestListener listener) {
+        request(RetrofitInit.getApi().getBookDetail(bookId, page_ids), listener);
     }
 
     public void bookEdit(int pageId, int style, String content, int styleId, CommonRequestListener listener) {

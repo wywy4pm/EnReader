@@ -3,10 +3,10 @@ package com.arun.ebook.bean;
 import java.io.Serializable;
 
 public class BookItemBean implements Serializable{
-    public String bookId;
+    public int book_id;
     public String name;
     public String author;
     public String cover;
-    public String listImage;
-    public String createTime;
+    public String list_image;
+    public String create_time;
 }

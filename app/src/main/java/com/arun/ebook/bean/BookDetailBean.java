@@ -5,12 +5,11 @@ import java.io.Serializable;
 import java.util.List;
 
 public class BookDetailBean implements Serializable {
-    public int pageId;
-    public int bookId;
+    public int page_id;
     public String content;
     public int totalPage;
-    public int currentPage;
     public File file;
     public int style;
-    public List<String> keyword;
+    public int seq;
+    public List<String> queryed_word_list;
 }

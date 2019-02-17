@@ -35,7 +35,6 @@ public class ReadPageAdapter extends FragmentStatePagerAdapter{
     public Fragment getItem(int position) {
         if (data.get(position) != null) {
             data.get(position).totalPage = totalCount;
-            data.get(position).currentPage = position;
         }
         return ReadFragment.newInstance(data.get(position));
     }

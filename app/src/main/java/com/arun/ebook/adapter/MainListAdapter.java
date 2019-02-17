@@ -48,7 +48,7 @@ public class MainListAdapter extends BaseRecyclerAdapter<BookItemBean> {
 
         private void setData(final Context context, final BookItemBean item) {
             if (item != null) {
-                Glide.with(context).load(item.listImage).into(book_bg);
+                Glide.with(context).load(item.list_image).into(book_bg);
                 book_bg.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

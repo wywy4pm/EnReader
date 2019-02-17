@@ -5,8 +5,7 @@ package com.arun.ebook.bean;
  */
 
 public class CommonApiResponse<T> {
-    public int errno;
-    public int statusCode;
+    public int code;
     public T data;
-    public String errmsg;
+    public String msg;
 }

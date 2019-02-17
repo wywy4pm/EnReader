@@ -11,7 +11,7 @@ public class ErrorCode {
     public static final int SERVER_ERROR = -400;
     public static final int UNKNOWN_ERROR = -500;//未知错误
 
-    public static final int SUC_NO = 0;
+    public static final int SUC_NO = 200;
     public static final int SUCCESS = 200;//成功
     public static final int NO_DATA = 404;//无数据
     public static final int LACK_OF_PARAMS = 400;//缺少参数
