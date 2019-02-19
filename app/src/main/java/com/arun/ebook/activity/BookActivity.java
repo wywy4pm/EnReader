@@ -3,6 +3,7 @@ package com.arun.ebook.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.View;
@@ -47,6 +48,7 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
     private int currentPos;
     private List<Integer> page_ids;
     private String pageIds;
+    private int currentViewPos;
 
     public static void jumpToBook(Context context, BookItemBean item) {
         Intent intent = new Intent(context, BookActivity.class);
@@ -94,6 +96,7 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
+                currentViewPos = position;
                 if (pageList != null && pageList.get(position) != null) {
                     currentPos = pageList.get(position).seq - 1;
                 }
@@ -148,6 +151,23 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
                 }
             }
             readPageAdapter.updateData(pageList, totalCount);
+            if (!isNext) {
+                int pos = 0;
+                if (currentPos > 0 && currentPos < page_ids.size()) {
+                    if (currentPos >= 3) {
+                        pos = 3;
+                    } else {
+                        pos = currentPos;
+                    }
+                    final int finalPos = pos;
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            viewPager.setCurrentItem(finalPos,false);
+                        }
+                    }, 80);
+                }
+            }
         }
     }
 
