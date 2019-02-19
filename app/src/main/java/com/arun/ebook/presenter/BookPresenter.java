@@ -1,8 +1,8 @@
 package com.arun.ebook.presenter;
 
 import com.arun.ebook.activity.BookActivity;
+import com.arun.ebook.bean.BookDetailData;
 import com.arun.ebook.bean.CommonApiResponse;
-import com.arun.ebook.bean.CommonListData;
 import com.arun.ebook.common.ErrorCode;
 import com.arun.ebook.listener.RequestListenerImpl;
 import com.arun.ebook.model.BookModel;
@@ -11,9 +11,23 @@ import com.arun.ebook.view.CommonView4;
 public class BookPresenter extends BasePresenter<CommonView4> {
     public static final int TYPE_BOOK_EDIT = 1;
     public static final int TYPE_BOOK_TRANSLATE = 2;
+    public static final int TYPE_BOOK_PAGE_IDS = 3;
 
     public BookPresenter() {
         super();
+    }
+
+    public void getBookPageIds(int bookId) {
+        BookModel.getInstance().getBookPageIds(
+                bookId, new RequestListenerImpl(getMvpView(), this) {
+                    @SuppressWarnings("unchecked")
+                    @Override
+                    public void onSuccess(CommonApiResponse data) {
+                        if (getMvpView() != null) {
+                            getMvpView().refresh(TYPE_BOOK_PAGE_IDS, data.data);
+                        }
+                    }
+                });
     }
 
     public void getBookDetail(int bookId, String page_ids, final boolean isNext) {
@@ -23,15 +37,13 @@ public class BookPresenter extends BasePresenter<CommonView4> {
                     @Override
                     public void onSuccess(CommonApiResponse data) {
                         if (getMvpView() != null && data != null && data.code == ErrorCode.SUC_NO) {
-                            if (data.data instanceof CommonListData) {
-                                CommonListData bean = (CommonListData) data.data;
+                            if (data.data instanceof BookDetailData) {
+                                BookDetailData bean = (BookDetailData) data.data;
                                 if (getMvpView() instanceof BookActivity) {
-                                    ((BookActivity) getMvpView()).setTotalCount(bean.total);
+                                    ((BookActivity) getMvpView()).setTotalCount(bean.total_page);
                                 }
-                                if (bean.current_page == 1) {
-                                    getMvpView().refresh(bean.data);
-                                } else if (getMvpView() instanceof BookActivity) {
-                                    ((BookActivity) getMvpView()).refreshMoreData(bean.data, isNext);
+                                if (getMvpView() instanceof BookActivity) {
+                                    ((BookActivity) getMvpView()).refreshData(bean.page_list, isNext);
                                 }
                             }
                         }

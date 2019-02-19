@@ -136,7 +136,7 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
                 contentView.setTrans_words(bean.queryed_word_list);
                 contentView.setText(bean.content);
                 contentView.setTranslateListener(this);
-                pageText.setText((bean.seq + 1) + "/" + bean.totalPage);
+                pageText.setText(bean.seq + "/" + bean.totalPage);
             }
         }
 

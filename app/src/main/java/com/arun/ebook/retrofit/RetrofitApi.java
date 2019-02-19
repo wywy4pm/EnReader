@@ -1,12 +1,10 @@
 package com.arun.ebook.retrofit;
 
 import com.arun.ebook.bean.AppBean;
-import com.arun.ebook.bean.BookDetailBean;
 import com.arun.ebook.bean.BookDetailData;
-import com.arun.ebook.bean.BookItemBean;
+import com.arun.ebook.bean.BookPageIdsData;
 import com.arun.ebook.bean.BookListData;
 import com.arun.ebook.bean.CommonApiResponse;
-import com.arun.ebook.bean.CommonListData;
 import com.arun.ebook.bean.MineDataBean;
 import com.arun.ebook.bean.TranslateData;
 
@@ -24,6 +22,9 @@ public interface RetrofitApi {
 
     @GET(RetrofitUrl.BOOK_LIST)
     Observable<CommonApiResponse<BookListData>> getBookList(@Query("page") int page);
+
+    @GET(RetrofitUrl.BOOK_PAGE_IDS)
+    Observable<CommonApiResponse<BookPageIdsData>> getBookPageIds(@Query("book_id") int book_id);
 
     @GET(RetrofitUrl.BOOK_DETAIL)
     Observable<CommonApiResponse<BookDetailData>> getBookDetail(@Query("book_id") int bookId, @Query("page_ids") String page_ids);

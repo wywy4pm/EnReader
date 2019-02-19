@@ -10,6 +10,7 @@ import android.text.TextUtils;
 public class SharedPreferencesUtils {
     private static final String PATH_USER = "user";
     private static final String PATH_CONFIG = "config";
+    private static final String PATH_PAGE_IDS = "page_ids";
     private static final String KEY_USER_UID = "uid";
     public static final String KEY_READ_CONFIG = "read_config";
     public static final String KEY_READ_FONT = "read_font";
@@ -39,6 +40,26 @@ public class SharedPreferencesUtils {
             uid = preferences.getString(KEY_USER_UID, "");
         }
         return uid;
+    }
+
+    public static void setPageIds(Context context, String key, String value) {
+        SharedPreferences preferences = context.getSharedPreferences(PATH_PAGE_IDS, Context.MODE_PRIVATE);
+        if (preferences != null) {
+            SharedPreferences.Editor editor = preferences.edit();
+            if (editor != null) {
+                editor.putString(key, value);
+                editor.apply();
+            }
+        }
+    }
+
+    public static String getPageIds(Context context, String key) {
+        SharedPreferences preferences = context.getSharedPreferences(PATH_PAGE_IDS, Context.MODE_PRIVATE);
+        String value = "";
+        if (preferences != null) {
+            value = preferences.getString(key, "");
+        }
+        return value;
     }
 
     public static void setConfigString(Context context, String key, String value) {

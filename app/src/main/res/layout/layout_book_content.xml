@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/bg_read"
     android:minHeight="300dp">
 
     <!--<TextView
@@ -28,7 +27,7 @@
         android:lineSpacingExtra="2dp"
         android:lineSpacingMultiplier="1"
         android:text=""
-        android:textColor="@color/charcoalgrey"
+        android:textColor="@color/read_text"
         android:textSize="16sp" />
 
     <TextView
@@ -39,8 +38,9 @@
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:paddingBottom="35dp"
-        android:text="ddddddddddd"
-        android:textSize="15sp" />
+        android:text=""
+        android:textSize="15sp"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/front_merge"

@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.arun.ebook.R;
 import com.arun.ebook.activity.BookActivity;
@@ -42,6 +45,7 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
     private BookPresenter bookPresenter;
     private int currentPage;
     private NewTranslateDialog translateDialog;
+    private TextView pageNum;
 
     public static ReadFragment newInstance(BookDetailBean bean) {
         ReadFragment readFragment = new ReadFragment();
@@ -59,6 +63,7 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
 
     @Override
     protected void initView() {
+        pageNum = findViewById(R.id.pageNum);
         recyclerView = findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
@@ -83,9 +88,11 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
                     currentPage = bean.seq;
                 }
                 bookDetailList.add(itemBean);
-
                 bookPresenter = new BookPresenter();
                 bookPresenter.attachView(this);
+                if (bean != null) {
+                    pageNum.setText(bean.seq + "/" + bean.totalPage);
+                }
             }
         }
     }
