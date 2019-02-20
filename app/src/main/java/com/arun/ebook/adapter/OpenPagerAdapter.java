@@ -213,14 +213,18 @@ public abstract class OpenPagerAdapter<T> extends PagerAdapter {
             mSavedState.toArray(fss);
             state.putParcelableArray("states", fss);
         }
-        for (int i = 0; i < mItemInfos.size(); i++) {
-            Fragment f = mItemInfos.get(i).fragment;
-            if (f != null && f.isAdded()) {
-                if (state == null) {
-                    state = new Bundle();
+        if (mItemInfos != null && mItemInfos.size() > 0) {
+            for (int i = 0; i < mItemInfos.size(); i++) {
+                if (mItemInfos.get(i) != null) {
+                    Fragment f = mItemInfos.get(i).fragment;
+                    if (f != null && f.isAdded()) {
+                        if (state == null) {
+                            state = new Bundle();
+                        }
+                        String key = "f" + i;
+                        mFragmentManager.putFragment(state, key, f);
+                    }
                 }
-                String key = "f" + i;
-                mFragmentManager.putFragment(state, key, f);
             }
         }
         return state;

@@ -1,6 +1,5 @@
 package com.arun.ebook.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -26,9 +25,9 @@ public class WebViewActivity extends BaseActivity {
     private WebView webView;
     private String url;
     private ProgressBar progressBar;
-    /*private ImageView image_back;
+    private ImageView image_back;
     private TextView titleText;
-    private String title;*/
+    private String title;
 
     public static void jumpToWebViewActivity(Context context, String webUrl) {
         Intent intent = new Intent(context, WebViewActivity.class);
@@ -52,8 +51,17 @@ public class WebViewActivity extends BaseActivity {
     }
 
     private void initView() {
+        image_back = findViewById(R.id.image_back);
+        titleText = findViewById(R.id.title);
         progressBar = findViewById(R.id.progressBar);
         webView = findViewById(R.id.webView);
+
+        image_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
 
@@ -91,8 +99,8 @@ public class WebViewActivity extends BaseActivity {
             public void onReceivedTitle(WebView view, String title) {
                 super.onReceivedTitle(view, title);
                 Log.d("ANDROID_LAB", "TITLE=" + title);
-                /*WebViewActivity.this.title = title;
-                titleText.setText(title);*/
+                WebViewActivity.this.title = title;
+                titleText.setText(title);
             }
 
             @Override

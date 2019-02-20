@@ -11,10 +11,8 @@ import com.arun.ebook.bean.MineDataBean;
 import com.arun.ebook.bean.MineGroupBean;
 import com.arun.ebook.bean.MineMenuItem;
 import com.arun.ebook.event.UidEvent;
-import com.arun.ebook.helper.AppHelper;
 import com.arun.ebook.presenter.MinePresenter;
 import com.arun.ebook.utils.AppUtils;
-import com.arun.ebook.utils.DeviceUtils;
 import com.arun.ebook.utils.SharedPreferencesUtils;
 import com.arun.ebook.view.CommonView3;
 

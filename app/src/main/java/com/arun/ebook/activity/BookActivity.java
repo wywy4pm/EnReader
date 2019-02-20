@@ -260,7 +260,7 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
     }
 
     public void backMain(View view) {
-        finish();
+        onBackPressed();
     }
 
     @Override

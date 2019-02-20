@@ -151,14 +151,17 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
                 case BookEditBean.STYLE_TITLE:
                     contentView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);
                     contentView.setLineSpacing(DensityUtil.dp2px(12), 1);
+                    contentView.setTypeface(contentView.getTypeface(),Typeface.NORMAL);
                     break;
                 case BookEditBean.STYLE_QUOTE:
                     contentView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
                     contentView.setLineSpacing(DensityUtil.dp2px(12), 1);
+                    contentView.setTypeface(contentView.getTypeface(),Typeface.ITALIC);
                     break;
                 case BookEditBean.STYLE_MAIN_BODY:
                     contentView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
                     contentView.setLineSpacing(DensityUtil.dp2px(6), 1);
+                    contentView.setTypeface(contentView.getTypeface(),Typeface.NORMAL);
                     break;
             }
         }
