@@ -16,8 +16,8 @@
 
     <ImageView
         android:id="@+id/ic_back"
-        android:layout_width="23dp"
-        android:layout_height="23dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="28dp"
         android:onClick="backMain"
@@ -31,8 +31,9 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginRight="28dp"
-        android:textColor="@color/read_text"
-        android:textSize="15sp"
+        android:textColor="@color/read_page_num"
+        android:textSize="16sp"
+        android:text=""
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 </android.support.constraint.ConstraintLayout>

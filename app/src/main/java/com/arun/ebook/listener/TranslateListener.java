@@ -1,5 +1,5 @@
 package com.arun.ebook.listener;
 
 public interface TranslateListener {
-    void showTransDialog(String word, int seq);
+    void showTransDialog(int book_id,String word, int seq);
 }

@@ -5,5 +5,5 @@ import com.arun.ebook.bean.BookEditBean;
 public interface BookEditListener {
     void onBookEdit(BookEditBean bean);
 
-    void translateWord(String keyword, int page_id);
+    void translateWord(int book_id,String keyword, int page_id);
 }

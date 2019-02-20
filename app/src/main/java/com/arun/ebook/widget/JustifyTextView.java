@@ -87,6 +87,12 @@ public class JustifyTextView extends AppCompatTextView {
         this.paraSeq = paraSeq;
     }
 
+    private int book_id;
+
+    public void setBookId(int book_id) {
+        this.book_id = book_id;
+    }
+
     private int page_id;
 
     public void setPageId(int page_id) {
@@ -631,7 +637,7 @@ public class JustifyTextView extends AppCompatTextView {
         addTranslated(word);
         invalidate();
         if (translateListener != null) {
-            translateListener.showTransDialog(word, page_id);
+            translateListener.showTransDialog(book_id,word, page_id);
         }
     }
 

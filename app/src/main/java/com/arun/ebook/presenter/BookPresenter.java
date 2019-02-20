@@ -30,7 +30,7 @@ public class BookPresenter extends BasePresenter<CommonView4> {
                 });
     }
 
-    public void getBookDetail(int bookId, String page_ids, final boolean isNext) {
+    public void getBookDetail(int bookId, String page_ids, final boolean isNext, final boolean isFirst) {
         BookModel.getInstance().getBookDetail(
                 bookId, page_ids, new RequestListenerImpl(getMvpView(), this) {
                     @SuppressWarnings("unchecked")
@@ -43,7 +43,7 @@ public class BookPresenter extends BasePresenter<CommonView4> {
                                     ((BookActivity) getMvpView()).setTotalCount(bean.total_page);
                                 }
                                 if (getMvpView() instanceof BookActivity) {
-                                    ((BookActivity) getMvpView()).refreshData(bean.page_list, isNext);
+                                    ((BookActivity) getMvpView()).refreshData(bean.page_list, isNext, isFirst);
                                 }
                             }
                         }
@@ -64,9 +64,9 @@ public class BookPresenter extends BasePresenter<CommonView4> {
                 });
     }
 
-    public void bookTranslate(String keyword, int page_id) {
+    public void bookTranslate(int book_id, String keyword, int page_id) {
         BookModel.getInstance().bookTranslate(
-                keyword, String.valueOf(page_id), new RequestListenerImpl(getMvpView(), this) {
+                book_id, keyword, String.valueOf(page_id), new RequestListenerImpl(getMvpView(), this) {
                     @SuppressWarnings("unchecked")
                     @Override
                     public void onSuccess(CommonApiResponse data) {

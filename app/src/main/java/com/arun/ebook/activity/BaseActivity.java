@@ -52,6 +52,9 @@ public abstract class BaseActivity extends AppCompatActivity implements MvpView 
                 }
             }
         }
+        getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
 

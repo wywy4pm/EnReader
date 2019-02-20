@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.arun.ebook.activity.BookActivity">
+    tools:context="com.arun.ebook.activity.BookActivity"
+    android:background="@color/black">
 
     <com.arun.ebook.widget.ReadViewPager
         android:id="@+id/viewPager"

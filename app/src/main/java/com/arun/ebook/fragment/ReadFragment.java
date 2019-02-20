@@ -1,5 +1,6 @@
 package com.arun.ebook.fragment;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
@@ -43,13 +44,15 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
     private List<BookDetailItemBean> bookDetailList = new ArrayList<>();
     private boolean isPressPopShow;
     private BookPresenter bookPresenter;
-    private int currentPage;
+    public int currentPage;
     private NewTranslateDialog translateDialog;
     private TextView pageNum;
+    private int bookId;
 
-    public static ReadFragment newInstance(BookDetailBean bean) {
+    public static ReadFragment newInstance(BookDetailBean bean, int bookId) {
         ReadFragment readFragment = new ReadFragment();
         Bundle bundle = new Bundle();
+        bundle.putInt(Constant.INTENT_BOOK_ID, bookId);
         bundle.putSerializable(Constant.INTENT_BOOK_DETAIL, bean);
         readFragment.setArguments(bundle);
         return readFragment;
@@ -91,7 +94,19 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
                 bookPresenter = new BookPresenter();
                 bookPresenter.attachView(this);
                 if (bean != null) {
+                    if (bean.file != null) {
+                        Typeface typeface = Typeface.createFromFile(bean.file);
+                        if (typeface != null) {
+                            pageNum.setTypeface(typeface);
+                        }
+                    }
                     pageNum.setText(bean.seq + "/" + bean.totalPage);
+                }
+            }
+            if (getArguments().containsKey(Constant.INTENT_BOOK_ID)) {
+                bookId = getArguments().getInt(Constant.INTENT_BOOK_ID);
+                if (bookDetailAdapter != null) {
+                    bookDetailAdapter.setBook_id(bookId);
                 }
             }
         }
@@ -177,14 +192,15 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
         //((BookActivity) getActivity()).removeList(currentPage);
     }
 
+
     @Override
-    public void translateWord(String keyword, int page_id) {
+    public void translateWord(int book_id, String keyword, int page_id) {
         if (translateDialog != null
                 && translateDialog.getDialog() != null
                 && translateDialog.getDialog().isShowing()) {
         } else {
             if (bookPresenter != null) {
-                bookPresenter.bookTranslate(keyword, page_id);
+                bookPresenter.bookTranslate(book_id, keyword, page_id);
             }
         }
     }

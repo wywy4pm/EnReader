@@ -231,4 +231,6 @@
     <color name="text_green">#7cba64</color>
 
     <color name="read_text">#8b968d</color>
+
+    <color name="read_page_num">#7Fbfbfbf</color>
 </resources>

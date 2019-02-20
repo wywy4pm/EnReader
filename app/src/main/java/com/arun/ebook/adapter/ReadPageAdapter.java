@@ -10,16 +10,20 @@ import com.arun.ebook.bean.BookDetailBean;
 import com.arun.ebook.fragment.ReadFragment;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class ReadPageAdapter extends FragmentStatePagerAdapter{
-
+public class ReadPageAdapter extends OpenPagerAdapter<BookDetailBean> {
     private List<BookDetailBean> data = new ArrayList<>();
     private int totalCount;
+    private int book_id;
 
-    public ReadPageAdapter(FragmentManager fm, List<BookDetailBean> data) {
+    public ReadPageAdapter(FragmentManager fm, List<BookDetailBean> data, int book_id) {
         super(fm);
-        this.data.addAll(data);
+        this.book_id = book_id;
+        if (this.data != null) {
+            this.data.addAll(data);
+        }
     }
 
     public void updateData(List<BookDetailBean> data, int totalCount) {
@@ -36,7 +40,7 @@ public class ReadPageAdapter extends FragmentStatePagerAdapter{
         if (data.get(position) != null) {
             data.get(position).totalPage = totalCount;
         }
-        return ReadFragment.newInstance(data.get(position));
+        return ReadFragment.newInstance(data.get(position), book_id);
     }
 
     @Override
@@ -45,7 +49,66 @@ public class ReadPageAdapter extends FragmentStatePagerAdapter{
     }
 
     @Override
-    public int getItemPosition(Object object) {
-        return PagerAdapter.POSITION_NONE;
+    protected BookDetailBean getItemData(int position) {
+        return data.get(position);
     }
+
+    @Override
+    protected boolean dataEquals(BookDetailBean oldData, BookDetailBean newData) {
+        return oldData.equals(newData);
+    }
+
+    @Override
+    public int getDataPosition(BookDetailBean bean) {
+        return data.indexOf(bean);
+    }
+
+    public ReadFragment getCurrentFragmentItem() {
+        return (ReadFragment) getCurrentPrimaryItem();
+    }
+
+    public void setNewData(List<BookDetailBean> datas) {
+        data.clear();
+        data.addAll(datas);
+        notifyDataSetChanged();
+    }
+
+    public void addData(BookDetailBean bean) {
+        data.add(bean);
+        notifyDataSetChanged();
+    }
+
+    public void addData(int position, BookDetailBean bean) {
+        data.add(position, bean);
+        notifyDataSetChanged();
+    }
+
+    public void remove(int position) {
+        data.remove(position);
+        notifyDataSetChanged();
+    }
+
+    public void moveData(int from, int to) {
+        if (from == to) return;
+        Collections.swap(data, from, to);
+        notifyDataSetChanged();
+    }
+
+    public void moveDataToFirst(int from) {
+        BookDetailBean tempData = data.remove(from);
+        data.add(0, tempData);
+        notifyDataSetChanged();
+    }
+
+    public void updateByPosition(int position, BookDetailBean bean) {
+        if (position >= 0 && data.size() > position) {
+            data.set(position, bean);
+            ReadFragment targetF = getCachedFragmentByPosition(position);
+        }
+    }
+
+    public ReadFragment getCachedFragmentByPosition(int position) {
+        return (ReadFragment) getFragmentByPosition(position);
+    }
+
 }

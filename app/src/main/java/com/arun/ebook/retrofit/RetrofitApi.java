@@ -33,7 +33,7 @@ public interface RetrofitApi {
     Observable<CommonApiResponse<List<String>>> bookEdit(@Path("pageId") int pageId, @Path("type") int type, @Query("content") String content, @Query("styleId") int styleId);
 
     @GET(RetrofitUrl.BOOK_TRANSLATE)
-    Observable<CommonApiResponse<TranslateData>> bookTranslate(@Query("keyword") String keyword, @Query("page_id") String page_id);
+    Observable<CommonApiResponse<TranslateData>> bookTranslate(@Query("book_id") int book_id, @Query("keyword") String keyword, @Query("page_id") String page_id);
 
     @GET(RetrofitUrl.USER_CENTER)
     Observable<CommonApiResponse<MineDataBean>> getMineData();

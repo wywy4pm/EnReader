@@ -36,6 +36,7 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
     private static final int VIEW_TYPE_CONTENT = 1;
     public static final String DATA_TYPE_CONTENT = "content";
     private BookEditListener bookEditListener;
+    private int book_id;
 
     public BookDetailAdapter(Context context, List<BookDetailItemBean> list) {
         super(context, list);
@@ -43,6 +44,10 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
 
     public void setBookEditListener(BookEditListener bookEditListener) {
         this.bookEditListener = bookEditListener;
+    }
+
+    public void setBook_id(int book_id) {
+        this.book_id = book_id;
     }
 
     @Override
@@ -57,7 +62,7 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof BookContentHolder) {
-            ((BookContentHolder) holder).setData((BookDetailBean) getItem(position).content);
+            ((BookContentHolder) holder).setData((BookDetailBean) getItem(position).content, book_id);
         }
     }
 
@@ -127,11 +132,12 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
             this.bookEditListener = bookEditListener;
         }
 
-        private void setData(BookDetailBean bean) {
+        private void setData(BookDetailBean bean, int book_id) {
             if (bean != null) {
                 this.detailBean = bean;
                 initFont(contentView, bean);
                 setTextStyle(bean.style);
+                contentView.setBookId(book_id);
                 contentView.setPageId(bean.page_id);
                 contentView.setTrans_words(bean.queryed_word_list);
                 contentView.setText(bean.content);
@@ -143,16 +149,16 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
         public void setTextStyle(int style) {
             switch (style) {
                 case BookEditBean.STYLE_TITLE:
-                    contentView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-                    contentView.setLineSpacing(DensityUtil.dp2px(8), 1);
+                    contentView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);
+                    contentView.setLineSpacing(DensityUtil.dp2px(12), 1);
                     break;
                 case BookEditBean.STYLE_QUOTE:
                     contentView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
-                    contentView.setLineSpacing(DensityUtil.dp2px(4), 1);
+                    contentView.setLineSpacing(DensityUtil.dp2px(12), 1);
                     break;
                 case BookEditBean.STYLE_MAIN_BODY:
                     contentView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-                    contentView.setLineSpacing(DensityUtil.dp2px(2), 1);
+                    contentView.setLineSpacing(DensityUtil.dp2px(6), 1);
                     break;
             }
         }
@@ -191,10 +197,10 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
         }
 
         @Override
-        public void showTransDialog(String word, int page_id) {
+        public void showTransDialog(int book_id, String word, int page_id) {
             //ToastUtils.getInstance(context).showToast(word);
             if (bookEditListener != null) {
-                bookEditListener.translateWord(word, page_id);
+                bookEditListener.translateWord(book_id, word, page_id);
             }
         }
 
