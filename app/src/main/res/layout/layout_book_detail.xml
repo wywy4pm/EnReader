@@ -16,8 +16,8 @@
 
     <ImageView
         android:id="@+id/ic_back"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="28dp"
         android:onClick="backMain"
