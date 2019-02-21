@@ -8,6 +8,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.os.Handler;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.Layout;
@@ -182,7 +183,7 @@ public class JustifyTextView extends AppCompatTextView {
                 getPaint().getFontMetricsInt(fontMetricsInt);
             }
             //canvas.translate(0, fontMetricsInt.top - fontMetricsInt.ascent);
-            mLineY = 0;
+            mLineY = getPaddingTop();
             //mViewWidth = getMeasuredWidth();
             if (isForward) {
                 drawNextPage(canvas);
@@ -195,7 +196,7 @@ public class JustifyTextView extends AppCompatTextView {
     private int startIndex = 0;
 
     private void drawNextPage(Canvas canvas) {
-        mLineY = (int) getTextSize();
+        mLineY += (int) getTextSize();
         String text = getText().toString();
         Layout layout = getLayout();
         if (layout != null) {
@@ -638,7 +639,7 @@ public class JustifyTextView extends AppCompatTextView {
         addTranslated(word);
         invalidate();
         if (translateListener != null) {
-            translateListener.showTransDialog(book_id,word, page_id);
+            translateListener.showTransDialog(book_id, word, page_id);
         }
     }
 

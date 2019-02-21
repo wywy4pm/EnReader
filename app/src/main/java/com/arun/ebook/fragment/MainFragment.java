@@ -3,6 +3,7 @@ package com.arun.ebook.fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.arun.ebook.R;
@@ -28,6 +29,8 @@ public class MainFragment extends BaseFragment implements CommonView4<List<BookI
     private static final int PAGE_SIZE = 15;
     private List<BookItemBean> bookList = new ArrayList<>();
     private String uid;
+    private boolean isCreate;
+    private boolean isFirstLoad;
 
     public static MainFragment newInstance() {
         MainFragment mainFragment = new MainFragment();
@@ -50,10 +53,15 @@ public class MainFragment extends BaseFragment implements CommonView4<List<BookI
         setRecyclerViewScrollListener(recyclerView);
     }
 
+
     @Override
     protected void initData() {
         mainPresenter = new MainPresenter();
         mainPresenter.attachView(this);
+        isCreate = true;
+        if (!isFirstLoad) {
+            getData();
+        }
     }
 
     private void getData() {
@@ -110,7 +118,10 @@ public class MainFragment extends BaseFragment implements CommonView4<List<BookI
         if (uidEvent != null) {
             uid = uidEvent.uid;
             AppHelper.getInstance().getAppConfig().setUid(uid);
-            getData();
+            if (isCreate) {
+                getData();
+                isFirstLoad = true;
+            }
         }
     }
 

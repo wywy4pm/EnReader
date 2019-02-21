@@ -48,6 +48,9 @@ public class NewTranslateDialog extends DialogFragment {
         View transView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_new_translate, null);
         dialog.setContentView(transView);
         dialog.setCanceledOnTouchOutside(true);
+        getActivity().getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         // 设置宽度为屏宽、位置靠近屏幕顶部
         Window window = dialog.getWindow();
         if (window != null) {

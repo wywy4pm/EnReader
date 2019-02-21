@@ -51,7 +51,7 @@ public class BaseModel {
                 public void onNext(CommonApiResponse object) {
                     if (listener != null) {
                         if (object != null) {
-                            if (object.code == ErrorCode.SUC_NO) {
+                            if (object.code == ErrorCode.SUC_NO || object.code == ErrorCode.NO_DATA) {
                                 listener.onSuccess(object);
                                 if (!TextUtils.isEmpty(object.msg)) {
                                     listener.onError(ErrorCode.COMMON_ERROR, object.msg);

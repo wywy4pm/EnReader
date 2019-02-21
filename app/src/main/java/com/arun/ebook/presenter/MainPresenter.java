@@ -33,14 +33,18 @@ public class MainPresenter extends BasePresenter<CommonView4> {
                     @SuppressWarnings("unchecked")
                     @Override
                     public void onSuccess(CommonApiResponse data) {
-                        if (getMvpView() != null && data != null && data.code == ErrorCode.SUC_NO) {
-                            if (data.data instanceof BookListData) {
-                                BookListData bean = (BookListData) data.data;
-                                if (page == 1) {
-                                    getMvpView().refresh(bean.book_list);
-                                } else {
-                                    getMvpView().refreshMore(bean.book_list);
+                        if (getMvpView() != null) {
+                            if (data.code == ErrorCode.SUC_NO) {
+                                if (data.data instanceof BookListData) {
+                                    BookListData bean = (BookListData) data.data;
+                                    if (page == 1) {
+                                        getMvpView().refresh(bean.book_list);
+                                    } else {
+                                        getMvpView().refreshMore(bean.book_list);
+                                    }
                                 }
+                            } else if (data.code == ErrorCode.NO_DATA) {
+                                getMvpView().refreshMore(null);
                             }
                         }
                     }

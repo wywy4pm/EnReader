@@ -147,22 +147,37 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
         }
 
         public void setTextStyle(int style) {
+            setAlignStyle(style);
             switch (style) {
                 case BookEditBean.STYLE_TITLE:
                     contentView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);
                     contentView.setLineSpacing(DensityUtil.dp2px(12), 1);
-                    contentView.setTypeface(contentView.getTypeface(),Typeface.NORMAL);
+                    contentView.setTypeface(contentView.getTypeface(), Typeface.NORMAL);
                     break;
                 case BookEditBean.STYLE_QUOTE:
                     contentView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
                     contentView.setLineSpacing(DensityUtil.dp2px(12), 1);
-                    contentView.setTypeface(contentView.getTypeface(),Typeface.ITALIC);
+                    contentView.setTypeface(contentView.getTypeface(), Typeface.ITALIC);
                     break;
                 case BookEditBean.STYLE_MAIN_BODY:
                     contentView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
                     contentView.setLineSpacing(DensityUtil.dp2px(10), 1);
-                    contentView.setTypeface(contentView.getTypeface(),Typeface.NORMAL);
+                    contentView.setTypeface(contentView.getTypeface(), Typeface.NORMAL);
                     break;
+            }
+        }
+
+        private void setAlignStyle(int style) {
+            int alignStyle = 0;
+            if (style == BookEditBean.STYLE_TITLE) {
+                alignStyle = RelativeLayout.CENTER_IN_PARENT;
+            } else if (style == BookEditBean.STYLE_QUOTE) {
+                alignStyle = RelativeLayout.CENTER_VERTICAL;
+            } else if (style == BookEditBean.STYLE_MAIN_BODY) {
+                alignStyle = RelativeLayout.ALIGN_PARENT_TOP;
+            }
+            if (contentView.getLayoutParams() instanceof RelativeLayout.LayoutParams) {
+                ((RelativeLayout.LayoutParams) contentView.getLayoutParams()).addRule(alignStyle);
             }
         }
 

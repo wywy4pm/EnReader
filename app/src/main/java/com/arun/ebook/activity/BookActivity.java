@@ -8,6 +8,7 @@ import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.arun.ebook.R;
 import com.arun.ebook.adapter.ReadPageAdapter;
@@ -65,6 +66,8 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
         EventBus.getDefault().register(this);
         initData();
         initView();
+        //保持屏幕常亮
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     @Override
@@ -229,6 +232,8 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        //取消保持屏幕常亮
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

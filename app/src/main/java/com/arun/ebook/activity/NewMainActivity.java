@@ -1,5 +1,7 @@
 package com.arun.ebook.activity;
 
+import android.Manifest;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
@@ -20,6 +22,7 @@ import com.arun.ebook.fragment.InteractFragment;
 import com.arun.ebook.fragment.MainFragment;
 import com.arun.ebook.fragment.MessageFragment;
 import com.arun.ebook.fragment.MineFragment;
+import com.arun.ebook.helper.PermissionsChecker;
 import com.arun.ebook.presenter.MainPresenter;
 import com.arun.ebook.utils.SharedPreferencesUtils;
 import com.arun.ebook.view.CommonView4;
@@ -30,6 +33,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NewMainActivity extends BaseActivity implements CommonView4<List<BookItemBean>>, View.OnClickListener {
+    // 所需的全部权限
+    public static final String[] PERMISSIONS = new String[]{
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.INTERNET,
+            Manifest.permission.READ_PHONE_STATE
+    };
+    private PermissionsChecker mPermissionsChecker; // 权限检测器
+    private static final int REQUEST_CODE = 0; // 请求码
+
     private MainPresenter mainPresenter;
     private ViewPager viewPager;
     private List<Fragment> fragmentList = new ArrayList<>();
@@ -42,6 +55,7 @@ public class NewMainActivity extends BaseActivity implements CommonView4<List<Bo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setFullScreen();
+        mPermissionsChecker = new PermissionsChecker(this);
         setContentView(R.layout.activity_new_main);
         initView();
         initData();
@@ -51,6 +65,22 @@ public class NewMainActivity extends BaseActivity implements CommonView4<List<Bo
     protected void onResume() {
         super.onResume();
         setFullScreen();
+        if (mPermissionsChecker.lacksPermissions(PERMISSIONS)) {
+            startPermissionsActivity();
+        }
+    }
+
+    private void startPermissionsActivity() {
+        PermissionsActivity.startActivityForResult(this, REQUEST_CODE, PERMISSIONS);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // 拒绝时, 关闭页面, 缺少主要权限, 无法运行
+        if (requestCode == REQUEST_CODE && resultCode == PermissionsActivity.PERMISSIONS_DENIED) {
+            finish();
+        }
     }
 
     private void initView() {
@@ -83,7 +113,7 @@ public class NewMainActivity extends BaseActivity implements CommonView4<List<Bo
         fragmentList.add(messageFragment);*/
         fragmentList.add(mineFragment);
         viewPager.setAdapter(new MainAdapter(getSupportFragmentManager(), fragmentList));
-        viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener(){
+        viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
@@ -146,7 +176,7 @@ public class NewMainActivity extends BaseActivity implements CommonView4<List<Bo
         }
     }
 
-    private void setSelectTab(int index){
+    private void setSelectTab(int index) {
         viewPager.setCurrentItem(index);
         setSelect(index);
     }
