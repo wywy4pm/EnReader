@@ -1,11 +1,19 @@
 package com.arun.ebook.fragment;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Display;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,6 +27,7 @@ import com.arun.ebook.bean.FontBean;
 import com.arun.ebook.bean.TranslateData;
 import com.arun.ebook.common.Constant;
 import com.arun.ebook.dialog.NewTranslateDialog;
+import com.arun.ebook.dialog.TranslateController;
 import com.arun.ebook.dialog.TranslateDialog;
 import com.arun.ebook.event.EditPageEvent;
 import com.arun.ebook.event.LongPressEvent;
@@ -45,7 +54,8 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
     private boolean isPressPopShow;
     private BookPresenter bookPresenter;
     public int currentPage;
-    private NewTranslateDialog translateDialog;
+    //private NewTranslateDialog translateDialog;
+    private TranslateController translateController;
     private TextView pageNum;
     private int bookId;
 
@@ -168,18 +178,19 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
         } else if (type == BookPresenter.TYPE_BOOK_TRANSLATE) {
             if (data instanceof TranslateData) {
                 TranslateData translateData = (TranslateData) data;
-                translateDialog = new NewTranslateDialog();
+                translateController = new TranslateController(getActivity());
+                translateController.setTranslateData(translateData);
+                translateController.showDialog();
+                /*translateDialog = new NewTranslateDialog();
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("TranslateData", translateData);
-                /*bundle.putInt("bgColor", bgColor);
-                bundle.putInt("textColor", textColor);*/
                 translateDialog.setArguments(bundle);
                 translateDialog.show(getFragmentManager(), "dialog");
                 translateDialog.setListener(new DialogListener() {
                     @Override
                     public void onDismiss() {
                     }
-                });
+                });*/
             }
         }
     }
@@ -195,9 +206,8 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
 
     @Override
     public void translateWord(int book_id, String keyword, int page_id) {
-        if (translateDialog != null
-                && translateDialog.getDialog() != null
-                && translateDialog.getDialog().isShowing()) {
+        if (translateController != null
+                && translateController.isShowing()) {
         } else {
             if (bookPresenter != null) {
                 bookPresenter.bookTranslate(book_id, keyword, page_id);
@@ -208,8 +218,8 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (translateDialog != null) {
-            translateDialog = null;
+        if (translateController != null) {
+            translateController = null;
         }
     }
 }

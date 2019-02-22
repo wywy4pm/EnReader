@@ -2,18 +2,14 @@ package com.arun.ebook.dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -23,85 +19,77 @@ import com.arun.ebook.R;
 import com.arun.ebook.bean.TranslateData;
 import com.arun.ebook.listener.DialogListener;
 
-public class NewTranslateDialog extends DialogFragment {
+public class TranslateController implements DialogInterface.OnDismissListener,DialogInterface.OnCancelListener{
+    private Context context;
+    private TranslateData translateData;
+    private Dialog dialog;
+    private View transView;
     private DialogListener listener;
     private MediaPlayer mediaPlayer;
+
+    public TranslateController(Context context) {
+        this.context = context;
+    }
+
+    public void setTranslateData(TranslateData translateData) {
+        this.translateData = translateData;
+    }
 
     public void setListener(DialogListener listener) {
         this.listener = listener;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final Dialog dialog = new AlertDialog.Builder(getActivity()).create();
-        View transView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_new_translate, null);
-        dialog.setContentView(transView);
-        dialog.setCanceledOnTouchOutside(true);
-        // 设置宽度为屏宽、位置靠近屏幕顶部
-        Window window = dialog.getWindow();
-        if (window != null) {
-            window.setDimAmount(0f);
-            window.getDecorView().setPadding(0, 0, 0, 0);
-            window.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
-            WindowManager.LayoutParams wlp = window.getAttributes();
-            wlp.width = WindowManager.LayoutParams.MATCH_PARENT;
-            wlp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-            window.setAttributes(wlp);
+    public void showDialog() {
+        if (dialog == null) {
+            dialog = new AlertDialog.Builder(context).create();
+            transView = LayoutInflater.from(context).inflate(R.layout.layout_new_translate, null);
+            dialog.setCanceledOnTouchOutside(true);
+            dialog.show();
+            dialog.setContentView(transView);
+            Window window = dialog.getWindow();
+            if (window != null) {
+                window.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
+                WindowManager.LayoutParams wlp = window.getAttributes();
+                wlp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                wlp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                window.setAttributes(wlp);
+            }
+            dialog.setOnDismissListener(this);
+            dialog.setOnCancelListener(this);
+        } else {
+            dialog.show();
         }
-        TranslateData bean = null;
-        int bgColor = Color.parseColor("#F2F1ED");
-        int textColor = Color.parseColor("#15140F");
-        if (getArguments() != null) {
-            if (getArguments().containsKey("TranslateData")) {
-                bean = (TranslateData) getArguments().getSerializable("TranslateData");
-            }
-            if (getArguments().containsKey("bgColor")) {
-                bgColor = getArguments().getInt("bgColor");
-            }
-            if (getArguments().containsKey("textColor")) {
-                textColor = getArguments().getInt("textColor");
-            }
+        if (transView != null && translateData != null) {
+            setData(transView, translateData);
         }
-        setData(transView, bean);
-        return dialog;
     }
 
-    @Override
-    public void onCancel(DialogInterface dialog) {
-        super.onCancel(dialog);
+    /*public void cancel() {
+        if (dialog != null) {
+            dialog.cancel();
+        }
         if (listener != null) {
             listener.onDismiss();
         }
         if (mediaPlayer != null) {
             mediaPlayer.release();
         }
+    }*/
+
+    public boolean isShowing() {
+        if (dialog != null) {
+            return dialog.isShowing();
+        }
+        return false;
     }
 
-    @Override
     public void dismiss() {
-        super.dismiss();
-        if (listener != null) {
-            listener.onDismiss();
-        }
-        if (mediaPlayer != null) {
-            mediaPlayer.release();
+        if (dialog != null) {
+            dialog.dismiss();
         }
     }
 
-    @Override
     public void onDestroy() {
-        super.onDestroy();
         if (mediaPlayer != null) {
             mediaPlayer.release();
         }
@@ -160,7 +148,7 @@ public class NewTranslateDialog extends DialogFragment {
     private void startReadTranslation(TranslateData bean) {
         if (mediaPlayer == null || !mediaPlayer.isPlaying()) {
             Uri uri = Uri.parse(bean.speak_url);
-            mediaPlayer = MediaPlayer.create(getActivity(), uri);
+            mediaPlayer = MediaPlayer.create(context, uri);
             if (mediaPlayer != null) {
                 mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                     @Override
@@ -184,6 +172,26 @@ public class NewTranslateDialog extends DialogFragment {
                 });
                 mediaPlayer.start();
             }
+        }
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        if (listener != null) {
+            listener.onDismiss();
+        }
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+        }
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        if (listener != null) {
+            listener.onDismiss();
+        }
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
         }
     }
 }
