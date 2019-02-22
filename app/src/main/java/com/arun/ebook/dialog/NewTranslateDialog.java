@@ -1,6 +1,5 @@
 package com.arun.ebook.dialog;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -44,10 +43,14 @@ public class NewTranslateDialog extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final Dialog dialog = new AlertDialog.Builder(getActivity()).create();
+        final Dialog dialog = new Dialog(getActivity(), R.style.DialogBottomStyle);
+        //dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         View transView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_new_translate, null);
         dialog.setContentView(transView);
         dialog.setCanceledOnTouchOutside(true);
+        getActivity().getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         // 设置宽度为屏宽、位置靠近屏幕顶部
         Window window = dialog.getWindow();
         if (window != null) {
