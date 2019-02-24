@@ -61,10 +61,10 @@ public abstract class BaseActivity extends AppCompatActivity implements MvpView 
     }
 
 
-    /*@Override
+    @Override
     public boolean moveTaskToBack(boolean nonRoot) {
         return super.moveTaskToBack(true);
-    }*/
+    }
 
     public void setContentView(@LayoutRes int layoutResID) {
         super.setContentView(layoutResID);

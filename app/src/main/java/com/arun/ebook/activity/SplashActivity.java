@@ -21,6 +21,7 @@ public class SplashActivity extends BaseActivity {
             @Override
             public void run() {
                 NewMainActivity.jumpToMain(SplashActivity.this);
+                finish();
             }
         }, 2000);
     }
