@@ -3,11 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.arun.ebook">
 
+    <uses-sdk android:minSdkVersion="8" />
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!-- <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <!-- 推荐的权限 -->
+    <!-- 添加如下权限，以便使用更多的第三方SDK和更精准的统计数据 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 
     <application
         android:name=".MyApplication"
@@ -19,18 +28,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
+
+        <!-- EnReader旧页面 start -->
         <activity android:name=".activity.MainActivity" />
-        <activity android:name=".activity.PermissionsActivity" />
         <activity android:name=".activity.ReadActivity" />
         <activity
-            android:name=".activity.NewReadActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
-        <activity
             android:name=".activity.FontActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
+        <!-- EnReader旧页面 end -->
         <activity
-            android:name=".activity.NewMainActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize">
+            android:name=".activity.SplashActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -38,20 +48,44 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".activity.NewMainActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait">
+
+        </activity>
+        <activity
+            android:name=".activity.PermissionsActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.NewReadActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".activity.BookActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.EditPageActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.WebViewActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="android.max_aspect"
             android:value="2.1" />
 
-        <activity
-            android:name=".activity.EditPageActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="5c71614bf1f55636ce00008e" />
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="xima" />
 
-        <activity
-            android:name=".activity.WebViewActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
+
     </application>
 
 </manifest>

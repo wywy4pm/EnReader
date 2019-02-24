@@ -48,7 +48,9 @@ public class TranslateController implements DialogInterface.OnDismissListener,Di
             dialog.setContentView(transView);
             Window window = dialog.getWindow();
             if (window != null) {
-                window.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
+                window.getDecorView().setPadding(0, 0, 0, 0);
+                window.getDecorView().setBackgroundColor(context.getResources().getColor(R.color.black));
+                window.setGravity(Gravity.BOTTOM);
                 WindowManager.LayoutParams wlp = window.getAttributes();
                 wlp.width = WindowManager.LayoutParams.MATCH_PARENT;
                 wlp.height = WindowManager.LayoutParams.WRAP_CONTENT;

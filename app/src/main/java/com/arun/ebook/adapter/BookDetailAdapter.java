@@ -3,6 +3,7 @@ package com.arun.ebook.adapter;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +35,10 @@ import java.util.List;
 
 public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
     private static final int VIEW_TYPE_CONTENT = 1;
+    private static final int VIEW_TYPE_TRANSLATE = 2;
     public static final String DATA_TYPE_CONTENT = "content";
+    public static final String DATA_TYPE_TRANSLATE = "translate";
+
     private BookEditListener bookEditListener;
     private int book_id;
 
@@ -55,6 +59,9 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
         if (viewType == VIEW_TYPE_CONTENT) {
             View itemView = LayoutInflater.from(contexts.get()).inflate(R.layout.layout_book_content, parent, false);
             return new BookContentHolder(contexts.get(), itemView, bookEditListener);
+        } else if (viewType == VIEW_TYPE_TRANSLATE) {
+            View itemView = LayoutInflater.from(contexts.get()).inflate(R.layout.layout_book_translate, parent, false);
+            return new BookTranslateHolder(itemView);
         }
         return null;
     }
@@ -63,6 +70,8 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof BookContentHolder) {
             ((BookContentHolder) holder).setData((BookDetailBean) getItem(position).content, book_id);
+        } else if (holder instanceof BookTranslateHolder) {
+            ((BookTranslateHolder) holder).setData((String) getItem(position).content);
         }
     }
 
@@ -73,6 +82,8 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
         if (bean != null) {
             if (DATA_TYPE_CONTENT.equals(bean.type)) {
                 type = VIEW_TYPE_CONTENT;
+            } else if (DATA_TYPE_TRANSLATE.equals(bean.type)) {
+                type = VIEW_TYPE_TRANSLATE;
             }
         }
         return type;
@@ -161,7 +172,7 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
                     break;
                 case BookEditBean.STYLE_MAIN_BODY:
                     contentView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-                    contentView.setLineSpacing(DensityUtil.dp2px(10), 1);
+                    contentView.setLineSpacing(DensityUtil.dp2px(12), 1);
                     contentView.setTypeface(contentView.getTypeface(), Typeface.NORMAL);
                     break;
             }
@@ -259,6 +270,22 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
                 bookEditListener.onBookEdit(bean);
             }
         }
+    }
+
+    private static class BookTranslateHolder extends RecyclerView.ViewHolder {
+        private TextView translate_content;
+
+        private BookTranslateHolder(View itemView) {
+            super(itemView);
+            translate_content = itemView.findViewById(R.id.translate_content);
+        }
+
+        private void setData(String cnContent) {
+            if (!TextUtils.isEmpty(cnContent)) {
+                translate_content.setText(cnContent);
+            }
+        }
+
     }
 
 }

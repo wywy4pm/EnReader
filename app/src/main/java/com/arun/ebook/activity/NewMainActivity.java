@@ -1,6 +1,7 @@
 package com.arun.ebook.activity;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -50,6 +51,11 @@ public class NewMainActivity extends BaseActivity implements CommonView4<List<Bo
     //private int[] tabIds = new int[]{R.id.main_tab, R.id.answer_tab, R.id.interact_tab, R.id.message_tab, R.id.mine_tab};
     private int[] tabIds = new int[]{R.id.main_tab, R.id.mine_tab};
     private List<ImageView> tabViews = new ArrayList<>();
+
+    public static void jumpToMain(Context context) {
+        Intent intent = new Intent(context, NewMainActivity.class);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

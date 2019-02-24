@@ -35,6 +35,7 @@
     <string name="close">关闭</string>
     <string name="mine">我的</string>
 
-    <string name="slogan">洗马：帮你精读外文好书</string>
+    <string name="slogan">洗马：陪你精读外文好书</string>
     <string name="bottom_tips">版本 %1$s 用户 %2$s</string>
+    <string name="translate_title">译 文</string>
 </resources>

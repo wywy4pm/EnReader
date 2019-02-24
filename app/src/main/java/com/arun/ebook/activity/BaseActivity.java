@@ -18,6 +18,7 @@ import com.arun.ebook.utils.SharedPreferencesUtils;
 import com.arun.ebook.utils.StatusBarUtils;
 import com.arun.ebook.utils.ToastUtils;
 import com.arun.ebook.view.MvpView;
+import com.umeng.analytics.MobclickAgent;
 
 public abstract class BaseActivity extends AppCompatActivity implements MvpView {
     public TextView text_back, text_name, text_right;
@@ -52,16 +53,18 @@ public abstract class BaseActivity extends AppCompatActivity implements MvpView 
                 }
             }
         }
-        getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        if (getWindow() != null) {
+            getWindow().setFlags(
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
     }
 
 
-    @Override
+    /*@Override
     public boolean moveTaskToBack(boolean nonRoot) {
         return super.moveTaskToBack(true);
-    }
+    }*/
 
     public void setContentView(@LayoutRes int layoutResID) {
         super.setContentView(layoutResID);
@@ -198,5 +201,17 @@ public abstract class BaseActivity extends AppCompatActivity implements MvpView 
     protected void onDestroy() {
         super.onDestroy();
         ToastUtils.getInstance(this).destory();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

@@ -7,6 +7,7 @@ import java.util.List;
 public class BookDetailBean implements Serializable {
     public int page_id;
     public String content;
+    public String cn;
     public int totalPage;
     public File file;
     public int style;

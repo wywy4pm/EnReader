@@ -232,5 +232,9 @@
 
     <color name="read_text">#8b968d</color>
 
+    <color name="read_text_half">#7F8b968d</color>
+
     <color name="read_page_num">#7Fbfbfbf</color>
+
+    <color name="splash_bg_color">#F6F6F6</color>
 </resources>

@@ -90,20 +90,26 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
         if (getArguments() != null) {
             if (getArguments().containsKey(Constant.INTENT_BOOK_DETAIL)) {
                 BookDetailBean bean = (BookDetailBean) getArguments().get(Constant.INTENT_BOOK_DETAIL);
-                BookDetailItemBean<BookDetailBean> itemBean = new BookDetailItemBean<>();
-                itemBean.type = BookDetailAdapter.DATA_TYPE_CONTENT;
-                itemBean.content = bean;
-                File[] files = Utils.readFontsFile(getActivity(), "new_fonts", Constant.PATH_FONT_NEW);
-                if (files != null && bean != null) {
-                    bean.file = files[0];
-                }
                 if (bean != null) {
+                    //content
+                    BookDetailItemBean<BookDetailBean> contentBean = new BookDetailItemBean<>();
+                    contentBean.type = BookDetailAdapter.DATA_TYPE_CONTENT;
+                    File[] files = Utils.readFontsFile(getActivity(), "new_fonts", Constant.PATH_FONT_NEW);
+                    if (files != null) {
+                        bean.file = files[0];
+                    }
+                    contentBean.content = bean;
+                    bookDetailList.add(contentBean);
+
+                    //translate
+                    if (!TextUtils.isEmpty(bean.cn)) {
+                        BookDetailItemBean<String> translateBean = new BookDetailItemBean<>();
+                        translateBean.type = BookDetailAdapter.DATA_TYPE_TRANSLATE;
+                        translateBean.content = bean.cn;
+                        bookDetailList.add(translateBean);
+                    }
+
                     currentPage = bean.seq;
-                }
-                bookDetailList.add(itemBean);
-                bookPresenter = new BookPresenter();
-                bookPresenter.attachView(this);
-                if (bean != null) {
                     if (bean.file != null) {
                         Typeface typeface = Typeface.createFromFile(bean.file);
                         if (typeface != null) {
@@ -119,6 +125,9 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
                     bookDetailAdapter.setBook_id(bookId);
                 }
             }
+
+            bookPresenter = new BookPresenter();
+            bookPresenter.attachView(this);
         }
     }
 
