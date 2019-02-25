@@ -31,6 +31,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
@@ -150,6 +151,9 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
                 setTextStyle(bean.style);
                 contentView.setBookId(book_id);
                 contentView.setPageId(bean.page_id);
+                if (bean.queryed_word_list == null) {
+                    bean.queryed_word_list = new ArrayList<>();
+                }
                 contentView.setTrans_words(bean.queryed_word_list);
                 contentView.setText(bean.content);
                 contentView.setTranslateListener(this);

@@ -17,7 +17,7 @@ import java.util.ArrayList;
  */
 public abstract class OpenPagerAdapter<T> extends PagerAdapter {
     private static final String TAG = "FragmentStatePagerAdapt";
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     private final FragmentManager mFragmentManager;
     private FragmentTransaction mCurTransaction = null;
@@ -86,7 +86,9 @@ public abstract class OpenPagerAdapter<T> extends PagerAdapter {
         fragment.setMenuVisibility(false);
         fragment.setUserVisibleHint(false);
         ItemInfo<T> iiNew = new ItemInfo<>(fragment, getItemData(position), position);
-        mItemInfos.set(position, iiNew);
+        if (position <= mItemInfos.size()) {
+            mItemInfos.set(position, iiNew);
+        }
         mCurTransaction.add(container.getId(), fragment);
 
         return iiNew;
@@ -99,14 +101,15 @@ public abstract class OpenPagerAdapter<T> extends PagerAdapter {
         if (mCurTransaction == null) {
             mCurTransaction = mFragmentManager.beginTransaction();
         }
-        if (DEBUG) Log.v(TAG, "Removing item #" + position + ": f=" + object
-                + " v=" + ((Fragment) object).getView());
+        if (DEBUG) Log.v(TAG, "Removing item #" + position);
         while (mSavedState.size() <= position) {
             mSavedState.add(null);
         }
         mSavedState.set(position, ii.fragment.isAdded()
                 ? mFragmentManager.saveFragmentInstanceState(ii.fragment) : null);
-        mItemInfos.set(position, null);
+        if (position <= mItemInfos.size()) {
+            mItemInfos.set(position, null);
+        }
 
         mCurTransaction.remove(ii.fragment);
     }
