@@ -149,31 +149,37 @@ public class TranslateController implements DialogInterface.OnDismissListener,Di
 
     private void startReadTranslation(TranslateData bean) {
         if (mediaPlayer == null || !mediaPlayer.isPlaying()) {
-            Uri uri = Uri.parse(bean.speak_url);
-            mediaPlayer = MediaPlayer.create(context, uri);
-            if (mediaPlayer != null) {
-                mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                    @Override
-                    public void onPrepared(MediaPlayer mp) {
-                        Log.d("TAG", "TransMediaPlayer onPrepared");
+            final Uri uri = Uri.parse(bean.speak_url);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    mediaPlayer = MediaPlayer.create(context, uri);
+                    if (mediaPlayer != null) {
+                        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                            @Override
+                            public void onPrepared(MediaPlayer mp) {
+                                Log.d("TAG", "TransMediaPlayer onPrepared");
+                            }
+                        });
+                        mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                            @Override
+                            public boolean onError(MediaPlayer mp, int what, int extra) {
+                                Log.d("TAG", "TransMediaPlayer onError = " + what);
+                                return false;
+                            }
+                        });
+                        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                            @Override
+                            public void onCompletion(MediaPlayer mp) {
+                                Log.d("TAG", "TransMediaPlayer onCompletion");
+                                mediaPlayer.stop();
+                            }
+                        });
+                        mediaPlayer.start();
                     }
-                });
-                mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-                    @Override
-                    public boolean onError(MediaPlayer mp, int what, int extra) {
-                        Log.d("TAG", "TransMediaPlayer onError = " + what);
-                        return false;
-                    }
-                });
-                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        Log.d("TAG", "TransMediaPlayer onCompletion");
-                        mediaPlayer.stop();
-                    }
-                });
-                mediaPlayer.start();
-            }
+                }
+            }).start();
+
         }
     }
 

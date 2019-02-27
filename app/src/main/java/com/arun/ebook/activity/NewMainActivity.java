@@ -23,6 +23,7 @@ import com.arun.ebook.fragment.InteractFragment;
 import com.arun.ebook.fragment.MainFragment;
 import com.arun.ebook.fragment.MessageFragment;
 import com.arun.ebook.fragment.MineFragment;
+import com.arun.ebook.helper.AppHelper;
 import com.arun.ebook.helper.PermissionsChecker;
 import com.arun.ebook.presenter.MainPresenter;
 import com.arun.ebook.utils.SharedPreferencesUtils;
@@ -64,16 +65,17 @@ public class NewMainActivity extends BaseActivity implements CommonView4<List<Bo
         mPermissionsChecker = new PermissionsChecker(this);
         setContentView(R.layout.activity_new_main);
         initView();
-        initData();
+        if (mPermissionsChecker.lacksPermissions(PERMISSIONS)) {
+            startPermissionsActivity();
+        } else {
+            initData();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         setFullScreen();
-        if (mPermissionsChecker.lacksPermissions(PERMISSIONS)) {
-            startPermissionsActivity();
-        }
     }
 
     private void startPermissionsActivity() {
@@ -83,9 +85,14 @@ public class NewMainActivity extends BaseActivity implements CommonView4<List<Bo
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // 拒绝时, 关闭页面, 缺少主要权限, 无法运行
-        if (requestCode == REQUEST_CODE && resultCode == PermissionsActivity.PERMISSIONS_DENIED) {
-            finish();
+        if (requestCode == REQUEST_CODE) {
+            // 拒绝时, 关闭页面, 缺少主要权限, 无法运行
+            if (resultCode == PermissionsActivity.PERMISSIONS_DENIED) {
+                finish();
+            } else if (resultCode == PermissionsActivity.PERMISSIONS_GRANTED) {
+                AppHelper.getInstance().setAppConfig(this);
+                initData();
+            }
         }
     }
 
