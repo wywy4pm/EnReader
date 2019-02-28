@@ -103,6 +103,7 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
                 if (pageList != null && pageList.get(position) != null) {
                     currentPos = pageList.get(position).seq - 1;
                 }
+                SharedPreferencesUtils.setPageIds(BookActivity.this, String.valueOf(bookId), String.valueOf(currentPos));
                 currentShowPage = position / PAGE_SIZE + 1;
                 posOne = (currentShowPage - 1) * PAGE_SIZE;
                 EventBus.getDefault().post(new HidePopEvent());
@@ -271,7 +272,7 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        SharedPreferencesUtils.setPageIds(this, String.valueOf(bookId), String.valueOf(currentPos));
+        //SharedPreferencesUtils.setPageIds(this, String.valueOf(bookId), String.valueOf(currentPos));
     }
 
 }
