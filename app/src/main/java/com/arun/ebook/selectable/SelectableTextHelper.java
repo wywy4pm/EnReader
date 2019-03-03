@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.arun.ebook.R;
 import com.arun.ebook.event.LongPressEvent;
 import com.arun.ebook.listener.LongPressListener;
+import com.arun.ebook.utils.ToastUtils;
 import com.arun.ebook.widget.JustifyTextView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -308,6 +309,7 @@ public class SelectableTextHelper {
                     }
                     SelectableTextHelper.this.resetSelectionInfo();
                     SelectableTextHelper.this.hideSelectView();
+                    ToastUtils.getInstance(context).showToast(R.string.copy_done);
                 }
             });
             contentView.findViewById(R.id.tv_select_all).setOnClickListener(new View.OnClickListener() {
@@ -329,7 +331,7 @@ public class SelectableTextHelper {
             mTextView.getLocationInWindow(mTempCoors);
             Layout layout = mTextView.getLayout();
             int posX = (int) layout.getPrimaryHorizontal(mSelectionInfo.mStart) + mTempCoors[0];
-            int posY = layout.getLineTop(layout.getLineForOffset(mSelectionInfo.mStart)) + mTempCoors[1] - mHeight - 16;
+            int posY = layout.getLineTop(layout.getLineForOffset(mSelectionInfo.mStart)) + mTempCoors[1] - mHeight - 16 + mTextView.getPaddingTop();
             if (posX <= 0) posX = 16;
             if (posY < 0) posY = 16;
             if (posX + mWidth > TextLayoutUtil.getScreenWidth(mContext)) {
@@ -437,7 +439,7 @@ public class SelectableTextHelper {
                 oldOffset = mSelectionInfo.mEnd;
             }
 
-            y -= mTempCoors[1];
+            y -= mTempCoors[1] + mTextView.getPaddingTop();
 
             int offset = TextLayoutUtil.getHysteresisOffset(mTextView, x, y, oldOffset);
 
@@ -484,7 +486,7 @@ public class SelectableTextHelper {
         }
 
         public void show(int x, int y) {
-            mTextView.getLocationInWindow(mTempCoors);
+            mTextView.getLocationOnScreen(mTempCoors);
             int offset = isLeft ? mWidth : 0;
             mPopupWindow.showAtLocation(mTextView, Gravity.NO_GRAVITY, x - offset + getExtraX(), y + getExtraY());
         }

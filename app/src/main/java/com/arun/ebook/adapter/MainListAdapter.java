@@ -1,6 +1,7 @@
 package com.arun.ebook.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +12,12 @@ import android.widget.TextView;
 import com.arun.ebook.R;
 import com.arun.ebook.activity.BookActivity;
 import com.arun.ebook.bean.BookItemBean;
+import com.arun.ebook.utils.DensityUtil;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 
 import java.util.List;
 
@@ -48,7 +54,22 @@ public class MainListAdapter extends BaseRecyclerAdapter<BookItemBean> {
 
         private void setData(final Context context, final BookItemBean item) {
             if (item != null) {
-                Glide.with(context).load(item.list_image).into(book_bg);
+                final int imageWidth = DensityUtil.getScreenWidth(context);
+                Glide.with(context).load(item.list_image).asBitmap().listener(new RequestListener<String, Bitmap>() {
+                    @Override
+                    public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        if (resource != null) {
+                            int imageHeight = (resource.getHeight() * imageWidth) / resource.getWidth();
+                            book_bg.getLayoutParams().height = imageHeight;
+                        }
+                        return false;
+                    }
+                }).into(book_bg);
                 book_bg.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

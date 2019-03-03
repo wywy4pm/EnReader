@@ -174,7 +174,7 @@ public class JustifyTextView extends AppCompatTextView {
     @Override
     protected void onDraw(Canvas canvas) {
         Log.d("TAG", "Drawing TextView Address= " + this.toString());
-        if (isLongPress) {
+        if (isShowPop) {
             super.onDraw(canvas);
         } else {
             //设置remove间距
@@ -488,7 +488,7 @@ public class JustifyTextView extends AppCompatTextView {
                 int lastX = (int) event.getX();
                 int lastY = (int) event.getY();
                 Log.d("TAG", "---------------onTouchEvent ACTION_MOVE------------------");
-                if (Math.abs(lastX - downX) > 10 || Math.abs(lastY - downY) > 10) {
+                if (Math.abs(lastX - downX) > 20 || Math.abs(lastY - downY) > 20) {
                     this.mHandler.removeCallbacksAndMessages(null);
                 }
                 break;

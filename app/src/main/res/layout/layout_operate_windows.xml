@@ -10,13 +10,12 @@
     <TextView
         android:id="@+id/tv_copy"
         style="@style/OperateTextView"
-        android:background="@android:color/holo_green_dark"
         android:text="@string/copy" />
 
     <TextView
         android:id="@+id/tv_select_all"
         style="@style/OperateTextView"
-        android:background="@android:color/holo_green_dark"
-        android:text="@string/select_all" />
+        android:text="@string/select_all"
+        android:visibility="gone"/>
 
 </LinearLayout>

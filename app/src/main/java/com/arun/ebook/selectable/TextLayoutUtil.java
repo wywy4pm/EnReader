@@ -2,11 +2,12 @@ package com.arun.ebook.selectable;
 
 import android.content.Context;
 import android.text.Layout;
+import android.util.Log;
 import android.widget.TextView;
 
 /**
  * Created by Jaeger on 16/8/31.
- *
+ * <p>
  * Email: chjie.jaeger@gmail.com
  * GitHub: https://github.com/laobie
  */
@@ -19,8 +20,10 @@ public class TextLayoutUtil {
     public static int getPreciseOffset(TextView textView, int x, int y) {
         Layout layout = textView.getLayout();
         if (layout != null) {
-            int topVisibleLine = layout.getLineForVertical(y);
-            int offset = layout.getOffsetForHorizontal(topVisibleLine, x);
+            float newY = y + textView.getLineSpacingExtra() / 2 - textView.getPaddingTop();
+            int singleLineHeight = textView.getLineHeight();
+            int lineNumber = (int) (newY / singleLineHeight);
+            int offset = layout.getOffsetForHorizontal(lineNumber, x);
 
             int offsetX = (int) layout.getPrimaryHorizontal(offset);
 
@@ -38,7 +41,11 @@ public class TextLayoutUtil {
         final Layout layout = textView.getLayout();
         if (layout == null) return -1;
 
+        /*float newY = y + textView.getLineSpacingExtra() / 2 - textView.getPaddingTop();
+        int singleLineHeight = textView.getLineHeight();
+        int line = (int) (newY / singleLineHeight);*/
         int line = layout.getLineForVertical(y);
+        Log.d("TAG", "getOffsetForHorizontal: line = " + line + "  x = " + x + "  y = " + y);
 
         // The "HACK BLOCK"S in this function is required because of how Android Layout for
         // TextView works - if 'offset' equals to the last character of a line, then
@@ -73,11 +80,10 @@ public class TextLayoutUtil {
         // If new line is just before or after previous line and y position is less than
         // hysteresisThreshold away from previous line, keep cursor on previous line.
         if (((line == previousLine + 1) && ((y - previousLineBottom) < hysteresisThreshold)) || ((line == previousLine - 1) && ((
-            previousLineTop
-                - y) < hysteresisThreshold))) {
+                previousLineTop
+                        - y) < hysteresisThreshold))) {
             line = previousLine;
         }
-
         int offset = layout.getOffsetForHorizontal(line, x);
 
         // This allow the user to select the last character of a line without moving the

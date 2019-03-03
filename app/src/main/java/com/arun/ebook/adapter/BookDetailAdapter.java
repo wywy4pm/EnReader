@@ -121,10 +121,10 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
             style_quote = itemView.findViewById(R.id.style_quote);
             style_main_body = itemView.findViewById(R.id.style_main_body);
 
-            /*mSelectableTextHelper = new SelectableTextHelper.Builder(contentView)
-                    .setSelectedColor(context.getResources().getColor(R.color.text_green))
+            mSelectableTextHelper = new SelectableTextHelper.Builder(contentView)
+                    .setSelectedColor(context.getResources().getColor(R.color.white))
                     .setCursorHandleSizeInDp(20)
-                    .setCursorHandleColor(context.getResources().getColor(R.color.red))
+                    .setCursorHandleColor(context.getResources().getColor(R.color.more_yellow))
                     .build();
 
             mSelectableTextHelper.setSelectListener(new OnSelectListener() {
@@ -132,7 +132,7 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
                 public void onTextSelected(CharSequence content) {
 
                 }
-            });*/
+            });
 
             front_merge.setOnClickListener(this);
             insert.setOnClickListener(this);
@@ -219,6 +219,7 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
             if (mSelectableTextHelper != null) {
                 mSelectableTextHelper.resetSelectionInfo();
                 mSelectableTextHelper.hideSelectView();
+                contentView.invalidate();
             }
         }
 

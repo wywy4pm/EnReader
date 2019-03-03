@@ -38,4 +38,6 @@
     <string name="slogan">洗马：陪你精读外文好书</string>
     <string name="bottom_tips">版本 %1$s 用户 %2$s</string>
     <string name="translate_title">译 文</string>
+
+    <string name="copy_done">已复制</string>
 </resources>
