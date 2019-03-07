@@ -1,5 +1,7 @@
 package com.arun.ebook.utils;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -143,6 +145,16 @@ public class StringUtils {
             if (typeface != null) {
                 content.setTypeface(typeface);
             }
+        }
+    }
+
+    /**
+     * 复制到剪切板
+     */
+    public static void copyWord(Context mContext, String text) {
+        ClipboardManager clip = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+        if (clip != null) {
+            clip.setPrimaryClip(ClipData.newPlainText("CopyWord", text));
         }
     }
 }

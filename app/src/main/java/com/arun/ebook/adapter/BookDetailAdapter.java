@@ -24,6 +24,7 @@ import com.arun.ebook.listener.TranslateListener;
 import com.arun.ebook.selectable.OnSelectListener;
 import com.arun.ebook.selectable.SelectableTextHelper;
 import com.arun.ebook.utils.DensityUtil;
+import com.arun.ebook.utils.StringUtils;
 import com.arun.ebook.utils.ToastUtils;
 import com.arun.ebook.widget.JustifyTextView;
 
@@ -121,7 +122,7 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
             style_quote = itemView.findViewById(R.id.style_quote);
             style_main_body = itemView.findViewById(R.id.style_main_body);
 
-            mSelectableTextHelper = new SelectableTextHelper.Builder(contentView)
+            /*mSelectableTextHelper = new SelectableTextHelper.Builder(contentView)
                     .setSelectedColor(context.getResources().getColor(R.color.white))
                     .setCursorHandleSizeInDp(20)
                     .setCursorHandleColor(context.getResources().getColor(R.color.more_yellow))
@@ -132,7 +133,7 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
                 public void onTextSelected(CharSequence content) {
 
                 }
-            });
+            });*/
 
             front_merge.setOnClickListener(this);
             insert.setOnClickListener(this);
@@ -233,6 +234,7 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
         @Override
         public void showTransDialog(int book_id, String word, int page_id) {
             //ToastUtils.getInstance(context).showToast(word);
+            StringUtils.copyWord(context, word);
             if (bookEditListener != null) {
                 bookEditListener.translateWord(book_id, word, page_id);
             }

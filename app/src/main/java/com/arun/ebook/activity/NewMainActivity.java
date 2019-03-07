@@ -61,6 +61,7 @@ public class NewMainActivity extends BaseActivity implements CommonView4<List<Bo
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("TestBackHomeIn","-----------------NewMainActivity onCreate-----------------");
         setFullScreen();
         mPermissionsChecker = new PermissionsChecker(this);
         setContentView(R.layout.activity_new_main);
