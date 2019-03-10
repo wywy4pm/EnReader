@@ -6,6 +6,7 @@ import com.arun.ebook.bean.BookPageIdsData;
 import com.arun.ebook.bean.BookListData;
 import com.arun.ebook.bean.CommonApiResponse;
 import com.arun.ebook.bean.MineDataBean;
+import com.arun.ebook.bean.RegisterData;
 import com.arun.ebook.bean.TranslateData;
 
 import java.util.List;
@@ -18,7 +19,7 @@ import retrofit2.http.Query;
 public interface RetrofitApi {
 
     @GET(RetrofitUrl.USER_REGISTER)
-    Observable<CommonApiResponse<AppBean>> userRegister();
+    Observable<CommonApiResponse<RegisterData>> userRegister();
 
     @GET(RetrofitUrl.BOOK_LIST)
     Observable<CommonApiResponse<BookListData>> getBookList(@Query("page") int page);

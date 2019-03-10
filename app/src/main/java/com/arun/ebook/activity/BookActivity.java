@@ -85,10 +85,12 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
                 }
             }
         }
-        //currentPos = SharedPreferencesUtils.getConfigInt(this, SharedPreferencesUtils.KEY_READ_POS);
-        //currentPage = currentPos / PAGE_SIZE + 1;
-
         currentPosStr = SharedPreferencesUtils.getPageIds(this, String.valueOf(bookId));
+        if (TextUtils.isEmpty(currentPosStr)) {
+            if (bookItem != null && bookItem.readSeq > 0) {
+                currentPosStr = String.valueOf(bookItem.readSeq - 1);
+            }
+        }
     }
 
     private void initView() {

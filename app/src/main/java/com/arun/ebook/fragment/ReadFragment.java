@@ -47,7 +47,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReadFragment extends BaseFragment implements CommonView4, BookEditListener {
+public class ReadFragment extends BaseFragment implements CommonView4, BookEditListener, View.OnClickListener {
     private ReadRecyclerView recyclerView;
     private BookDetailAdapter bookDetailAdapter;
     private List<BookDetailItemBean> bookDetailList = new ArrayList<>();
@@ -56,7 +56,7 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
     public int currentPage;
     //private NewTranslateDialog translateDialog;
     private TranslateController translateController;
-    private TextView pageNum;
+    private TextView pageNum, pageFont;
     private int bookId;
 
     public static ReadFragment newInstance(BookDetailBean bean, int bookId) {
@@ -77,12 +77,15 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
     @Override
     protected void initView() {
         pageNum = findViewById(R.id.pageNum);
+        pageFont = findViewById(R.id.pageFont);
         recyclerView = findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         bookDetailAdapter = new BookDetailAdapter(getActivity(), bookDetailList);
         bookDetailAdapter.setBookEditListener(this);
         recyclerView.setAdapter(bookDetailAdapter);
+
+        pageFont.setOnClickListener(this);
     }
 
     @Override
@@ -229,6 +232,15 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
         super.onDestroyView();
         if (translateController != null) {
             translateController = null;
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.pageFont:
+
+                break;
         }
     }
 }

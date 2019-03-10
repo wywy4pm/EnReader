@@ -9,4 +9,5 @@ public class BookItemBean implements Serializable{
     public String cover;
     public String list_image;
     public String create_time;
+    public int readSeq;
 }

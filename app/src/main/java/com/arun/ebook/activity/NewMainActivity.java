@@ -16,6 +16,7 @@ import com.arun.ebook.R;
 import com.arun.ebook.adapter.MainAdapter;
 import com.arun.ebook.bean.AppBean;
 import com.arun.ebook.bean.BookItemBean;
+import com.arun.ebook.bean.RegisterData;
 import com.arun.ebook.common.Constant;
 import com.arun.ebook.event.UidEvent;
 import com.arun.ebook.fragment.AnswerFragment;
@@ -61,7 +62,7 @@ public class NewMainActivity extends BaseActivity implements CommonView4<List<Bo
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("TestBackHomeIn","-----------------NewMainActivity onCreate-----------------");
+        Log.d("TestBackHomeIn", "-----------------NewMainActivity onCreate-----------------");
         setFullScreen();
         mPermissionsChecker = new PermissionsChecker(this);
         setContentView(R.layout.activity_new_main);
@@ -158,11 +159,11 @@ public class NewMainActivity extends BaseActivity implements CommonView4<List<Bo
     @Override
     public void refresh(int type, Object data) {
         if (type == MainPresenter.TYPE_REGISTER) {
-            if (data instanceof AppBean) {
-                AppBean bean = (AppBean) data;
+            if (data instanceof RegisterData) {
+                RegisterData bean = (RegisterData) data;
                 if (!TextUtils.isEmpty((bean.uid))) {
                     SharedPreferencesUtils.saveUid(this, bean.uid);
-                    EventBus.getDefault().postSticky(new UidEvent(bean.uid));
+                    EventBus.getDefault().postSticky(new UidEvent(bean.uid, bean.read_progress));
                     Log.d("TAG", "register success");
                 }
             }

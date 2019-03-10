@@ -9,6 +9,7 @@ import android.util.Log;
 import com.arun.ebook.R;
 import com.arun.ebook.adapter.MainListAdapter;
 import com.arun.ebook.bean.BookItemBean;
+import com.arun.ebook.bean.ReadProgressBean;
 import com.arun.ebook.event.UidEvent;
 import com.arun.ebook.helper.AppHelper;
 import com.arun.ebook.presenter.MainPresenter;
@@ -31,6 +32,7 @@ public class MainFragment extends BaseFragment implements CommonView4<List<BookI
     private String uid;
     private boolean isCreate;
     private boolean isFirstLoad;
+    private List<ReadProgressBean> readProgressList;
 
     public static MainFragment newInstance() {
         MainFragment mainFragment = new MainFragment();
@@ -61,6 +63,7 @@ public class MainFragment extends BaseFragment implements CommonView4<List<BookI
         isCreate = true;
         if (!isFirstLoad) {
             getData();
+            isFirstLoad = true;
         }
     }
 
@@ -92,6 +95,9 @@ public class MainFragment extends BaseFragment implements CommonView4<List<BookI
             setHaveMore(true);
             bookList.clear();
             bookList.addAll(data);
+            if (readProgressList != null && readProgressList.size() > 0) {
+                addReadProgress(readProgressList);
+            }
             mainListAdapter.notifyDataSetChanged();
         } else {
             setHaveMore(false);
@@ -118,9 +124,33 @@ public class MainFragment extends BaseFragment implements CommonView4<List<BookI
         if (uidEvent != null) {
             uid = uidEvent.uid;
             AppHelper.getInstance().getAppConfig().setUid(uid);
-            if (isCreate) {
+            readProgressList = uidEvent.read_progress;
+            if (isCreate && !isFirstLoad) {
                 getData();
                 isFirstLoad = true;
+            }
+            if (bookList != null && bookList.size() > 0) {
+                addReadProgress(readProgressList);
+                if (mainListAdapter != null) {
+                    mainListAdapter.notifyDataSetChanged();
+                }
+            }
+        }
+    }
+
+    private void addReadProgress(List<ReadProgressBean> readProgressList) {
+        if (readProgressList != null && readProgressList.size() > 0
+                && bookList != null && bookList.size() > 0) {
+            for (int i = 0; i < bookList.size(); i++) {
+                BookItemBean bean = bookList.get(i);
+                if (bean != null) {
+                    for (int j = 0; j < readProgressList.size(); j++) {
+                        ReadProgressBean progressBean = readProgressList.get(j);
+                        if (progressBean != null && bean.book_id == progressBean.book_id) {
+                            bean.readSeq = progressBean.seq;
+                        }
+                    }
+                }
             }
         }
     }

@@ -55,7 +55,8 @@ public class MainListAdapter extends BaseRecyclerAdapter<BookItemBean> {
         private void setData(final Context context, final BookItemBean item) {
             if (item != null) {
                 final int imageWidth = DensityUtil.getScreenWidth(context);
-                Glide.with(context).load(item.list_image).asBitmap().listener(new RequestListener<String, Bitmap>() {
+                book_bg.getLayoutParams().height = imageWidth * 4 / 3;
+                Glide.with(context).load(item.list_image).asBitmap().centerCrop().listener(new RequestListener<String, Bitmap>() {
                     @Override
                     public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
                         return false;
@@ -63,10 +64,10 @@ public class MainListAdapter extends BaseRecyclerAdapter<BookItemBean> {
 
                     @Override
                     public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                        if (resource != null) {
+                        /*if (resource != null) {
                             int imageHeight = (resource.getHeight() * imageWidth) / resource.getWidth();
                             book_bg.getLayoutParams().height = imageHeight;
-                        }
+                        }*/
                         return false;
                     }
                 }).into(book_bg);
