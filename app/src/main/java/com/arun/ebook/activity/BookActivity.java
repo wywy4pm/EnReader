@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -15,6 +17,8 @@ import com.arun.ebook.adapter.ReadPageAdapter;
 import com.arun.ebook.bean.BookDetailBean;
 import com.arun.ebook.bean.BookItemBean;
 import com.arun.ebook.bean.BookPageIdsData;
+import com.arun.ebook.bean.ConfigData;
+import com.arun.ebook.bean.PageStyleData;
 import com.arun.ebook.common.Constant;
 import com.arun.ebook.event.HidePopEvent;
 import com.arun.ebook.event.LongPressEvent;
@@ -50,6 +54,7 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
     private int currentPos;
     private List<Integer> page_ids;
     private String pageIds;
+    private View groupView;
 
     public static void jumpToBook(Context context, BookItemBean item) {
         Intent intent = new Intent(context, BookActivity.class);
@@ -62,7 +67,8 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
         super.onCreate(savedInstanceState);
         setFullScreen();
         //groupView = (PageViewGroup) LayoutInflater.from(this).inflate(R.layout.activity_book, null);
-        setContentView(R.layout.activity_book);
+        groupView = LayoutInflater.from(this).inflate(R.layout.activity_book, null);
+        setContentView(groupView);
         EventBus.getDefault().register(this);
         initData();
         initView();
@@ -74,6 +80,12 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
     protected void onResume() {
         super.onResume();
         setFullScreen();
+    }
+
+    public void setReadBg(int color) {
+        if (color != 0) {
+            groupView.setBackgroundColor(color);
+        }
     }
 
     private void initData() {
@@ -123,7 +135,13 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
         bookPresenter = new BookPresenter();
         bookPresenter.attachView(this);
         getBookPageIds();
+        getPageStyle();
+    }
 
+    private void getPageStyle() {
+        if (bookPresenter != null) {
+            bookPresenter.getPageStyle();
+        }
     }
 
     private void getBookPageIds() {
@@ -193,6 +211,12 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
                         getBookDetail(true, true);
                     }
                 }
+            }
+        } else if (type == BookPresenter.TYPE_PAGE_STYLE) {
+            if (data instanceof PageStyleData) {
+                PageStyleData pageStyleData = (PageStyleData) data;
+                ConfigData.bgColor = pageStyleData.bg_color;
+                ConfigData.textColor = pageStyleData.text_color;
             }
         }
     }
@@ -277,4 +301,14 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
         //SharedPreferencesUtils.setPageIds(this, String.valueOf(bookId), String.valueOf(currentPos));
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (getSupportFragmentManager().getFragments() != null && getSupportFragmentManager().getFragments().size() > 0) {
+            List<Fragment> fragments = getSupportFragmentManager().getFragments();
+            for (Fragment mFragment : fragments) {
+                mFragment.onActivityResult(requestCode, resultCode, data);
+            }
+        }
+    }
 }

@@ -148,6 +148,17 @@ public class StringUtils {
         }
     }
 
+    public static void setEnTextFont(TextView content, File fontFile) {
+        if (fontFile != null) {
+            Typeface typeface = Typeface.createFromFile(fontFile);
+            if (typeface != null) {
+                content.setTypeface(typeface);
+            }
+        }else {
+            content.setTypeface(Typeface.DEFAULT);
+        }
+    }
+
     /**
      * 复制到剪切板
      */

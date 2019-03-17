@@ -40,4 +40,12 @@
     <string name="translate_title">译 文</string>
 
     <string name="copy_done">已复制</string>
+
+    <string name="font_style">字体</string>
+    <string name="font_size">字号</string>
+    <string name="font_color">字色</string>
+    <string name="read_bg">背景</string>
+
+    <string name="change_font">更换</string>
+
 </resources>

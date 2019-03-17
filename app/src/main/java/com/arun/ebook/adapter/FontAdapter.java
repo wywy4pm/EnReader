@@ -63,18 +63,18 @@ public class FontAdapter extends RecyclerView.Adapter {
                     font_text.setText(bean.fontName);
                     if (position == size - 1) {
                         font_text.setClickable(false);
-                    }else {
+                    } else {
                         font_text.setClickable(true);
                     }
                 } else {
                     font_text.setClickable(true);
-                    font_text.setText(String.valueOf(bean.fontName + context.getResources().getString(R.string.font_example)));
+                    font_text.setText(String.valueOf(bean.fontName + " " + context.getResources().getString(R.string.font_example)));
                 }
                 font_text.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (switchFontListener != null) {
-                            if(position != size - 1){
+                            if (position != size - 1) {
                                 switchFontListener.switchFont(bean);
                             }
                         }

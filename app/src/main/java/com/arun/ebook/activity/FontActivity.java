@@ -51,7 +51,7 @@ public class FontActivity extends AppCompatActivity implements SwitchFontListene
         FontBean top = new FontBean();
         top.fontName = "默认";
         list.add(top);
-        File[] files = Utils.readFontsFile(this, "fonts",Constant.PATH_FONT);
+        File[] files = Utils.readFontsFile(this, "new_fonts",Constant.PATH_FONT_NEW);
         if (files != null) {
             for (int i = 0; i < files.length; i++) {
                 FontBean bean = new FontBean();

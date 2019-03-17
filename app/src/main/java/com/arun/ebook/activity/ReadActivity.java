@@ -431,6 +431,11 @@ public class ReadActivity extends AppCompatActivity implements PageViewListener,
         DensityUtil.changeAppBrightness(this, light);
     }
 
+    @Override
+    public void setTextSize(double scale) {
+
+    }
+
     /*@Override
     public void setWordSpace(int wordSpace) {
 

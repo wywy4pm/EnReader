@@ -1,24 +1,17 @@
 package com.arun.ebook.fragment;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Display;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.arun.ebook.R;
 import com.arun.ebook.activity.BookActivity;
+import com.arun.ebook.activity.FontActivity;
 import com.arun.ebook.adapter.BookDetailAdapter;
 import com.arun.ebook.bean.BookDetailBean;
 import com.arun.ebook.bean.BookDetailItemBean;
@@ -26,15 +19,14 @@ import com.arun.ebook.bean.BookEditBean;
 import com.arun.ebook.bean.FontBean;
 import com.arun.ebook.bean.TranslateData;
 import com.arun.ebook.common.Constant;
-import com.arun.ebook.dialog.NewTranslateDialog;
+import com.arun.ebook.dialog.StyleBottomDialog;
 import com.arun.ebook.dialog.TranslateController;
-import com.arun.ebook.dialog.TranslateDialog;
 import com.arun.ebook.event.EditPageEvent;
 import com.arun.ebook.event.LongPressEvent;
 import com.arun.ebook.listener.BookEditListener;
-import com.arun.ebook.listener.DialogListener;
-import com.arun.ebook.model.BookModel;
+import com.arun.ebook.listener.PageViewListener;
 import com.arun.ebook.presenter.BookPresenter;
+import com.arun.ebook.utils.StringUtils;
 import com.arun.ebook.utils.Utils;
 import com.arun.ebook.view.CommonView4;
 import com.arun.ebook.widget.ReadRecyclerView;
@@ -47,7 +39,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReadFragment extends BaseFragment implements CommonView4, BookEditListener, View.OnClickListener {
+public class ReadFragment extends BaseFragment implements CommonView4, BookEditListener, View.OnClickListener, PageViewListener {
     private ReadRecyclerView recyclerView;
     private BookDetailAdapter bookDetailAdapter;
     private List<BookDetailItemBean> bookDetailList = new ArrayList<>();
@@ -56,6 +48,7 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
     public int currentPage;
     //private NewTranslateDialog translateDialog;
     private TranslateController translateController;
+    private StyleBottomDialog styleBottomDialog;
     private TextView pageNum, pageFont;
     private int bookId;
 
@@ -239,8 +232,89 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.pageFont:
-
+                styleBottomDialog = new StyleBottomDialog();
+                styleBottomDialog.show(getFragmentManager(), "dialog");
+                styleBottomDialog.setListener(this);
                 break;
         }
+    }
+
+
+    @Override
+    public void setTextSize(double scale) {
+        if (bookDetailAdapter != null) {
+            bookDetailAdapter.setEnTextSize(scale);
+        }
+    }
+
+    @Override
+    public void setReadBackground(int bgColor) {
+        if (getActivity() != null && getActivity() instanceof BookActivity) {
+            ((BookActivity) getActivity()).setReadBg(bgColor);
+        }
+    }
+
+    @Override
+    public void setTextColor(int textColor) {
+        if (bookDetailAdapter != null) {
+            bookDetailAdapter.setTextColor(textColor);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == FontActivity.REQUEST_CODE_FOR_FONT) {
+            if (resultCode == FontActivity.RESULT_CODE_TO_READ) {
+                if (data != null && data.getExtras() != null && data.getExtras().containsKey("switchFont")) {
+                    FontBean bean = (FontBean) data.getExtras().getSerializable("switchFont");
+                    if (bean != null) {
+                        if (bookDetailAdapter != null) {
+                            bookDetailAdapter.setEnTextFont(bean);
+                        }
+                        if (styleBottomDialog != null) {
+                            styleBottomDialog.setFontName(bean.fontName);
+                        }
+                        StringUtils.setEnTextFont(pageNum, bean.file);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void setReadProgress(int progress) {
+    }
+
+    @Override
+    public void setScreenLight(int light) {
+    }
+
+    @Override
+    public void setLineSpace(int lineSpace) {
+    }
+
+    @Override
+    public void setEdgeSpace(int edgeSpace) {
+    }
+
+    @Override
+    public void setParaSpace(int paraSpace) {
+    }
+
+    @Override
+    public void showNextPage() {
+    }
+
+    @Override
+    public void showPrePage() {
+    }
+
+    @Override
+    public void showTransDialog(String word, String seq) {
+    }
+
+    @Override
+    public void setTextSize(int spSize) {
     }
 }

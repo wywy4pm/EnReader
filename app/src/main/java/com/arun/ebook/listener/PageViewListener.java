@@ -21,6 +21,8 @@ public interface PageViewListener {
 
     void setScreenLight(int light);
 
+    void setTextSize(double scale);
+
     void setTextSize(int spSize);
 
     void setLineSpace(int lineSpace);

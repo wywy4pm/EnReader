@@ -12,6 +12,7 @@ public class BookPresenter extends BasePresenter<CommonView4> {
     public static final int TYPE_BOOK_EDIT = 1;
     public static final int TYPE_BOOK_TRANSLATE = 2;
     public static final int TYPE_BOOK_PAGE_IDS = 3;
+    public static final int TYPE_PAGE_STYLE = 4;
 
     public BookPresenter() {
         super();
@@ -76,4 +77,17 @@ public class BookPresenter extends BasePresenter<CommonView4> {
                     }
                 });
     }
+
+    public void getPageStyle() {
+        BookModel.getInstance().getPageStyle(new RequestListenerImpl(getMvpView(), this) {
+            @SuppressWarnings("unchecked")
+            @Override
+            public void onSuccess(CommonApiResponse data) {
+                if (getMvpView() != null && data != null && data.code == ErrorCode.SUC_NO) {
+                    getMvpView().refresh(TYPE_PAGE_STYLE, data.data);
+                }
+            }
+        });
+    }
+
 }

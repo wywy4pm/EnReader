@@ -6,6 +6,7 @@ import com.arun.ebook.bean.BookPageIdsData;
 import com.arun.ebook.bean.BookListData;
 import com.arun.ebook.bean.CommonApiResponse;
 import com.arun.ebook.bean.MineDataBean;
+import com.arun.ebook.bean.PageStyleData;
 import com.arun.ebook.bean.RegisterData;
 import com.arun.ebook.bean.TranslateData;
 
@@ -38,5 +39,8 @@ public interface RetrofitApi {
 
     @GET(RetrofitUrl.USER_CENTER)
     Observable<CommonApiResponse<MineDataBean>> getMineData();
+
+    @GET(RetrofitUrl.BOOK_PAGE_STYLE)
+    Observable<CommonApiResponse<PageStyleData>> getPageStyle();
 
 }

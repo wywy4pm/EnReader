@@ -32,4 +32,9 @@ public class BookModel extends BaseModel {
     public void bookTranslate(int book_id, String keyword, String page_id, CommonRequestListener listener) {
         request(RetrofitInit.getApi().bookTranslate(book_id, keyword, page_id), listener);
     }
+
+    public void getPageStyle(CommonRequestListener listener) {
+        request(RetrofitInit.getApi().getPageStyle(), listener);
+    }
+
 }

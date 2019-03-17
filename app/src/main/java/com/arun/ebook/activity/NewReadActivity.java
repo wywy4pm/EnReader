@@ -604,6 +604,11 @@ public class NewReadActivity extends AppCompatActivity implements PageViewListen
         DensityUtil.changeAppBrightness(this, light);
     }
 
+    @Override
+    public void setTextSize(double scale) {
+
+    }
+
     private void setFont(Typeface typeface) {
 //        this.typeface = typeface;
         if (readAdapter != null) {

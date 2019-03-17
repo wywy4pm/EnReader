@@ -32,6 +32,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +44,9 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
 
     private BookEditListener bookEditListener;
     private int book_id;
+    private int color;
+    private FontBean fontBean;
+    private double scale = 1;
 
     public BookDetailAdapter(Context context, List<BookDetailItemBean> list) {
         super(context, list);
@@ -54,6 +58,21 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
 
     public void setBook_id(int book_id) {
         this.book_id = book_id;
+    }
+
+    public void setTextColor(int color) {
+        this.color = color;
+        notifyDataSetChanged();
+    }
+
+    public void setEnTextFont(FontBean fontBean) {
+        this.fontBean = fontBean;
+        notifyDataSetChanged();
+    }
+
+    public void setEnTextSize(double scale) {
+        this.scale = scale;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -71,9 +90,9 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof BookContentHolder) {
-            ((BookContentHolder) holder).setData((BookDetailBean) getItem(position).content, book_id);
+            ((BookContentHolder) holder).setData((BookDetailBean) getItem(position).content, book_id, color, fontBean, scale);
         } else if (holder instanceof BookTranslateHolder) {
-            ((BookTranslateHolder) holder).setData((String) getItem(position).content);
+            ((BookTranslateHolder) holder).setData((String) getItem(position).content, color);
         }
     }
 
@@ -107,6 +126,7 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
         private TextView front_merge, insert, delete, edit, style_title, style_quote, style_main_body;
         private BookEditListener bookEditListener;
         private BookDetailBean detailBean;
+        private double scale;
 
         private BookContentHolder(Context context, View itemView, BookEditListener bookEditListener) {
             super(itemView);
@@ -145,11 +165,18 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
             this.bookEditListener = bookEditListener;
         }
 
-        private void setData(BookDetailBean bean, int book_id) {
+        private void setData(BookDetailBean bean, int book_id, int color, FontBean fontBean, double scale) {
             if (bean != null) {
                 this.detailBean = bean;
-                initFont(contentView, bean);
-                setTextStyle(bean.style);
+                File fontFile = null;
+                if (fontBean != null) {
+                    fontFile = fontBean.file;
+                } else {
+                    fontFile = bean.file;
+                }
+                initFont(contentView, fontFile);
+                this.scale = scale;
+                setTextStyle(bean.style, scale);
                 contentView.setBookId(book_id);
                 contentView.setPageId(bean.page_id);
                 if (bean.queryed_word_list == null) {
@@ -158,25 +185,28 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
                 contentView.setTrans_words(bean.queryed_word_list);
                 contentView.setText(bean.content);
                 contentView.setTranslateListener(this);
+                if (color != 0) {
+                    contentView.setTextColor(color);
+                }
                 pageText.setText(bean.seq + "/" + bean.totalPage);
             }
         }
 
-        public void setTextStyle(int style) {
+        public void setTextStyle(int style, double scale) {
             setAlignStyle(style);
             switch (style) {
                 case BookEditBean.STYLE_TITLE:
-                    contentView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);
+                    contentView.setTextSize(TypedValue.COMPLEX_UNIT_SP, (float) (28 * scale));
                     contentView.setLineSpacing(DensityUtil.dp2px(12), 1);
                     contentView.setTypeface(contentView.getTypeface(), Typeface.NORMAL);
                     break;
                 case BookEditBean.STYLE_QUOTE:
-                    contentView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+                    contentView.setTextSize(TypedValue.COMPLEX_UNIT_SP, (float) (18 * scale));
                     contentView.setLineSpacing(DensityUtil.dp2px(12), 1);
                     contentView.setTypeface(contentView.getTypeface(), Typeface.ITALIC);
                     break;
                 case BookEditBean.STYLE_MAIN_BODY:
-                    contentView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+                    contentView.setTextSize(TypedValue.COMPLEX_UNIT_SP, (float) (16 * scale));
                     contentView.setLineSpacing(DensityUtil.dp2px(12), 1);
                     contentView.setTypeface(contentView.getTypeface(), Typeface.NORMAL);
                     break;
@@ -197,9 +227,9 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
             }
         }
 
-        private void initFont(TextView textView, BookDetailBean bean) {
-            if (bean != null && bean.file != null) {
-                Typeface typeface = Typeface.createFromFile(bean.file);
+        private void initFont(TextView textView, File file) {
+            if (file != null) {
+                Typeface typeface = Typeface.createFromFile(file);
                 if (typeface != null) {
                     textView.setTypeface(typeface);
                 }
@@ -262,15 +292,15 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
                     break;
                 case R.id.style_title:
                     bean = new BookEditBean(detailBean.page_id, BookEditBean.TYPE_STYLE, BookEditBean.STYLE_TITLE);
-                    setTextStyle(BookEditBean.STYLE_TITLE);
+                    setTextStyle(BookEditBean.STYLE_TITLE, scale);
                     break;
                 case R.id.style_quote:
                     bean = new BookEditBean(detailBean.page_id, BookEditBean.TYPE_STYLE, BookEditBean.STYLE_QUOTE);
-                    setTextStyle(BookEditBean.STYLE_QUOTE);
+                    setTextStyle(BookEditBean.STYLE_QUOTE, scale);
                     break;
                 case R.id.style_main_body:
                     bean = new BookEditBean(detailBean.page_id, BookEditBean.TYPE_STYLE, BookEditBean.STYLE_MAIN_BODY);
-                    setTextStyle(BookEditBean.STYLE_MAIN_BODY);
+                    setTextStyle(BookEditBean.STYLE_MAIN_BODY, scale);
                     break;
             }
             if (bookEditListener != null && bean != null) {
@@ -287,9 +317,12 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
             translate_content = itemView.findViewById(R.id.translate_content);
         }
 
-        private void setData(String cnContent) {
+        private void setData(String cnContent, int color) {
             if (!TextUtils.isEmpty(cnContent)) {
                 translate_content.setText(cnContent);
+                if (color != 0) {
+                    translate_content.setTextColor(color);
+                }
             }
         }
 
