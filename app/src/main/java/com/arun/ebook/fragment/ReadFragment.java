@@ -22,10 +22,13 @@ import com.arun.ebook.common.Constant;
 import com.arun.ebook.dialog.StyleBottomDialog;
 import com.arun.ebook.dialog.TranslateController;
 import com.arun.ebook.event.EditPageEvent;
+import com.arun.ebook.event.EnSizeEvent;
 import com.arun.ebook.event.LongPressEvent;
+import com.arun.ebook.event.TextColorEvent;
 import com.arun.ebook.listener.BookEditListener;
 import com.arun.ebook.listener.PageViewListener;
 import com.arun.ebook.presenter.BookPresenter;
+import com.arun.ebook.utils.SharedPreferencesUtils;
 import com.arun.ebook.utils.StringUtils;
 import com.arun.ebook.utils.Utils;
 import com.arun.ebook.view.CommonView4;
@@ -51,6 +54,8 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
     private StyleBottomDialog styleBottomDialog;
     private TextView pageNum, pageFont;
     private int bookId;
+    private int textColor;
+    private double textScale;
 
     public static ReadFragment newInstance(BookDetailBean bean, int bookId) {
         ReadFragment readFragment = new ReadFragment();
@@ -124,7 +129,37 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
 
             bookPresenter = new BookPresenter();
             bookPresenter.attachView(this);
+            setTextColor();
+            setEnSize();
         }
+    }
+
+    private void setTextColor() {
+        if (getActivity() instanceof BookActivity && ((BookActivity) getActivity()).textColor != 0) {
+            textColor = ((BookActivity) getActivity()).textColor;
+            if (textColor != 0) {
+                bookDetailAdapter.setTextColor(textColor);
+            }
+        }
+    }
+
+    private void setEnSize() {
+        if (getActivity() instanceof BookActivity && ((BookActivity) getActivity()).textScale > 0) {
+            textScale = ((BookActivity) getActivity()).textScale;
+            if (textScale > 0) {
+                bookDetailAdapter.setEnTextSize(textScale);
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onTextColorChange(TextColorEvent textColorEvent) {
+        setTextColor();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEnSizeChange(EnSizeEvent enSizeEvent) {
+        setEnSize();
     }
 
     @Override
@@ -186,6 +221,14 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
                 translateController = new TranslateController(getActivity());
                 translateController.setTranslateData(translateData);
                 translateController.showDialog();
+                if (getActivity() instanceof BookActivity) {
+                    if (((BookActivity) getActivity()).readBg != 0) {
+                        translateController.setReadBg(((BookActivity) getActivity()).readBg);
+                    }
+                    if (((BookActivity) getActivity()).textColor != 0) {
+                        translateController.setTextColor(((BookActivity) getActivity()).textColor);
+                    }
+                }
                 /*translateDialog = new NewTranslateDialog();
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("TranslateData", translateData);
@@ -235,6 +278,17 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
                 styleBottomDialog = new StyleBottomDialog();
                 styleBottomDialog.show(getFragmentManager(), "dialog");
                 styleBottomDialog.setListener(this);
+                if (getActivity() instanceof BookActivity) {
+                    if (((BookActivity) getActivity()).readBg != 0) {
+                        styleBottomDialog.setBgColor(((BookActivity) getActivity()).readBg);
+                    }
+                    if (((BookActivity) getActivity()).textColor != 0) {
+                        styleBottomDialog.setTextColor(((BookActivity) getActivity()).textColor);
+                    }
+                    if (((BookActivity) getActivity()).textScale > 0) {
+                        styleBottomDialog.setScale(((BookActivity) getActivity()).textScale);
+                    }
+                }
                 break;
         }
     }
@@ -242,13 +296,22 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
 
     @Override
     public void setTextSize(double scale) {
+        SharedPreferencesUtils.setConfigString(getActivity(), SharedPreferencesUtils.KEY_READ_EN_SIZE, String.valueOf(scale));
         if (bookDetailAdapter != null) {
             bookDetailAdapter.setEnTextSize(scale);
         }
+        if (getActivity() != null && getActivity() instanceof BookActivity) {
+            ((BookActivity) getActivity()).setEnSize(scale);
+        }
+        EventBus.getDefault().post(new EnSizeEvent(scale));
     }
 
     @Override
     public void setReadBackground(int bgColor) {
+        SharedPreferencesUtils.setConfigInt(getActivity(), SharedPreferencesUtils.KEY_READ_BG, bgColor);
+        if (translateController != null) {
+            translateController.setReadBg(bgColor);
+        }
         if (getActivity() != null && getActivity() instanceof BookActivity) {
             ((BookActivity) getActivity()).setReadBg(bgColor);
         }
@@ -256,9 +319,17 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
 
     @Override
     public void setTextColor(int textColor) {
+        SharedPreferencesUtils.setConfigInt(getActivity(), SharedPreferencesUtils.KEY_READ_TEXT_COLOR, textColor);
         if (bookDetailAdapter != null) {
             bookDetailAdapter.setTextColor(textColor);
         }
+        if (translateController != null) {
+            translateController.setTextColor(textColor);
+        }
+        if (getActivity() != null && getActivity() instanceof BookActivity) {
+            ((BookActivity) getActivity()).setTextColor(textColor);
+        }
+        EventBus.getDefault().post(new TextColorEvent(textColor));
     }
 
     @Override

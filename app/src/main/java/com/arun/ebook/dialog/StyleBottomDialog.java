@@ -42,9 +42,34 @@ public class StyleBottomDialog extends DialogFragment {
     private List<String> bg_colors = new ArrayList<>();
     private List<String> text_colors = new ArrayList<>();
     private PageViewListener listener;
+    private int bgColor;
+    private int textColor;
+    private double scale;
 
     public void setListener(PageViewListener listener) {
         this.listener = listener;
+    }
+
+    public void setBgColor(int bgColor) {
+        this.bgColor = bgColor;
+        /*if (window != null && bgColor != 0) {
+            window.getDecorView().setBackgroundColor(bgColor);
+        }*/
+    }
+
+    public void setTextColor(int textColor) {
+        this.textColor = textColor;
+        /*if (textColor != 0) {
+            font_text.setTextColor(textColor);
+            font_size.setTextColor(textColor);
+            font_color.setTextColor(textColor);
+            read_bg.setTextColor(textColor);
+            font_name.setTextColor(textColor);
+        }*/
+    }
+
+    public void setScale(double scale) {
+        this.scale = scale;
     }
 
     @NonNull
@@ -60,7 +85,11 @@ public class StyleBottomDialog extends DialogFragment {
             window = dialog.getWindow();
             if (window != null) {
                 window.getDecorView().setPadding(0, 0, 0, 0);
-                window.getDecorView().setBackgroundColor(getResources().getColor(R.color.black));
+                if (bgColor != 0) {
+                    window.getDecorView().setBackgroundColor(bgColor);
+                } else {
+                    window.getDecorView().setBackgroundColor(getResources().getColor(R.color.black));
+                }
                 window.setGravity(Gravity.BOTTOM);
                 WindowManager.LayoutParams wlp = window.getAttributes();
                 wlp.width = WindowManager.LayoutParams.MATCH_PARENT;
@@ -118,6 +147,17 @@ public class StyleBottomDialog extends DialogFragment {
                 }
             }
         });
+        if (scale > 0) {
+            int progress = (int) ((scale - 0.5) * 100);
+            seekChangeSize.setProgress(progress);
+        }
+        if (textColor != 0) {
+            font_text.setTextColor(textColor);
+            font_size.setTextColor(textColor);
+            font_color.setTextColor(textColor);
+            read_bg.setTextColor(textColor);
+            font_name.setTextColor(textColor);
+        }
 
         setColorPanel(1);
         setColorPanel(2);

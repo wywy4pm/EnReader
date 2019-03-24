@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Log;
@@ -19,13 +20,17 @@ import com.arun.ebook.R;
 import com.arun.ebook.bean.TranslateData;
 import com.arun.ebook.listener.DialogListener;
 
-public class TranslateController implements DialogInterface.OnDismissListener,DialogInterface.OnCancelListener{
+public class TranslateController implements DialogInterface.OnDismissListener, DialogInterface.OnCancelListener {
     private Context context;
     private TranslateData translateData;
     private Dialog dialog;
     private View transView;
     private DialogListener listener;
     private MediaPlayer mediaPlayer;
+    private Window window;
+    private int readBg;
+    private int textColor;
+    private TextView mWordTranslate, mVoiceTranslate, mDetailTranslate;
 
     public TranslateController(Context context) {
         this.context = context;
@@ -39,6 +44,28 @@ public class TranslateController implements DialogInterface.OnDismissListener,Di
         this.listener = listener;
     }
 
+    public void setReadBg(int readBg) {
+        this.readBg = readBg;
+        if (window != null && readBg != 0) {
+            window.getDecorView().setBackgroundColor(readBg);
+        }
+    }
+
+    public void setTextColor(int textColor) {
+        this.textColor = textColor;
+        if (textColor != 0) {
+            if (mWordTranslate != null) {
+                mWordTranslate.setTextColor(textColor);
+            }
+            if (mVoiceTranslate != null) {
+                mVoiceTranslate.setTextColor(textColor);
+            }
+            if (mDetailTranslate != null) {
+                mDetailTranslate.setTextColor(textColor);
+            }
+        }
+    }
+
     public void showDialog() {
         if (dialog == null) {
             dialog = new AlertDialog.Builder(context).create();
@@ -46,7 +73,7 @@ public class TranslateController implements DialogInterface.OnDismissListener,Di
             dialog.setCanceledOnTouchOutside(true);
             dialog.show();
             dialog.setContentView(transView);
-            Window window = dialog.getWindow();
+            window = dialog.getWindow();
             if (window != null) {
                 window.getDecorView().setPadding(0, 0, 0, 0);
                 window.getDecorView().setBackgroundColor(context.getResources().getColor(R.color.black));
@@ -98,11 +125,11 @@ public class TranslateController implements DialogInterface.OnDismissListener,Di
     }
 
     private void setData(View itemView, TranslateData bean) {
-        TextView mWordTranslate = itemView.findViewById(R.id.text_word);
+        mWordTranslate = itemView.findViewById(R.id.text_word);
         TextView mCloseImg = itemView.findViewById(R.id.btn_close);
-        TextView mVoiceTranslate = itemView.findViewById(R.id.translate_voice);
+        mVoiceTranslate = itemView.findViewById(R.id.translate_voice);
         ImageView mVoiceImg = itemView.findViewById(R.id.img_voice);
-        TextView mDetailTranslate = itemView.findViewById(R.id.translate_detail);
+        mDetailTranslate = itemView.findViewById(R.id.translate_detail);
 
         if (bean != null) {
             mWordTranslate.setText(bean.keyword);

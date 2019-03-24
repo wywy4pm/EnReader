@@ -55,6 +55,9 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
     private List<Integer> page_ids;
     private String pageIds;
     private View groupView;
+    public int readBg;
+    public int textColor;
+    public double textScale = 1;
 
     public static void jumpToBook(Context context, BookItemBean item) {
         Intent intent = new Intent(context, BookActivity.class);
@@ -82,10 +85,21 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
         setFullScreen();
     }
 
-    public void setReadBg(int color) {
-        if (color != 0) {
-            groupView.setBackgroundColor(color);
+    public void setReadBg(int bgColor) {
+        if (bgColor != 0) {
+            this.readBg = bgColor;
+            groupView.setBackgroundColor(bgColor);
         }
+    }
+
+    public void setTextColor(int textColor) {
+        if (textColor != 0) {
+            this.textColor = textColor;
+        }
+    }
+
+    public void setEnSize(double enSize) {
+        this.textScale = enSize;
     }
 
     private void initData() {
@@ -102,6 +116,15 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
             if (bookItem != null && bookItem.readSeq > 0) {
                 currentPosStr = String.valueOf(bookItem.readSeq - 1);
             }
+        }
+        readBg = SharedPreferencesUtils.getConfigInt(this, SharedPreferencesUtils.KEY_READ_BG);
+        if (readBg != 0) {
+            setReadBg(readBg);
+        }
+        textColor = SharedPreferencesUtils.getConfigInt(this, SharedPreferencesUtils.KEY_READ_TEXT_COLOR);
+        String scaleText = SharedPreferencesUtils.getConfigString(this, SharedPreferencesUtils.KEY_READ_EN_SIZE);
+        if (!TextUtils.isEmpty(scaleText)) {
+            textScale = Double.valueOf(scaleText);
         }
     }
 
