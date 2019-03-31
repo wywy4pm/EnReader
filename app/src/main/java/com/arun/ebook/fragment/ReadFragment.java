@@ -113,12 +113,12 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
                     }
 
                     currentPage = bean.seq;
-                    if (bean.file != null) {
+                    /*if (bean.file != null) {
                         Typeface typeface = Typeface.createFromFile(bean.file);
                         if (typeface != null) {
                             pageNum.setTypeface(typeface);
                         }
-                    }
+                    }*/
                     pageNum.setText(bean.seq + "/" + bean.totalPage);
                 }
             }
@@ -390,7 +390,7 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
             if (styleBottomDialog != null) {
                 styleBottomDialog.setFontName(fontBean.fontName);
             }
-            StringUtils.setEnTextFont(pageNum, fontBean.file);
+            //StringUtils.setEnTextFont(pageNum, fontBean.file);
         }
     }
 
