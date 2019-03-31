@@ -14,7 +14,8 @@
         android:textSize="16sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:alpha="0.5"/>
 
     <TextView
         android:id="@+id/translate_content"

@@ -22,6 +22,7 @@ import com.arun.ebook.common.Constant;
 import com.arun.ebook.dialog.StyleBottomDialog;
 import com.arun.ebook.dialog.TranslateController;
 import com.arun.ebook.event.EditPageEvent;
+import com.arun.ebook.event.EnFontEvent;
 import com.arun.ebook.event.EnSizeEvent;
 import com.arun.ebook.event.LongPressEvent;
 import com.arun.ebook.event.TextColorEvent;
@@ -56,6 +57,7 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
     private int bookId;
     private int textColor;
     private double textScale;
+    private FontBean fontBean;
 
     public static ReadFragment newInstance(BookDetailBean bean, int bookId) {
         ReadFragment readFragment = new ReadFragment();
@@ -104,9 +106,9 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
 
                     //translate
                     if (!TextUtils.isEmpty(bean.cn)) {
-                        BookDetailItemBean<String> translateBean = new BookDetailItemBean<>();
+                        BookDetailItemBean<BookDetailBean> translateBean = new BookDetailItemBean<>();
                         translateBean.type = BookDetailAdapter.DATA_TYPE_TRANSLATE;
-                        translateBean.content = bean.cn;
+                        translateBean.content = bean;
                         bookDetailList.add(translateBean);
                     }
 
@@ -131,6 +133,7 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
             bookPresenter.attachView(this);
             setTextColor();
             setEnSize();
+            setEnFont();
         }
     }
 
@@ -140,6 +143,8 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
             if (textColor != 0) {
                 bookDetailAdapter.setTextColor(textColor);
             }
+            pageNum.setTextColor(textColor);
+            pageFont.setTextColor(textColor);
         }
     }
 
@@ -152,6 +157,15 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
         }
     }
 
+    private void setEnFont() {
+        if (getActivity() instanceof BookActivity && ((BookActivity) getActivity()).fontBean != null) {
+            fontBean = ((BookActivity) getActivity()).fontBean;
+            if (fontBean != null) {
+                setFont(fontBean);
+            }
+        }
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onTextColorChange(TextColorEvent textColorEvent) {
         setTextColor();
@@ -160,6 +174,11 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEnSizeChange(EnSizeEvent enSizeEvent) {
         setEnSize();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEnFontChange(EnFontEvent enFontEvent) {
+        setEnFont();
     }
 
     @Override
@@ -288,6 +307,9 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
                     if (((BookActivity) getActivity()).textScale > 0) {
                         styleBottomDialog.setScale(((BookActivity) getActivity()).textScale);
                     }
+                    if (((BookActivity) getActivity()).fontBean != null) {
+                        styleBottomDialog.setFont_name(((BookActivity) getActivity()).fontBean.fontName);
+                    }
                 }
                 break;
         }
@@ -340,16 +362,35 @@ public class ReadFragment extends BaseFragment implements CommonView4, BookEditL
                 if (data != null && data.getExtras() != null && data.getExtras().containsKey("switchFont")) {
                     FontBean bean = (FontBean) data.getExtras().getSerializable("switchFont");
                     if (bean != null) {
-                        if (bookDetailAdapter != null) {
-                            bookDetailAdapter.setEnTextFont(bean);
+                        setFont(bean);
+                        String saveFileName = "";
+                        if (bean.file == null) {
+                            saveFileName = "默认";
+                        } else {
+                            saveFileName = bean.file.getAbsolutePath();
                         }
-                        if (styleBottomDialog != null) {
-                            styleBottomDialog.setFontName(bean.fontName);
+                        if (getActivity() != null) {
+                            if (getActivity() instanceof BookActivity) {
+                                ((BookActivity) getActivity()).setEnFont(bean);
+                            }
+                            SharedPreferencesUtils.setConfigString(getActivity(), SharedPreferencesUtils.KEY_READ_EN_FONT, saveFileName);
                         }
-                        StringUtils.setEnTextFont(pageNum, bean.file);
+                        EventBus.getDefault().post(new EnFontEvent());
                     }
                 }
             }
+        }
+    }
+
+    public void setFont(FontBean fontBean) {
+        if (fontBean != null) {
+            if (bookDetailAdapter != null) {
+                bookDetailAdapter.setEnTextFont(fontBean);
+            }
+            if (styleBottomDialog != null) {
+                styleBottomDialog.setFontName(fontBean.fontName);
+            }
+            StringUtils.setEnTextFont(pageNum, fontBean.file);
         }
     }
 

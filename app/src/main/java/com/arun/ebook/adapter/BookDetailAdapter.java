@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,7 +93,7 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
         if (holder instanceof BookContentHolder) {
             ((BookContentHolder) holder).setData((BookDetailBean) getItem(position).content, book_id, color, fontBean, scale);
         } else if (holder instanceof BookTranslateHolder) {
-            ((BookTranslateHolder) holder).setData((String) getItem(position).content, color);
+            ((BookTranslateHolder) holder).setData((BookDetailBean) getItem(position).content, color);
         }
     }
 
@@ -310,18 +311,32 @@ public class BookDetailAdapter extends BaseRecyclerAdapter<BookDetailItemBean> {
     }
 
     private static class BookTranslateHolder extends RecyclerView.ViewHolder {
-        private TextView translate_content;
+        private TextView translate_content, translate_title;
 
         private BookTranslateHolder(View itemView) {
             super(itemView);
             translate_content = itemView.findViewById(R.id.translate_content);
+            translate_title = itemView.findViewById(R.id.translate_title);
         }
 
-        private void setData(String cnContent, int color) {
-            if (!TextUtils.isEmpty(cnContent)) {
-                translate_content.setText(cnContent);
+        private void setData(BookDetailBean bean, int color) {
+            if (bean != null) {
+                if (!TextUtils.isEmpty(bean.cn)) {
+                    translate_content.setText(bean.cn);
+                }
                 if (color != 0) {
                     translate_content.setTextColor(color);
+                    translate_title.setTextColor(color);
+                }
+                if (bean.style == BookEditBean.STYLE_MAIN_BODY) {
+                    translate_content.setTypeface(translate_content.getTypeface(), Typeface.NORMAL);
+                    translate_content.setGravity(Gravity.LEFT);
+                } else if (bean.style == BookEditBean.STYLE_TITLE) {
+                    translate_content.setTypeface(translate_content.getTypeface(), Typeface.NORMAL);
+                    translate_content.setGravity(Gravity.CENTER);
+                } else if (bean.style == BookEditBean.STYLE_QUOTE) {
+                    translate_content.setTypeface(translate_content.getTypeface(), Typeface.ITALIC);
+                    translate_content.setGravity(Gravity.LEFT);
                 }
             }
         }

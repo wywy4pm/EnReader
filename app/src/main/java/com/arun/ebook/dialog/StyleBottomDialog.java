@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -45,6 +46,7 @@ public class StyleBottomDialog extends DialogFragment {
     private int bgColor;
     private int textColor;
     private double scale;
+    private String fontName;
 
     public void setListener(PageViewListener listener) {
         this.listener = listener;
@@ -70,6 +72,10 @@ public class StyleBottomDialog extends DialogFragment {
 
     public void setScale(double scale) {
         this.scale = scale;
+    }
+
+    public void setFont_name(String fontName) {
+        this.fontName = fontName;
     }
 
     @NonNull
@@ -157,6 +163,9 @@ public class StyleBottomDialog extends DialogFragment {
             font_color.setTextColor(textColor);
             read_bg.setTextColor(textColor);
             font_name.setTextColor(textColor);
+        }
+        if (!TextUtils.isEmpty(fontName)) {
+            setFontName(fontName);
         }
 
         setColorPanel(1);

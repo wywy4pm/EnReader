@@ -18,6 +18,7 @@ import com.arun.ebook.bean.BookDetailBean;
 import com.arun.ebook.bean.BookItemBean;
 import com.arun.ebook.bean.BookPageIdsData;
 import com.arun.ebook.bean.ConfigData;
+import com.arun.ebook.bean.FontBean;
 import com.arun.ebook.bean.PageStyleData;
 import com.arun.ebook.common.Constant;
 import com.arun.ebook.event.HidePopEvent;
@@ -31,6 +32,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,6 +60,7 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
     public int readBg;
     public int textColor;
     public double textScale = 1;
+    public FontBean fontBean;
 
     public static void jumpToBook(Context context, BookItemBean item) {
         Intent intent = new Intent(context, BookActivity.class);
@@ -102,6 +105,10 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
         this.textScale = enSize;
     }
 
+    public void setEnFont(FontBean bean) {
+        this.fontBean = bean;
+    }
+
     private void initData() {
         if (getIntent() != null && getIntent().getExtras() != null) {
             if (getIntent().getExtras().containsKey(Constant.INTENT_BOOK_ITEM)) {
@@ -125,6 +132,20 @@ public class BookActivity extends BaseActivity implements CommonView4<List<BookD
         String scaleText = SharedPreferencesUtils.getConfigString(this, SharedPreferencesUtils.KEY_READ_EN_SIZE);
         if (!TextUtils.isEmpty(scaleText)) {
             textScale = Double.valueOf(scaleText);
+        }
+        String fontFilePath = SharedPreferencesUtils.getConfigString(this, SharedPreferencesUtils.KEY_READ_EN_FONT);
+        if (!TextUtils.isEmpty(fontFilePath)) {
+            fontBean = new FontBean();
+            File fontFile = null;
+            String fontName = "";
+            if (!"默认".equals(fontFilePath)) {
+                fontFile = new File(fontFilePath);
+                fontName = fontFile.getName();
+            } else {
+                fontName = "默认";
+            }
+            fontBean.fontName = fontName;
+            fontBean.file = fontFile;
         }
     }
 
