@@ -10,7 +10,8 @@ import java.io.File;
  */
 
 public class Constant {
-    public static final String API_BASE_URL = "http://xima.link365.cn/fd/";
+    public static String API_BASE_URL = "http://xima.link365.cn/fd/";
+    public static final String API_BASE_TEST_URL = "http://xima.link365.cn/fdtest/";
     public static final String GET_TRANSLATE_DATA = "https://tps.link365.cn/wx/article/translate";
     public static final String PATH_FONT = Environment.getExternalStorageDirectory() + File.separator + "enreader" + File.separator + "fonts";
     public static final String PATH_FONT_NEW = Environment.getExternalStorageDirectory() + File.separator + "FD" + File.separator + "fonts";

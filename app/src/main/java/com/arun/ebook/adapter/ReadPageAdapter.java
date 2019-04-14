@@ -45,12 +45,12 @@ public class ReadPageAdapter extends OpenPagerAdapter<BookDetailBean> {
 
     @Override
     public int getCount() {
-        return data.size();
+        return data == null || data.size() == 0 ? 0 : data.size();
     }
 
     @Override
     protected BookDetailBean getItemData(int position) {
-        return data.get(position);
+        return data == null || data.size() == 0 ? null : data.get(position);
     }
 
     @Override
